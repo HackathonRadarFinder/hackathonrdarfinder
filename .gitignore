@@ -1,1 +1,2 @@
 backend/hackathon_radar.db
+backend/ai/models/*.pkl
