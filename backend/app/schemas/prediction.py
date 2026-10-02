@@ -1,21 +1,14 @@
 from pydantic import BaseModel
-from typing import Optional
-from datetime import datetime
+from typing import List, Optional
 
 
-class PredictionBase(BaseModel):
+class PredictionRequest(BaseModel):
     organization: str
-    predicted_date: datetime
+    historical_dates: List[str]
+
+
+class PredictionResponse(BaseModel):
+    organization: str
+    predicted_date: Optional[str] = None
     confidence: float
-    reasoning: Optional[str] = None
-
-
-class PredictionCreate(PredictionBase):
-    pass
-
-
-class PredictionResponse(PredictionBase):
-    id: int
-
-    class Config:
-        from_attributes = True
+    reasoning: str
