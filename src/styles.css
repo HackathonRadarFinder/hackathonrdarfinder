@@ -20,3 +20,108 @@
 
 @media(max-width:900px){.hero{padding:65px 6%}.hero-panel{display:none}.nav-actions{display:none}.nav-links{margin-left:auto}.event-grid,.prediction-grid{grid-template-columns:1fr}.explore-layout{grid-template-columns:1fr}.side-filter{display:none}.detail-grid{grid-template-columns:1fr}.prediction-banner{margin:0 25px 60px}.org-grid{grid-template-columns:1fr}}
 @media(max-width:650px){.navbar{padding:0 18px}.mobile-menu{display:block}.nav-links{display:none;position:absolute;top:72px;left:0;right:0;background:#0c101d;border-bottom:1px solid var(--border);padding:12px 18px;flex-direction:column;align-items:stretch}.nav-links.open{display:flex}.nav-link{padding:12px}.hero{min-height:auto;padding:65px 20px}.hero h1{font-size:47px;letter-spacing:-2px}.hero-search{height:auto;padding:10px;flex-wrap:wrap}.hero-search input{min-width:180px;height:38px}.search-action{margin-left:auto}.trust-row{flex-direction:column;gap:9px}.stats-strip{grid-template-columns:1fr 1fr;padding:18px}.stats-strip div{margin:7px 0}.section,.page{padding:50px 18px}.section-heading{align-items:start}.section-heading h2{font-size:23px}.event-grid{grid-template-columns:1fr}.event-card{padding:15px}.page-header{align-items:start;gap:15px;flex-direction:column}.filter-bar{flex-wrap:wrap}.filter-search{flex-basis:100%}.detail-hero{flex-wrap:wrap}.detail-heading{min-width:calc(100% - 95px)}.detail-heading h1{font-size:27px}.detail-hero .primary-btn{width:100%;justify-content:center}.info-grid{grid-template-columns:1fr}.prediction-head{flex-direction:row;align-items:center}.prediction-head h1{font-size:30px}.model-pill{white-space:nowrap}.prediction-banner{margin:0 18px 50px;flex-direction:column;align-items:start}.prediction-banner .primary-btn{margin:0}.org-hero{flex-wrap:wrap;padding:20px}.org-hero h1{font-size:25px}.secondary-btn{margin-left:0}.org-stats{grid-template-columns:1fr 1fr}.org-stats div:nth-child(2){border-right:0}.org-stats div:nth-child(3),.org-stats div:nth-child(4){border-top:1px solid var(--border)}.footer{flex-direction:column;gap:10px}}
+
+/* =====================================================
+   ANALYTICS DASHBOARD - SOFT LIGHT THEME
+   ===================================================== */
+
+.analytics-page {
+  background: #f8f9fc !important;
+  color: #1e293b !important;
+  min-height: 100vh;
+}
+
+
+/* PAGE HEADER */
+
+.analytics-page .page-header h1 {
+  color: #1e293b !important;
+}
+
+.analytics-page .page-header p {
+  color: #64748b !important;
+}
+
+.analytics-page .page-header .eyebrow {
+  color: #635bff !important;
+}
+
+
+/* ALL DIRECT DASHBOARD CARDS */
+
+.analytics-page > div {
+  color: #1e293b;
+}
+
+
+/* WHITE CARDS */
+
+.analytics-page [style*="background"] {
+  background: #ffffff !important;
+  color: #1e293b !important;
+}
+
+
+/* HEADINGS INSIDE ANALYTICS */
+
+.analytics-page h2,
+.analytics-page h3 {
+  color: #1e293b !important;
+}
+
+
+/* SECONDARY TEXT */
+
+.analytics-page p {
+  color: #64748b !important;
+}
+
+
+/* FILTER AREA */
+
+.analytics-page select {
+  background: #ffffff !important;
+  color: #334155 !important;
+  border: 1px solid #d9dee8 !important;
+  border-radius: 10px !important;
+}
+
+
+/* FILTER LABELS */
+
+.analytics-page label {
+  color: #334155 !important;
+}
+
+
+/* CHART GRID */
+
+.analytics-page .recharts-cartesian-grid line {
+  stroke: #e5e7eb !important;
+}
+
+
+/* CHART AXIS */
+
+.analytics-page .recharts-cartesian-axis-tick-value {
+  fill: #64748b !important;
+}
+
+
+/* CHART TOOLTIP */
+
+.analytics-page .recharts-default-tooltip {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  color: #1e293b !important;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+  .analytics-page {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}

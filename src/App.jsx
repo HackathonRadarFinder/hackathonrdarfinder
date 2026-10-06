@@ -7,6 +7,7 @@ import {
   BrainCircuit, ShieldCheck, TrendingUp, Award, Globe2
 } from "lucide-react";
 import { events, predictions, organizers } from "./data";
+import AnalyticsDashboard from "./AnalyticsDashboard";
 
 function Layout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -14,6 +15,7 @@ function Layout({ children }) {
     { to: "/", label: "Home", icon: HomeIcon },
     { to: "/explore", label: "Explore", icon: Compass },
     { to: "/predictions", label: "Predictions", icon: Sparkles },
+    { to: "/analytics", label: "Analytics", icon: TrendingUp },
     { to: "/organizer/microsoft", label: "Organizers", icon: Building2 },
   ];
 
@@ -258,6 +260,7 @@ function App() {
     <Route path="/explore" element={<Explore/>}/>
     <Route path="/event/:id" element={<EventDetails/>}/>
     <Route path="/predictions" element={<Predictions/>}/>
+    <Route path="/analytics" element={<AnalyticsDashboard/>}/>
     <Route path="/organizer/:name" element={<OrganizerProfile/>}/>
     <Route path="*" element={<Home/>}/>
   </Routes></Layout>;
