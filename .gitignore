@@ -2,3 +2,6 @@ backend/hackathon_radar.db
 backend/ai/models/*.pkl
 backend/data/historical_hackathons.csv
 backend/data/ml_training_dataset.csv
+node_modules/
+dist/
+.env
