@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
@@ -11,10 +12,10 @@ class Hackathon(Base):
     title = Column(String(255), nullable=False, index=True)
 
     organization_id = Column(
-        Integer,
-        ForeignKey("organizations.id"),
-        nullable=True
-    )
+         UUID(as_uuid=True),
+         ForeignKey("organizations.id"),
+         nullable=True
+     )
 
     start_date = Column(DateTime, nullable=True)
     end_date = Column(DateTime, nullable=True)
