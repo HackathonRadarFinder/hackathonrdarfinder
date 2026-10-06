@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Hackathon Radar AI - Frontend
 
 React + Vite frontend for the Hackathon Radar AI internship project.
@@ -35,3 +36,6 @@ The UI follows the supplied Hackathon Radar AI SRS:
 - event provenance/freshness
 - organizer history
 - search/filter discovery
+=======
+# hackathonrdarfinder
+>>>>>>> ae76ea402eee7dc9b69955641ff2172241f09041
