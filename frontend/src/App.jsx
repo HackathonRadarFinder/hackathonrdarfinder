@@ -11,7 +11,6 @@ import {
   Navigate,
   Link,
   NavLink,
-  useNavigate,
   useParams,
 } from 'react-router-dom';
 
@@ -30,7 +29,6 @@ import {
   Clock3,
   ExternalLink,
   SlidersHorizontal,
-  ChevronDown,
   Bell,
   Menu,
   X,
@@ -374,7 +372,8 @@ function Explore() {
   const [query, setQuery] = useState('');
   const [mode, setMode] = useState('All');
   const [status, setStatus] = useState('All');
-  const [sort, setSort] = useState('Recommended');
+  const [theme, setTheme] = useState('All');
+  const [eligibility, setEligibility] = useState('All');
 
   const filtered = useMemo(() => {
     let list = events.filter(
@@ -388,17 +387,19 @@ function Explore() {
           .toLowerCase()
           .includes(query.toLowerCase()) &&
         (mode === 'All' || e.mode === mode) &&
-        (status === 'All' || e.status === status)
+        (status === 'All' || e.status === status) &&
+        (
+          theme === 'All' ||
+          e.theme.toLowerCase().includes(theme.toLowerCase())
+        ) &&
+        (
+          eligibility === 'All' ||
+          e.eligibility.toLowerCase().includes(eligibility.toLowerCase())
+        )
     );
 
-    if (sort === 'Prize') {
-      list = [...list].sort((a, b) =>
-        b.prize.localeCompare(a.prize)
-      );
-    }
-
     return list;
-  }, [query, mode, status, sort]);
+  }, [query, mode, status, theme, eligibility]);
 
   return (
     <div className="page">
@@ -451,18 +452,6 @@ function Explore() {
             <option>Reported</option>
           </select>
         </div>
-
-        <div className="select-wrap">
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-          >
-            <option>Recommended</option>
-            <option>Prize</option>
-          </select>
-
-          <ChevronDown size={15} />
-        </div>
       </div>
 
       <div className="explore-layout">
@@ -472,24 +461,41 @@ function Explore() {
           <label>Theme</label>
 
           {[
-            'Artificial Intelligence',
-            'Web Development',
-            'Cloud Computing',
+            'All',
+            'AI',
+            'Technology',
+            'Social Innovation',
+            'Generative AI',
             'Sustainability',
             'Open Innovation',
           ].map((x) => (
-            <button key={x} type="button">
+            <button
+              key={x}
+              type="button"
+              onClick={() => setTheme(x)}
+              aria-pressed={theme === x}
+            >
               {x}
-              <span>›</span>
+              <span>{theme === x ? '?' : '?'}</span>
             </button>
           ))}
 
           <label>Eligibility</label>
 
-          {['Students', 'Developers', 'Everyone'].map((x) => (
-            <button key={x} type="button">
+          {[
+            'All',
+            'Students',
+            'Developers',
+            'Everyone',
+          ].map((x) => (
+            <button
+              key={x}
+              type="button"
+              onClick={() => setEligibility(x)}
+              aria-pressed={eligibility === x}
+            >
               {x}
-              <span>›</span>
+              <span>{eligibility === x ? '?' : '?'}</span>
             </button>
           ))}
         </aside>
@@ -515,10 +521,25 @@ function Explore() {
 function EventDetails() {
   const { id } = useParams();
 
-  const event =
-    events.find((e) => e.id === id) || events[0];
+  const event = events.find((e) => e.id === id);
 
   const [saved, setSaved] = useState(false);
+
+  if (!event) {
+    return (
+      <div className="page">
+        <Link to="/explore" className="back-link">
+          ? Back to explore
+        </Link>
+
+        <div className="empty">
+          <Compass size={38} />
+          <h3>Event not found</h3>
+          <p>The requested hackathon does not exist.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page">
@@ -651,12 +672,19 @@ function EventDetails() {
               <b>{event.verified}</b>
             </div>
 
-            <a
-              href="#"
-              onClick={(e) => e.preventDefault()}
-            >
-              View source <ExternalLink size={14} />
-            </a>
+            {event.sourceUrl ? (
+              <a
+                href={event.sourceUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                View source <ExternalLink size={14} />
+              </a>
+            ) : (
+              <span className="source-link-disabled">
+                Source link unavailable
+              </span>
+            )}
           </div>
 
           <div className="source-card">
@@ -779,8 +807,23 @@ function Predictions() {
 function OrganizerProfile() {
   const { name = 'microsoft' } = useParams();
 
-  const org =
-    organizers[name] || organizers.microsoft;
+  const org = organizers[name];
+
+  if (!org) {
+    return (
+      <div className="page">
+        <Link to="/explore" className="back-link">
+          ? Back to explore
+        </Link>
+
+        <div className="empty">
+          <Building2 size={38} />
+          <h3>Organizer not found</h3>
+          <p>The requested organizer does not exist.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="page">
@@ -799,8 +842,9 @@ function OrganizerProfile() {
           <p>{org.description}</p>
 
           <a
-            href="#"
-            onClick={(e) => e.preventDefault()}
+            href={`https://${org.domain}`}
+            target="_blank"
+            rel="noreferrer"
           >
             {org.domain} <ExternalLink size={14} />
           </a>
@@ -958,7 +1002,15 @@ function DashboardView() {
 }
 
 function ProtectedDashboard() {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="auth-page-container">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   if (!user) {
     return <Navigate to="/login" replace />;
