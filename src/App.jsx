@@ -1918,10 +1918,6 @@ function OrganizerProfile() {
               <b className="green-text">{org.totalPrizesGiven}</b>
             </div>
             <div>
-              <small>Community Followers</small>
-              <b>{org.followers}</b>
-            </div>
-            <div>
               <small>Verification Guarantee</small>
               <b>100% Tier-1</b>
             </div>
