@@ -1085,10 +1085,6 @@ function Home() {
                   <b>{org.activeHackathons}</b>
                 </div>
                 <div>
-                  <small>Followers</small>
-                  <b>{org.followers}</b>
-                </div>
-                <div>
                   <small>Total Prizes</small>
                   <b className="green-text">{org.totalPrizesGiven}</b>
                 </div>
