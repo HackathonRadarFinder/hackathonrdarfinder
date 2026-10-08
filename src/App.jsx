@@ -10,6 +10,19 @@ import {
 } from "lucide-react";
 import { events, predictions, organizers } from "./data";
 import AdminRouter from "./Admin";
+import {
+  AceternitySpotlight,
+  TextGenerateEffect,
+  HeroHighlight,
+  PlaceholdersAndVanishInput,
+  HeroInteractiveRadar,
+  CardSpotlightWrapper,
+  MovingBorderBox,
+  TracingBeamTimeline,
+  AnimatedCounter,
+  LiveRadarSection,
+  MagneticButton
+} from "./AceternityUI";
 
 // ─── Toast System Context / Hook ────────────────────────────────────────────────
 const ToastContext = React.createContext({
