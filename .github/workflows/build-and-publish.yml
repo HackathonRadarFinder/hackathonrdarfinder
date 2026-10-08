@@ -1,0 +1,50 @@
+name: Build and Publish
+
+on:
+  push:
+    branches: [develop, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_TAG: ${{ github.sha }}
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set lowercase image prefix
+        run: |
+          OWNER=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
+          REPO=$(echo "${GITHUB_REPOSITORY#*/}" | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE_PREFIX=ghcr.io/${OWNER}/${REPO}" >> "$GITHUB_ENV"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build backend image
+        run: docker build -t "${IMAGE_PREFIX}/backend:${IMAGE_TAG}" ./backend
+
+      - name: Push backend image
+        run: docker push "${IMAGE_PREFIX}/backend:${IMAGE_TAG}"
+
+      - name: Build frontend image
+        run: docker build -t "${IMAGE_PREFIX}/frontend:${IMAGE_TAG}" ./frontend
+
+      - name: Push frontend image
+        run: docker push "${IMAGE_PREFIX}/frontend:${IMAGE_TAG}"
+
+      - name: Print deployment summary
+        run: |
+          echo "Immutable image tag: ${IMAGE_TAG}"
+          echo "Backend image: ${IMAGE_PREFIX}/backend:${IMAGE_TAG}"
+          echo "Frontend image: ${IMAGE_PREFIX}/frontend:${IMAGE_TAG}"

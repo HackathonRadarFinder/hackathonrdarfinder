@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop, main]
+
+jobs:
+  backend-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: hackathon_radar
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres -d hackathon_radar"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@127.0.0.1:5432/hackathon_radar
+      SECRET_KEY: ci-secret-key
+      APP_ENV: test
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install backend dependencies
+        working-directory: backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Alembic migrations
+        working-directory: backend
+        run: alembic upgrade head
+
+      - name: Run backend tests
+        working-directory: backend
+        run: pytest -q
+
+  frontend-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint frontend
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+
+  docker-build:
+    needs: [backend-test, frontend-test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Build backend image
+        run: docker build -t hackathon-radar-backend:${{ github.sha }} ./backend
+
+      - name: Build frontend image
+        run: docker build -t hackathon-radar-frontend:${{ github.sha }} ./frontend
+
+      - name: Validate Docker builds
+        run: |
+          docker image inspect hackathon-radar-backend:${{ github.sha }} >/dev/null
+          docker image inspect hackathon-radar-frontend:${{ github.sha }} >/dev/null

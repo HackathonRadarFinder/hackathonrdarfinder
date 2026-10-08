@@ -1,0 +1,74 @@
+name: Deploy DEV
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Commit SHA already pushed to GHCR and approved for DEV deployment
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: development
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set image prefix
+        run: |
+          OWNER=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
+          REPO=$(echo "${GITHUB_REPOSITORY#*/}" | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE_PREFIX=ghcr.io/${OWNER}/${REPO}" >> $GITHUB_ENV
+          echo "Deploying backend:${{ inputs.image_tag }} and frontend:${{ inputs.image_tag }} to DEV"
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Validate GHCR image tags exist
+        run: |
+          docker manifest inspect "${IMAGE_PREFIX}/backend:${{ inputs.image_tag }}" >/dev/null
+          docker manifest inspect "${IMAGE_PREFIX}/frontend:${{ inputs.image_tag }}" >/dev/null
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Configure kubeconfig
+        env:
+          KUBE_CONFIG_DATA: ${{ secrets.KUBE_CONFIG_DATA }}
+        run: |
+          mkdir -p "$HOME/.kube"
+          printf '%s' "$KUBE_CONFIG_DATA" | base64 --decode > "$HOME/.kube/config"
+          chmod 600 "$HOME/.kube/config"
+          kubectl config current-context
+
+      - name: Ensure namespace exists
+        run: kubectl create namespace hackathon-dev --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Apply DEV manifests
+        working-directory: infrastructure/kubernetes/overlays/dev
+        run: |
+          perl -0pi -e 's#ghcr.io/hackathonradarfinder/hackathonrdarfinder/backend:PLACEHOLDER_SHA#${{ env.IMAGE_PREFIX }}/backend:${{ inputs.image_tag }}#g; s#ghcr.io/hackathonradarfinder/hackathonrdarfinder/frontend:PLACEHOLDER_SHA#${{ env.IMAGE_PREFIX }}/frontend:${{ inputs.image_tag }}#g' kustomization.yaml
+          kubectl apply -k .
+
+      - name: Wait for rollout
+        run: |
+          kubectl rollout status deployment/backend -n hackathon-dev --timeout=180s
+          kubectl rollout status deployment/frontend -n hackathon-dev --timeout=180s
+
+      - name: Summary
+        run: |
+          echo "Environment: DEV"
+          echo "Commit SHA: ${{ inputs.image_tag }}"
+          echo "Backend image: ${IMAGE_PREFIX}/backend:${{ inputs.image_tag }}"
+          echo "Frontend image: ${IMAGE_PREFIX}/frontend:${{ inputs.image_tag }}"

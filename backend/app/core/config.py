@@ -1,3 +1,4 @@
+from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 
 
@@ -6,8 +7,7 @@ class Settings(BaseSettings):
     SECRET_KEY: str = "change-this-secret-key"
     DEBUG: bool = True
 
-    class Config:
-        env_file = ".env"
+    model_config = ConfigDict(env_file=".env")
 
 
 settings = Settings()

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hackathon-dev
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hackathon-test
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hackathon-staging
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hackathon-prod
