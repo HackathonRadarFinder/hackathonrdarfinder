@@ -893,3 +893,223 @@ export function MagneticButton({ children, className = "", onClick, ...props }) 
     </button>
   );
 }
+
+// ─── 14. Aceternity Bento Grid Component ───────────────────────────────────────
+export function AceternityBentoGrid() {
+  return (
+    <section className="bento-grid-section">
+      <div className="section-container">
+        <div className="section-header-flex">
+          <div>
+            <div className="section-eyebrow">
+              <Sparkles size={14} /> INTELLIGENCE SUITE
+            </div>
+            <h2 className="section-heading">Platform Intelligence At Scale</h2>
+            <p className="section-subtext">
+              Engineered with predictive data pipelines, global satellite telemetry, and real-time eligibility scoring.
+            </p>
+          </div>
+        </div>
+
+        <div className="bento-grid-container">
+          {/* Card 1: AI Discovery (Span 2 cols) */}
+          <div className="bento-card bento-span-2 bento-ai-discovery">
+            <div className="bento-card-header">
+              <span className="bento-badge"><Zap size={13} /> Real-Time Telemetry</span>
+              <h3 className="bento-title">AI Discovery Engine</h3>
+              <p className="bento-desc">
+                Continuously tracks official sponsor portals, Devpost, HackerEarth, and GitHub repositories to index verified hackathons within minutes of publication.
+              </p>
+            </div>
+            <div className="bento-discovery-visual">
+              <div className="discovery-query-chip">
+                <span className="query-dot" />
+                <span>"Find Gemini 2.0 hackathons with $100K+ prize pools"</span>
+              </div>
+              <div className="discovery-results-preview">
+                <div className="result-mini-row">
+                  <span className="res-logo google">GD</span>
+                  <div className="res-meta">
+                    <b>Google Gemini AI Global Hackathon</b>
+                    <small>Online · $150,000 Cash Pool · 98% AI Match</small>
+                  </div>
+                  <span className="res-tag">Verified</span>
+                </div>
+                <div className="result-mini-row">
+                  <span className="res-logo msft">MS</span>
+                  <div className="res-meta">
+                    <b>Microsoft Imagine Cup 2027</b>
+                    <small>Seattle / Hybrid · $100,000 · 96% Match</small>
+                  </div>
+                  <span className="res-tag">Verified</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 2: AI Predictions */}
+          <div className="bento-card bento-ai-predictions">
+            <div className="bento-card-header">
+              <span className="bento-badge purple"><TrendingUp size={13} /> Cadence Radar</span>
+              <h3 className="bento-title">AI Recurrence Predictions</h3>
+              <p className="bento-desc">
+                Machine learning model forecasting seasonal developer competitions weeks before official press releases.
+              </p>
+            </div>
+            <div className="bento-prediction-visual">
+              <div className="pred-gauge-circle">
+                <span className="pred-pct">94%</span>
+                <span className="pred-label">Probability</span>
+              </div>
+              <div className="pred-preview-info">
+                <b>Microsoft AI Cloud Summit</b>
+                <small>Expected Window: May 2027</small>
+                <span className="pred-status-pill">Signal Lock Active</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 3: Global Radar */}
+          <div className="bento-card bento-global-radar">
+            <div className="bento-card-header">
+              <span className="bento-badge cyan"><Globe2 size={13} /> Global Mesh</span>
+              <h3 className="bento-title">Global Radar Tracking</h3>
+              <p className="bento-desc">
+                Live geolocation coordinates spanning SF, London, Bengaluru, Tokyo, Geneva, and Singapore.
+              </p>
+            </div>
+            <div className="bento-radar-visual">
+              <div className="radar-node-pill sf"><span>SF Hub</span><b>3 Events</b></div>
+              <div className="radar-node-pill blr"><span>Bengaluru</span><b>4 Events</b></div>
+              <div className="radar-node-pill ldn"><span>London</span><b>2 Events</b></div>
+              <div className="radar-node-pill tyo"><span>Tokyo</span><b>2 Events</b></div>
+            </div>
+          </div>
+
+          {/* Card 4: Prize Pool Tracking */}
+          <div className="bento-card bento-prize-tracking">
+            <div className="bento-card-header">
+              <span className="bento-badge gold"><Trophy size={13} /> Non-Dilutive Capital</span>
+              <h3 className="bento-title">Active Prize Tracking</h3>
+              <p className="bento-desc">
+                Real-time tracking of cash pools, GPU credits, and venture interview fast-tracks.
+              </p>
+            </div>
+            <div className="bento-prize-visual">
+              <div className="big-prize-display">$1,420,000+</div>
+              <div className="prize-tiers-row">
+                <div><small>1st Place Tiers</small><b>$50K - $100K</b></div>
+                <div><small>Cloud Credits</small><b>$20K / Team</b></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Card 5: Organizer Intelligence (Span 2 cols) */}
+          <div className="bento-card bento-span-2 bento-organizers">
+            <div className="bento-card-header">
+              <span className="bento-badge"><Building2 size={13} /> Verified Sponsors</span>
+              <h3 className="bento-title">Organizer Intelligence</h3>
+              <p className="bento-desc">
+                In-depth annual budget patterns and hiring track records for premier technology organizers.
+              </p>
+            </div>
+            <div className="bento-organizers-row">
+              <div className="org-mini-tile">
+                <span className="org-avatar ms">MS</span>
+                <b>Microsoft</b>
+                <small>$1.4M+ Given · 42K Followers</small>
+              </div>
+              <div className="org-mini-tile">
+                <span className="org-avatar goog">GD</span>
+                <b>Google Devs</b>
+                <small>$2.1M+ Given · 68K Followers</small>
+              </div>
+              <div className="org-mini-tile">
+                <span className="org-avatar aws">AWS</span>
+                <b>AWS Bedrock</b>
+                <small>$950K+ Given · 38K Followers</small>
+              </div>
+              <div className="org-mini-tile">
+                <span className="org-avatar nv">NV</span>
+                <b>NVIDIA</b>
+                <small>$1.1M+ Given · 51K Followers</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─── 15. Visual AI Intelligence Signal Flow ────────────────────────────────────
+export function AIPredictionSignalFlow({ prediction }) {
+  const defaultPrediction = prediction || {
+    event: "Microsoft AI Cloud Innovation Summit 2027",
+    organizer: "Microsoft",
+    probability: 0.94,
+    window: "May 15 - Jun 20, 2027",
+  };
+
+  const signals = [
+    { title: "Organizer History", desc: "Annual recurrence observed for 4 consecutive years (98% correlation)" },
+    { title: "Event Timing & Cadence", desc: "Q2 fiscal release cycle synchronized with Microsoft Build" },
+    { title: "Technology Trends", desc: "Azure AI Foundry & Copilot Studio developer incentives spiked +34%" },
+    { title: "Community Activity", desc: "DNS registrations and GitHub sample repository commits detected" },
+  ];
+
+  return (
+    <div className="ai-intelligence-flow-card">
+      <div className="flow-card-top">
+        <span className="flow-eyebrow"><Sparkles size={13} /> AI INTELLIGENCE CASCADE</span>
+        <span className="flow-match-pill">{Math.round(defaultPrediction.probability * 100)}% MATCH</span>
+      </div>
+
+      <div className="flow-diagram-container">
+        {/* Step 0: Input Signals */}
+        <div className="flow-step-node root-node">
+          <span className="node-tag">DATA SIGNALS</span>
+          <b>Multi-Vector Continuous Ingestion</b>
+        </div>
+        <div className="flow-arrow-down">↓</div>
+
+        {/* 4 Signals Grid / List */}
+        <div className="flow-signals-cascade-grid">
+          {signals.map((sig, idx) => (
+            <div key={idx} className="cascade-signal-card">
+              <span className="cascade-idx">0{idx + 1}</span>
+              <div>
+                <b>{sig.title}</b>
+                <small>{sig.desc}</small>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="flow-arrow-down">↓</div>
+
+        {/* Step 5: AI Analysis */}
+        <div className="flow-step-node analysis-node">
+          <span className="node-tag">AI ANALYSIS</span>
+          <b>Statistical Recurrence & Bayesian Cadence Synthesis</b>
+        </div>
+        <div className="flow-arrow-down">↓</div>
+
+        {/* Step 6: Prediction Output */}
+        <div className="flow-final-prediction-box">
+          <div className="final-pred-header">
+            <span className="final-org">{defaultPrediction.organizer}</span>
+            <span className="final-score-badge">
+              <Sparkles size={13} /> {Math.round(defaultPrediction.probability * 100)}% MATCH
+            </span>
+          </div>
+          <h3 className="final-event-title">{defaultPrediction.event}</h3>
+          <div className="final-window-row">
+            <Clock3 size={15} /> Expected Window: <b>{defaultPrediction.window}</b>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+

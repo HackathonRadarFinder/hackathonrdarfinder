@@ -21,7 +21,9 @@ import {
   TracingBeamTimeline,
   AnimatedCounter,
   LiveRadarSection,
-  MagneticButton
+  MagneticButton,
+  AceternityBentoGrid,
+  AIPredictionSignalFlow
 } from "./AceternityUI";
 
 // ─── Toast System Context / Hook ────────────────────────────────────────────────
@@ -764,28 +766,43 @@ function Home() {
             </div>
 
             <h1 className="hero-headline">
-              <TextGenerateEffect words="Participate in" />{" "}
-              <HeroHighlight>World-Class</HeroHighlight>{" "}
-              <TextGenerateEffect words="Hackathons & Challenges." />
+              <TextGenerateEffect words="Discover What's Next." />{" "}
+              <HeroHighlight>World-Class Hackathons.</HeroHighlight>
             </h1>
 
             <p className="hero-description">
-              Find verified hackathons, compete for over <b>$1.4M+</b> in cash prizes, and uncover AI-predicted future events before they're officially announced.
+              AI-powered discovery and intelligence for the world's most valuable hackathons.
             </p>
 
             {/* Smart Search: Aceternity Placeholders And Vanish Input */}
             <PlaceholdersAndVanishInput
               placeholders={[
-                "Find AI hackathons",
-                "Find hackathons under $100K",
-                "Find Gemini hackathons",
-                "Find hackathons in India",
-                "Find beginner-friendly hackathons"
+                "Find AI hackathons...",
+                "Find hackathons under $100K...",
+                "Find Gemini hackathons...",
+                "Find hackathons in India...",
+                "Find beginner-friendly hackathons..."
               ]}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onSubmit={handleSearchSubmit}
             />
+
+            {/* Hero Primary and Secondary CTAs */}
+            <div className="hero-cta-buttons-row">
+              <MagneticButton
+                type="button"
+                className="btn-primary btn-lg"
+                onClick={() => navigate("/explore")}
+              >
+                <span>Explore Hackathons</span>
+                <ArrowRight size={17} />
+              </MagneticButton>
+              <Link to="/predictions" className="btn-secondary btn-lg">
+                <Sparkles size={16} />
+                <span>View AI Predictions</span>
+              </Link>
+            </div>
 
             {/* Quick Pill Filter Suggestions */}
             <div className="quick-tags-strip">
@@ -875,6 +892,9 @@ function Home() {
 
       {/* ─── LIVE HACKATHON RADAR (Aceternity World Map & Telemetry) ───────────── */}
       <LiveRadarSection events={events} onRegister={setModalEvent} />
+
+      {/* ─── ACETERNITY BENTO GRID (Intelligence Suite) ───────────────────────── */}
+      <AceternityBentoGrid />
 
       {/* ─── Featured Spotlight Banner (HackerEarth Style) ─────────────────── */}
       <section className="featured-spotlight-section">
@@ -1125,32 +1145,36 @@ function Home() {
             </Link>
           </div>
 
-          <div className="prediction-mini-cards">
-            {predictions.slice(0, 2).map((p) => (
-              <MovingBorderBox key={p.id} className="prediction-moving-border-card">
-                <div className="prediction-spotlight-item">
-                  <div className="spotlight-pred-header">
-                    <span className="pred-org-label">{p.organizer}</span>
-                    <span className="pred-score-pill">
-                      <TrendingUp size={12} /> {Math.round(p.probability * 100)}% Match
-                    </span>
-                  </div>
-                  <h4 className="pred-item-title">{p.event}</h4>
-                  <div className="pred-window-row">
-                    <CalendarDays size={14} /> Expected Window: <b>{p.window}</b>
-                  </div>
-                  <div className="pred-signals-step-list">
-                    {p.signals.slice(0, 2).map((sig, sIdx) => (
-                      <div key={sIdx} className="pred-signal-step-pill">
-                        <CheckCircle2 size={13} />
-                        <span>{sig}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </MovingBorderBox>
-            ))}
+          <div className="prediction-flow-showcase">
+            <AIPredictionSignalFlow prediction={predictions[0]} />
           </div>
+        </div>
+
+        <div className="prediction-cards-preview-grid">
+          {predictions.slice(1, 3).map((p) => (
+            <MovingBorderBox key={p.id} className="prediction-moving-border-card">
+              <div className="prediction-spotlight-item">
+                <div className="spotlight-pred-header">
+                  <span className="pred-org-label">{p.organizer}</span>
+                  <span className="pred-score-pill">
+                    <TrendingUp size={12} /> {Math.round(p.probability * 100)}% Match
+                  </span>
+                </div>
+                <h4 className="pred-item-title">{p.event}</h4>
+                <div className="pred-window-row">
+                  <CalendarDays size={14} /> Expected Window: <b>{p.window}</b>
+                </div>
+                <div className="pred-signals-step-list">
+                  {p.signals.slice(0, 2).map((sig, sIdx) => (
+                    <div key={sIdx} className="pred-signal-step-pill">
+                      <CheckCircle2 size={13} />
+                      <span>{sig}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </MovingBorderBox>
+          ))}
         </div>
       </section>
 
