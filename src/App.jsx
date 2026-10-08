@@ -404,106 +404,111 @@ function EventCard({ event, onRegister, viewMode = "grid" }) {
   }
 
   return (
-    <article className="event-card-v2">
-      <div className="card-top-banner">
-        <div className="banner-badges">
-          <StatusPill status={event.status} badgeType={event.badgeType} />
-          {event.featured && (
-            <span className="featured-pill">
-              <Sparkles size={11} /> Featured
+    <CardSpotlightWrapper className="event-card-spotlight-item">
+      <article className="event-card-v2">
+        <div className="card-top-banner">
+          <div className="banner-badges">
+            <StatusPill status={event.status} badgeType={event.badgeType} />
+            {event.featured && (
+              <span className="featured-pill">
+                <Sparkles size={11} /> Featured
+              </span>
+            )}
+            <span className="ai-match-score-pill">
+              <Sparkles size={11} /> {event.aiMatchScore || 95}% Match
             </span>
-          )}
+          </div>
+          <div className="banner-actions">
+            <button
+              className={`card-tool-btn ${saved ? "saved-active" : ""}`}
+              onClick={handleSave}
+              title={saved ? "Remove bookmark" : "Save challenge"}
+            >
+              <Bookmark size={15} fill={saved ? "currentColor" : "none"} />
+            </button>
+            <button className="card-tool-btn" onClick={handleShare} title="Copy link">
+              <Share2 size={15} />
+            </button>
+          </div>
         </div>
-        <div className="banner-actions">
-          <button
-            className={`card-tool-btn ${saved ? "saved-active" : ""}`}
-            onClick={handleSave}
-            title={saved ? "Remove bookmark" : "Save challenge"}
-          >
-            <Bookmark size={15} fill={saved ? "currentColor" : "none"} />
+
+        <div className="card-body-content">
+          <div className="organizer-header-row">
+            <div className={`org-avatar-chip ${event.color}`}>
+              {event.organizerInitials || event.organizer.slice(0, 2)}
+            </div>
+            <div className="org-details">
+              <Link to={`/organizer/${event.organizerKey || "microsoft"}`} className="org-link">
+                {event.organizer} <ArrowUpRight size={12} />
+              </Link>
+              <span className="platform-label">{event.platform || "Official"}</span>
+            </div>
+          </div>
+
+          <Link to={`/event/${event.id}`} className="card-title-link">
+            {event.title}
+          </Link>
+
+          <p className="card-desc-snippet">{event.description}</p>
+
+          <div className="card-metrics-grid">
+            <div className="metric-box">
+              <div className="metric-icon prize-icon"><Trophy size={14} /></div>
+              <div>
+                <small>Prizes</small>
+                <b>{event.prize}</b>
+              </div>
+            </div>
+            <div className="metric-box">
+              <div className="metric-icon"><Users size={14} /></div>
+              <div>
+                <small>Hackers</small>
+                <b>{event.participants ? `${(event.participants / 1000).toFixed(1)}k` : "1.2k"}</b>
+              </div>
+            </div>
+            <div className="metric-box">
+              <div className="metric-icon"><Clock3 size={14} /></div>
+              <div>
+                <small>Closes in</small>
+                <b>{countdown.days}d {countdown.hours}h</b>
+              </div>
+            </div>
+          </div>
+
+          {/* Progress Bar for Registration Activity */}
+          <div className="activity-meter">
+            <div className="meter-header">
+              <span>Registration Activity</span>
+              <b>{Math.min(96, Math.max(45, 100 - (event.deadlineDays || 4) * 3))}% filled</b>
+            </div>
+            <div className="meter-track">
+              <div
+                className="meter-fill"
+                style={{ width: `${Math.min(96, Math.max(45, 100 - (event.deadlineDays || 4) * 3))}%` }}
+              />
+            </div>
+          </div>
+
+          <div className="tags-cloud">
+            {event.tags.slice(0, 3).map((tag) => (
+              <span key={tag} className="tag-chip">{tag}</span>
+            ))}
+            {event.tags.length > 3 && (
+              <span className="tag-more">+{event.tags.length - 3}</span>
+            )}
+          </div>
+        </div>
+
+        <div className="card-footer-actions">
+          <button className="register-quick-btn" onClick={() => onRegister(event)}>
+            <Zap size={14} /> Register Now
           </button>
-          <button className="card-tool-btn" onClick={handleShare} title="Copy link">
-            <Share2 size={15} />
-          </button>
+          <Link to={`/event/${event.id}`} className="details-quick-btn">
+            Details <ArrowRight size={14} />
+          </Link>
         </div>
-      </div>
-
-      <div className="card-body-content">
-        <div className="organizer-header-row">
-          <div className={`org-avatar-chip ${event.color}`}>
-            {event.organizerInitials || event.organizer.slice(0, 2)}
-          </div>
-          <div className="org-details">
-            <Link to={`/organizer/${event.organizerKey || "microsoft"}`} className="org-link">
-              {event.organizer} <ArrowUpRight size={12} />
-            </Link>
-            <span className="platform-label">{event.platform || "Official"}</span>
-          </div>
-        </div>
-
-        <Link to={`/event/${event.id}`} className="card-title-link">
-          {event.title}
-        </Link>
-
-        <p className="card-desc-snippet">{event.description}</p>
-
-        <div className="card-metrics-grid">
-          <div className="metric-box">
-            <div className="metric-icon prize-icon"><Trophy size={14} /></div>
-            <div>
-              <small>Prizes</small>
-              <b>{event.prize}</b>
-            </div>
-          </div>
-          <div className="metric-box">
-            <div className="metric-icon"><Users size={14} /></div>
-            <div>
-              <small>Hackers</small>
-              <b>{event.participants ? `${(event.participants / 1000).toFixed(1)}k` : "1.2k"}</b>
-            </div>
-          </div>
-          <div className="metric-box">
-            <div className="metric-icon"><Clock3 size={14} /></div>
-            <div>
-              <small>Closes in</small>
-              <b>{countdown.days}d {countdown.hours}h</b>
-            </div>
-          </div>
-        </div>
-
-        {/* Progress Bar for Registration Activity */}
-        <div className="activity-meter">
-          <div className="meter-header">
-            <span>Registration Activity</span>
-            <b>{Math.min(96, Math.max(45, 100 - (event.deadlineDays || 4) * 3))}% filled</b>
-          </div>
-          <div className="meter-track">
-            <div
-              className="meter-fill"
-              style={{ width: `${Math.min(96, Math.max(45, 100 - (event.deadlineDays || 4) * 3))}%` }}
-            />
-          </div>
-        </div>
-
-        <div className="tags-cloud">
-          {event.tags.slice(0, 3).map((tag) => (
-            <span key={tag} className="tag-chip">{tag}</span>
-          ))}
-          {event.tags.length > 3 && (
-            <span className="tag-more">+{event.tags.length - 3}</span>
-          )}
-        </div>
-      </div>
-
-      <div className="card-footer-actions">
-        <button className="register-quick-btn" onClick={() => onRegister(event)}>
-          <Zap size={14} /> Register Now
-        </button>
-        <Link to={`/event/${event.id}`} className="details-quick-btn">
-          Details <ArrowRight size={14} />
-        </Link>
-      </div>
-    </article>
+      </article>
+    </CardSpotlightWrapper>
   );
 }
 
@@ -511,8 +516,17 @@ function EventCard({ event, onRegister, viewMode = "grid" }) {
 function Layout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { savedIds } = useSaved();
   const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const nav = [
     { to: "/", label: "Home", icon: HomeIcon },
@@ -547,95 +561,97 @@ function Layout({ children }) {
         </div>
       </div>
 
-      <header className="navbar">
-        <Link className="brand" to="/">
-          <div className="brand-logo-glow">
-            <BrainCircuit size={22} />
-          </div>
-          <div className="brand-text">
-            <span>Hackathon<b>Radar</b></span>
-            <small>AI DISCOVERY PLATFORM</small>
-          </div>
-        </Link>
-
-        <button className="mobile-menu" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle Navigation">
-          {mobileOpen ? <X /> : <Menu />}
-        </button>
-
-        <nav className={`nav-links ${mobileOpen ? "open" : ""}`}>
-          {nav.map(({ to, label, icon: Icon, badge }) => (
-            <NavLink
-              key={to}
-              to={to}
-              onClick={() => setMobileOpen(false)}
-              className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
-            >
-              <Icon size={16} />
-              <span>{label}</span>
-              {badge && <span className="nav-mini-badge">{badge}</span>}
-            </NavLink>
-          ))}
-        </nav>
-
-        <div className="nav-actions">
-          {/* Saved Items Quick Counter */}
-          <Link to="/explore" className="saved-counter-chip" title="Saved Hackathons">
-            <Bookmark size={15} />
-            <span>Saved</span>
-            <b className="saved-count-pill">{savedIds.size}</b>
+      <div className={`navbar-outer-wrapper ${scrolled ? "is-scrolled" : ""}`}>
+        <header className={`navbar ${scrolled ? "scrolled" : ""}`}>
+          <Link className="brand" to="/">
+            <div className="brand-logo-glow">
+              <BrainCircuit size={22} />
+            </div>
+            <div className="brand-text">
+              <span>Hackathon<b>Radar</b></span>
+              <small>AI DISCOVERY PLATFORM</small>
+            </div>
           </Link>
 
-          {/* Notifications Dropdown Toggle */}
-          <div className="notif-wrapper">
-            <button
-              className={`icon-btn ${notificationsOpen ? "active" : ""}`}
-              onClick={() => setNotificationsOpen(!notificationsOpen)}
-              title="Recent Signals & Alerts"
-            >
-              <Bell size={17} />
-              <span className="notif-ping-dot" />
-            </button>
+          <button className="mobile-menu" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle Navigation">
+            {mobileOpen ? <X /> : <Menu />}
+          </button>
 
-            {notificationsOpen && (
-              <div className="notifications-popover">
-                <div className="notif-popover-header">
-                  <b>Radar Notifications</b>
-                  <span className="badge-new">3 New</span>
-                </div>
-                <div className="notif-list">
-                  {recentNotifications.map((n) => {
-                    const NIcon = n.icon;
-                    return (
-                      <div key={n.id} className="notif-item">
-                        <div className="notif-icon-wrap"><NIcon size={14} /></div>
-                        <div>
-                          <p>{n.title}</p>
-                          <small>{n.time}</small>
+          <nav className={`nav-links ${mobileOpen ? "open" : ""}`}>
+            {nav.map(({ to, label, icon: Icon, badge }) => (
+              <NavLink
+                key={to}
+                to={to}
+                onClick={() => setMobileOpen(false)}
+                className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
+              >
+                <Icon size={16} />
+                <span>{label}</span>
+                {badge && <span className="nav-mini-badge">{badge}</span>}
+              </NavLink>
+            ))}
+          </nav>
+
+          <div className="nav-actions">
+            {/* Saved Items Quick Counter */}
+            <Link to="/explore" className="saved-counter-chip" title="Saved Hackathons">
+              <Bookmark size={15} />
+              <span>Saved</span>
+              <b className="saved-count-pill">{savedIds.size}</b>
+            </Link>
+
+            {/* Notifications Dropdown Toggle */}
+            <div className="notif-wrapper">
+              <button
+                className={`icon-btn ${notificationsOpen ? "active" : ""}`}
+                onClick={() => setNotificationsOpen(!notificationsOpen)}
+                title="Recent Signals & Alerts"
+              >
+                <Bell size={17} />
+                <span className="notif-ping-dot" />
+              </button>
+
+              {notificationsOpen && (
+                <div className="notifications-popover">
+                  <div className="notif-popover-header">
+                    <b>Radar Notifications</b>
+                    <span className="badge-new">3 New</span>
+                  </div>
+                  <div className="notif-list">
+                    {recentNotifications.map((n) => {
+                      const NIcon = n.icon;
+                      return (
+                        <div key={n.id} className="notif-item">
+                          <div className="notif-icon-wrap"><NIcon size={14} /></div>
+                          <div>
+                            <p>{n.title}</p>
+                            <small>{n.time}</small>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
+                  <Link
+                    to="/predictions"
+                    className="notif-footer-link"
+                    onClick={() => setNotificationsOpen(false)}
+                  >
+                    View all predictive alerts <ArrowRight size={13} />
+                  </Link>
                 </div>
-                <Link
-                  to="/predictions"
-                  className="notif-footer-link"
-                  onClick={() => setNotificationsOpen(false)}
-                >
-                  View all predictive alerts <ArrowRight size={13} />
-                </Link>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          <div className="profile-chip">
-            <div className="avatar-gradient">NK</div>
-            <div className="profile-info">
-              <b>Nakul King</b>
-              <small>Hacker Pro</small>
+            <div className="profile-chip">
+              <div className="avatar-gradient">NK</div>
+              <div className="profile-info">
+                <b>Nakul King</b>
+                <small>Hacker Pro</small>
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
+      </div>
 
       <main>{children}</main>
 
@@ -730,7 +746,10 @@ function Home() {
     <div className="home-container">
       {/* ─── Hero Section with Dynamic Motion ──────────────────────────────── */}
       <section className="hero-section">
-        {/* Ambient Animated Glows */}
+        {/* Aceternity Spotlight Cone */}
+        <AceternitySpotlight className="hero-spotlight-beam" fill="#7667ff" />
+
+        {/* Ambient Animated Glows & Grid Pattern */}
         <div className="ambient-orb orb-1" />
         <div className="ambient-orb orb-2" />
         <div className="hero-grid-pattern" />
@@ -745,27 +764,28 @@ function Home() {
             </div>
 
             <h1 className="hero-headline">
-              Participate in <span>World-Class</span> Hackathons & Challenges.
+              <TextGenerateEffect words="Participate in" />{" "}
+              <HeroHighlight>World-Class</HeroHighlight>{" "}
+              <TextGenerateEffect words="Hackathons & Challenges." />
             </h1>
 
             <p className="hero-description">
               Find verified hackathons, compete for over <b>$1.4M+</b> in cash prizes, and uncover AI-predicted future events before they're officially announced.
             </p>
 
-            {/* Smart Search Command Bar */}
-            <form onSubmit={handleSearchSubmit} className="hero-search-bar">
-              <Search size={22} className="search-icon" />
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by tech stack (Gemini, PyTorch), company, or prize pool..."
-              />
-              <button type="submit" className="search-cta-btn">
-                <span>Explore Hackathons</span>
-                <ArrowRight size={17} />
-              </button>
-            </form>
+            {/* Smart Search: Aceternity Placeholders And Vanish Input */}
+            <PlaceholdersAndVanishInput
+              placeholders={[
+                "Find AI hackathons",
+                "Find hackathons under $100K",
+                "Find Gemini hackathons",
+                "Find hackathons in India",
+                "Find beginner-friendly hackathons"
+              ]}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onSubmit={handleSearchSubmit}
+            />
 
             {/* Quick Pill Filter Suggestions */}
             <div className="quick-tags-strip">
@@ -803,96 +823,58 @@ function Home() {
             </div>
           </div>
 
-          {/* Interactive Radar Visual Panel */}
+          {/* Aceternity Interactive World Map & 3D Globe Visual Panel */}
           <div className="hero-visual-col">
-            <div className="radar-hologram-card">
-              <div className="radar-sweep-screen">
-                <div className="radar-sweep-line" />
-                <div className="radar-concentric c1" />
-                <div className="radar-concentric c2" />
-                <div className="radar-concentric c3" />
-                <div className="radar-axis-x" />
-                <div className="radar-axis-y" />
-
-                {/* Radar Blips */}
-                <div className="radar-blip blip-1" title="Google Gemini Hackathon">
-                  <span className="blip-dot" />
-                  <span className="blip-label">Google · $150K</span>
-                </div>
-                <div className="radar-blip blip-2" title="Microsoft Imagine Cup">
-                  <span className="blip-dot" />
-                  <span className="blip-label">Imagine Cup</span>
-                </div>
-                <div className="radar-blip blip-3" title="AWS Bedrock Sprint">
-                  <span className="blip-dot" />
-                  <span className="blip-label">AWS Bedrock</span>
-                </div>
-                <div className="radar-blip blip-4 blip-predicted" title="Predicted Event">
-                  <span className="blip-dot predicted" />
-                  <span className="blip-label">AI Forecast (94%)</span>
-                </div>
-
-                <div className="radar-core-hub">
-                  <BrainCircuit size={28} />
-                </div>
-              </div>
-
-              {/* Floating Live Signal Card */}
-              <div className="floating-signal-badge">
-                <span className="beacon-dot" />
-                <div className="signal-badge-content">
-                  <small>AI PREDICTION MATCH</small>
-                  <b>Microsoft AI Cloud Summit</b>
-                  <span>94% probability · Expected window May 2027</span>
-                </div>
-                <Link to="/predictions" className="signal-arrow-btn">
-                  <ArrowRight size={14} />
-                </Link>
-              </div>
-            </div>
+            <HeroInteractiveRadar events={events} />
           </div>
         </div>
       </section>
 
-      {/* ─── High Stakes Metrics Strip ─────────────────────────────────────── */}
+      {/* ─── High Stakes Metrics Strip (Aceternity Animated Counters & Spotlight) ────── */}
       <section className="metrics-strip-v2">
-        <div className="metric-cell">
+        <CardSpotlightWrapper className="metric-cell">
           <div className="metric-num">
-            <span>$1,420,000</span><b>+</b>
+            <AnimatedCounter target={1420000} prefix="$" suffix="+" duration={2000} />
           </div>
           <div className="metric-text">
-            <b>Total Prize Pool</b>
+            <b>Active Prize Pool</b>
             <small>Across 12 verified hackathons</small>
           </div>
-        </div>
-        <div className="metric-cell">
+        </CardSpotlightWrapper>
+
+        <CardSpotlightWrapper className="metric-cell">
           <div className="metric-num">
-            <span>115,000</span><b>+</b>
+            <AnimatedCounter target={115000} suffix="+" duration={2200} />
           </div>
           <div className="metric-text">
             <b>Registered Builders</b>
             <small>Global developer community</small>
           </div>
-        </div>
-        <div className="metric-cell">
+        </CardSpotlightWrapper>
+
+        <CardSpotlightWrapper className="metric-cell">
           <div className="metric-num">
-            <span>94.2</span><b>%</b>
+            <AnimatedCounter target={94.2} decimals={1} suffix="%" duration={1800} />
           </div>
           <div className="metric-text">
             <b>Prediction Accuracy</b>
-            <small>Historical recurrence model</small>
+            <small>Historical cadence model</small>
           </div>
-        </div>
-        <div className="metric-cell">
+        </CardSpotlightWrapper>
+
+        <CardSpotlightWrapper className="metric-cell">
           <div className="metric-num">
-            <span>48</span><b>hrs</b>
+            <AnimatedCounter target={28} suffix="+" duration={1500} />
           </div>
           <div className="metric-text">
-            <b>Average Lead Advantage</b>
-            <small>Early signal detection</small>
+            <b>Verified Events Tracked</b>
+            <small>Multi-source ingestion engine</small>
           </div>
-        </div>
+        </CardSpotlightWrapper>
       </section>
+
+      {/* ─── LIVE HACKATHON RADAR (Aceternity World Map & Telemetry) ───────────── */}
+      <LiveRadarSection events={events} onRegister={setModalEvent} />
 
       {/* ─── Featured Spotlight Banner (HackerEarth Style) ─────────────────── */}
       <section className="featured-spotlight-section">
@@ -1145,19 +1127,28 @@ function Home() {
 
           <div className="prediction-mini-cards">
             {predictions.slice(0, 2).map((p) => (
-              <div key={p.id} className="prediction-spotlight-item">
-                <div className="spotlight-pred-header">
-                  <span className="pred-org-label">{p.organizer}</span>
-                  <span className="pred-score-pill">
-                    <TrendingUp size={12} /> {Math.round(p.probability * 100)}% Match
-                  </span>
+              <MovingBorderBox key={p.id} className="prediction-moving-border-card">
+                <div className="prediction-spotlight-item">
+                  <div className="spotlight-pred-header">
+                    <span className="pred-org-label">{p.organizer}</span>
+                    <span className="pred-score-pill">
+                      <TrendingUp size={12} /> {Math.round(p.probability * 100)}% Match
+                    </span>
+                  </div>
+                  <h4 className="pred-item-title">{p.event}</h4>
+                  <div className="pred-window-row">
+                    <CalendarDays size={14} /> Expected Window: <b>{p.window}</b>
+                  </div>
+                  <div className="pred-signals-step-list">
+                    {p.signals.slice(0, 2).map((sig, sIdx) => (
+                      <div key={sIdx} className="pred-signal-step-pill">
+                        <CheckCircle2 size={13} />
+                        <span>{sig}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <h4 className="pred-item-title">{p.event}</h4>
-                <div className="pred-window-row">
-                  <CalendarDays size={14} /> Expected Window: <b>{p.window}</b>
-                </div>
-                <p className="pred-signal-first">"{p.signals[0]}"</p>
-              </div>
+              </MovingBorderBox>
             ))}
           </div>
         </div>
@@ -1812,61 +1803,61 @@ function Predictions() {
 
         <div className="predictions-cards-grid">
           {predictions.map((p) => (
-            <article key={p.id} className="prediction-full-card">
-              <div className="pred-card-top-row">
-                <div className="pred-org-tag">
-                  <Building2 size={13} /> {p.organizer}
-                </div>
-                <div className="probability-gauge">
-                  <span className="gauge-fill" style={{ width: `${Math.round(p.probability * 100)}%` }} />
-                  <b>{Math.round(p.probability * 100)}% Probability</b>
-                </div>
-              </div>
-
-              <h2 className="pred-card-title">{p.event}</h2>
-
-              <div className="pred-specs-grid">
-                <div className="spec-tile">
-                  <CalendarDays size={14} />
-                  <div>
-                    <small>Predicted Window</small>
-                    <b>{p.window}</b>
+            <MovingBorderBox key={p.id} className="prediction-full-moving-card">
+              <article className="prediction-full-card">
+                <div className="pred-card-top-row">
+                  <div className="pred-org-tag">
+                    <Building2 size={13} /> {p.organizer}
+                  </div>
+                  <div className="probability-gauge">
+                    <span className="gauge-fill" style={{ width: `${Math.round(p.probability * 100)}%` }} />
+                    <b>{Math.round(p.probability * 100)}% Probability</b>
                   </div>
                 </div>
-                <div className="spec-tile">
-                  <Trophy size={14} />
-                  <div>
-                    <small>Expected Prize</small>
-                    <b>{p.expectedPrize}</b>
-                  </div>
-                </div>
-                <div className="spec-tile">
-                  <Clock3 size={14} />
-                  <div>
-                    <small>Cadence</small>
-                    <b>{p.historicalCadence}</b>
-                  </div>
-                </div>
-              </div>
 
-              <div className="evidence-signals-box">
-                <b>Detected Evidence & Signals:</b>
-                <div className="signals-checklist">
-                  {p.signals.map((sig, idx) => (
-                    <div key={idx} className="signal-check-item">
-                      <CheckCircle2 size={15} />
-                      <span>{sig}</span>
+                <h2 className="pred-card-title">{p.event}</h2>
+
+                <div className="pred-specs-grid">
+                  <div className="spec-tile">
+                    <CalendarDays size={14} />
+                    <div>
+                      <small>Predicted Window</small>
+                      <b>{p.window}</b>
                     </div>
-                  ))}
+                  </div>
+                  <div className="spec-tile">
+                    <Trophy size={14} />
+                    <div>
+                      <small>Expected Prize</small>
+                      <b>{p.expectedPrize}</b>
+                    </div>
+                  </div>
+                  <div className="spec-tile">
+                    <Clock3 size={14} />
+                    <div>
+                      <small>Cadence</small>
+                      <b>{p.historicalCadence}</b>
+                    </div>
+                  </div>
                 </div>
-              </div>
 
-              <div className="pred-card-footer">
-                <button className="btn-primary full-width" onClick={() => handleSetAlert(p.event)}>
-                  <Bell size={15} /> Set Instant Radar Alert
-                </button>
-              </div>
-            </article>
+                <div className="evidence-signals-box">
+                  <b>Detected Evidence & Radar Signals:</b>
+                  <TracingBeamTimeline
+                    steps={p.signals.map((sig, idx) => ({
+                      title: `Signal Beacon #${idx + 1}`,
+                      desc: sig,
+                    }))}
+                  />
+                </div>
+
+                <div className="pred-card-footer">
+                  <button className="btn-primary full-width" onClick={() => handleSetAlert(p.event)}>
+                    <Bell size={15} /> Set Instant Radar Alert
+                  </button>
+                </div>
+              </article>
+            </MovingBorderBox>
           ))}
         </div>
       </div>
