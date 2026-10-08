@@ -3431,3 +3431,926 @@ button, input, select { font: inherit; }
 @media(max-width:1100px){.admin-stat-grid{grid-template-columns:repeat(2,1fr)}.admin-two-col{grid-template-columns:1fr}}
 @media(max-width:700px){.admin-sidebar{width:54px}.admin-brand span,.admin-nav-item span,.admin-nav-item em{display:none}.admin-content{padding:16px}.admin-stat-grid,.admin-stat-grid.four-col{grid-template-columns:repeat(2,1fr)}.dup-compare{grid-template-columns:1fr}.dup-vs{display:none}.admin-page-header{flex-direction:column}}
 
+/* =================================================================================
+   ACETERNITY UI SYSTEM TOKENS & COMPONENTS (HACKATHONRADAR AI)
+   ================================================================================= */
+
+/* ─── 1. Aceternity Resizable / Floating Navbar ────────────────────────────────── */
+.navbar-outer-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0;
+}
+.navbar-outer-wrapper.is-scrolled {
+  padding: 10px 4%;
+}
+.navbar {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.navbar.scrolled {
+  height: 58px;
+  max-width: 1240px;
+  margin: 0 auto;
+  border-radius: 9999px;
+  background: rgba(10, 14, 29, 0.88);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(118, 103, 255, 0.35);
+  box-shadow: 
+    0 20px 40px -15px rgba(0, 0, 0, 0.9),
+    0 0 25px -5px rgba(118, 103, 255, 0.22),
+    inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  padding: 0 24px;
+}
+.navbar.scrolled .brand-logo-glow {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+}
+.navbar.scrolled .brand-logo-glow svg {
+  width: 18px;
+  height: 18px;
+}
+.navbar.scrolled .nav-link {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+/* Nav Link Hover & Glowing Active Pill */
+.nav-link {
+  position: relative;
+  overflow: hidden;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #7667ff, #00d2ff);
+  transform: translateX(-50%);
+  transition: width 0.25s ease;
+  border-radius: 99px;
+  box-shadow: 0 0 8px #00d2ff;
+}
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 60%;
+}
+
+/* ─── 2. Aceternity Spotlight ──────────────────────────────────────────────────── */
+.aceternity-spotlight {
+  position: absolute;
+  top: -140px;
+  left: 8%;
+  width: 120%;
+  height: 140%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.75;
+  transform: rotate(-10deg);
+  animation: spotlightAmbient 12s ease-in-out infinite alternate;
+}
+@keyframes spotlightAmbient {
+  0% { transform: rotate(-12deg) scale(0.98); opacity: 0.65; }
+  100% { transform: rotate(-8deg) scale(1.04); opacity: 0.85; }
+}
+
+/* ─── 3. Text Generate Effect & Hero Highlight ─────────────────────────────────── */
+.text-generate-container {
+  display: inline;
+}
+.generate-word {
+  display: inline-block;
+  opacity: 0;
+  filter: blur(10px);
+  transform: translateY(6px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.generate-word.visible {
+  opacity: 1;
+  filter: blur(0px);
+  transform: translateY(0);
+}
+.generate-word.word-highlight {
+  color: #fff;
+}
+
+/* Hero Highlight Pill */
+.hero-highlight-pill {
+  position: relative;
+  display: inline-block;
+  padding: 0 6px;
+  margin: 0 2px;
+}
+.hero-highlight-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(118, 103, 255, 0.28) 0%, rgba(0, 210, 255, 0.28) 100%);
+  border-radius: 8px;
+  transform: skewX(-6deg);
+  box-shadow: 0 0 25px rgba(0, 210, 255, 0.2);
+  border: 1px solid rgba(0, 210, 255, 0.35);
+  animation: highlightPulse 4s ease-in-out infinite alternate;
+}
+@keyframes highlightPulse {
+  0% { opacity: 0.8; filter: drop-shadow(0 0 10px rgba(118, 103, 255, 0.3)); }
+  100% { opacity: 1; filter: drop-shadow(0 0 20px rgba(0, 210, 255, 0.45)); }
+}
+.hero-highlight-content {
+  position: relative;
+  z-index: 2;
+  background: linear-gradient(135deg, #ffffff 30%, #7bf0ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ─── 4. Aceternity Placeholders And Vanish Input ──────────────────────────────── */
+.vanish-search-form {
+  width: 100%;
+  max-width: 660px;
+  margin: 0 0 24px;
+}
+.vanish-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(13, 18, 36, 0.85);
+  border: 1px solid rgba(118, 103, 255, 0.35);
+  border-radius: 16px;
+  padding: 8px 10px 8px 18px;
+  box-shadow: 
+    0 12px 35px -8px rgba(0, 0, 0, 0.6),
+    0 0 20px -5px rgba(118, 103, 255, 0.2);
+  transition: all 0.3s ease;
+}
+.vanish-input-container:focus-within {
+  border-color: #00d2ff;
+  box-shadow: 
+    0 16px 45px -8px rgba(0, 0, 0, 0.8),
+    0 0 30px rgba(0, 210, 255, 0.3);
+  background: rgba(15, 21, 44, 0.95);
+}
+.vanish-search-icon {
+  color: var(--cyan);
+  display: grid;
+  place-items: center;
+  margin-right: 14px;
+  flex-shrink: 0;
+}
+.vanish-text-input {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  z-index: 2;
+}
+.vanish-placeholder-track {
+  position: absolute;
+  left: 52px;
+  right: 160px;
+  pointer-events: none;
+  overflow: hidden;
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+.vanish-placeholder-text {
+  font-size: 14.5px;
+  color: var(--muted);
+  white-space: nowrap;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.35s ease,
+              filter 0.35s ease;
+}
+.vanish-placeholder-text.vanish-exit {
+  transform: translateY(-20px);
+  opacity: 0;
+  filter: blur(4px);
+}
+.vanish-placeholder-text.vanish-enter {
+  transform: translateY(0);
+  opacity: 1;
+  filter: blur(0px);
+}
+.vanish-submit-btn {
+  background: linear-gradient(135deg, #7667ff, #00d2ff);
+  color: #fff;
+  border: 0;
+  border-radius: 11px;
+  padding: 10px 18px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 15px rgba(118, 103, 255, 0.35);
+  flex-shrink: 0;
+}
+.vanish-submit-btn:hover {
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 210, 255, 0.45);
+}
+
+/* ─── 5. Right Hero Visual: World Map & 3D Globe Card ─────────────────────────── */
+.hero-interactive-radar-card {
+  position: relative;
+  background: linear-gradient(145deg, rgba(17, 23, 46, 0.92) 0%, rgba(9, 13, 26, 0.95) 100%);
+  border: 1px solid rgba(118, 103, 255, 0.28);
+  border-radius: 24px;
+  padding: 20px;
+  box-shadow: 
+    0 25px 60px -12px rgba(0, 0, 0, 0.8),
+    0 0 35px -5px rgba(118, 103, 255, 0.25);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 440px;
+}
+.radar-card-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  margin-bottom: 12px;
+}
+.radar-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  letter-spacing: 0.8px;
+  color: var(--cyan);
+}
+.radar-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  animation: radarDotBlink 2s infinite ease-in-out;
+}
+@keyframes radarDotBlink {
+  0%, 100% { opacity: 0.4; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+.radar-view-mode-toggle {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 2px;
+  gap: 4px;
+}
+.view-mode-btn {
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.view-mode-btn:hover { color: #fff; }
+.view-mode-btn.active {
+  background: rgba(118, 103, 255, 0.25);
+  color: #fff;
+  border: 1px solid rgba(118, 103, 255, 0.4);
+  box-shadow: 0 0 10px rgba(118, 103, 255, 0.25);
+}
+
+.radar-canvas-container {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 290px;
+}
+
+/* ─── 6. World Map Component Styles ────────────────────────────────────────────── */
+.world-map-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.world-map-wrapper.compact {
+  max-width: 540px;
+}
+.map-ambient-glow {
+  position: absolute;
+  inset: 10%;
+  background: radial-gradient(circle, rgba(118, 103, 255, 0.12) 0%, rgba(0, 210, 255, 0.08) 50%, transparent 80%);
+  pointer-events: none;
+}
+.map-grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
+  opacity: 0.6;
+}
+.world-map-svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.5));
+}
+.continent-dot {
+  fill: rgba(154, 165, 191, 0.25);
+  transition: fill 0.3s ease;
+}
+.continent-dot:hover {
+  fill: rgba(0, 210, 255, 0.6);
+}
+
+/* Animated Arcs */
+.animated-arc-beam {
+  stroke-dasharray: 20 80;
+  animation: arcDashFlow 4s linear infinite;
+}
+@keyframes arcDashFlow {
+  from { stroke-dashoffset: 100; }
+  to { stroke-dashoffset: 0; }
+}
+
+/* Beacon Nodes */
+.map-beacon-node {
+  transition: transform 0.2s ease;
+}
+.map-beacon-node:hover {
+  transform: scale(1.18);
+}
+.beacon-ping-ring {
+  fill: none;
+  stroke: #00d2ff;
+  stroke-width: 1.2;
+  opacity: 0;
+  transform-origin: center;
+  animation: beaconPingExpand 2.8s infinite cubic-bezier(0, 0.2, 0.8, 1);
+}
+.beacon-ping-ring.ping-2 {
+  animation-delay: 1.4s;
+  stroke: #7667ff;
+}
+@keyframes beaconPingExpand {
+  0% { r: 5; opacity: 0.9; }
+  100% { r: 24; opacity: 0; stroke-width: 0.5; }
+}
+.beacon-city-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 8.5px;
+  font-weight: 600;
+  fill: #8e9bb8;
+  letter-spacing: 0.4px;
+  pointer-events: none;
+  transition: all 0.2s;
+}
+.beacon-city-label.active,
+.map-beacon-node:hover .beacon-city-label {
+  fill: #00d2ff;
+  font-weight: 700;
+  filter: drop-shadow(0 0 6px rgba(0, 210, 255, 0.8));
+}
+
+/* Animated Tooltip on Map Markers */
+.map-animated-tooltip {
+  position: absolute;
+  transform: translate(-50%, -115%);
+  z-index: 50;
+  pointer-events: auto;
+  cursor: pointer;
+  animation: tooltipFloat 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes tooltipFloat {
+  from { opacity: 0; transform: translate(-50%, -100%) scale(0.92); }
+  to { opacity: 1; transform: translate(-50%, -115%) scale(1); }
+}
+.tooltip-glass-panel {
+  width: 250px;
+  background: rgba(14, 19, 38, 0.94);
+  border: 1px solid rgba(0, 210, 255, 0.45);
+  border-radius: 14px;
+  padding: 12px 14px;
+  backdrop-filter: blur(20px);
+  box-shadow: 
+    0 16px 36px rgba(0, 0, 0, 0.8),
+    0 0 25px rgba(0, 210, 255, 0.25);
+}
+.tooltip-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.tooltip-org {
+  font-size: 11px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.tooltip-ai-badge {
+  background: rgba(0, 210, 255, 0.15);
+  border: 1px solid rgba(0, 210, 255, 0.35);
+  color: #5ce6ff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.tooltip-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 8px;
+  line-height: 1.35;
+}
+.tooltip-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+  padding: 8px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 8px;
+}
+.tooltip-details-grid small {
+  display: block;
+  font-size: 9.5px;
+  color: var(--muted);
+}
+.tooltip-details-grid b {
+  font-size: 11.5px;
+  color: #fff;
+}
+.prize-gold { color: #ffbe3b !important; }
+.tooltip-tags-row {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+.tooltip-mini-tag {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  color: #b3bdd3;
+}
+.tooltip-cta-line {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--cyan);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.map-status-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 4px 0;
+  font-size: 11px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+.map-telemetry-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--cyan);
+}
+.live-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 8px var(--cyan);
+  animation: beaconPulse 1.8s infinite;
+}
+.map-coverage-text {
+  color: var(--muted);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+}
+
+/* ─── 7. 3D Globe Visualization Styles ─────────────────────────────────────────── */
+.globe-3d-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+}
+.globe-atmosphere-halo {
+  position: absolute;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(118, 103, 255, 0.25) 0%, rgba(0, 210, 255, 0.2) 60%, transparent 80%);
+  filter: blur(25px);
+  pointer-events: none;
+}
+.globe-3d-svg {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 15px 40px rgba(0, 0, 0, 0.7));
+}
+.globe-city-text {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 8px;
+  fill: #8de9ff;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.globe-tooltip-card {
+  position: absolute;
+  bottom: 10px;
+  background: rgba(13, 18, 38, 0.95);
+  border: 1px solid rgba(0, 210, 255, 0.4);
+  border-radius: 10px;
+  padding: 8px 14px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+  animation: tooltipFloat 0.2s ease;
+}
+.globe-tooltip-card b { display: block; font-size: 12px; color: #fff; }
+.globe-tooltip-card small { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.globe-ai-score {
+  font-size: 10px;
+  font-weight: 700;
+  color: #00d2ff;
+  background: rgba(0, 210, 255, 0.15);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* ─── 8. Aceternity Card Spotlight (3D Hover Effect) ───────────────────────────── */
+.aceternity-card-spotlight {
+  position: relative;
+  background: rgba(16, 22, 42, 0.8);
+  border: 1px solid rgba(118, 103, 255, 0.22);
+  border-radius: 18px;
+  transition: border-color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  overflow: hidden;
+}
+.aceternity-card-spotlight:hover {
+  border-color: rgba(0, 210, 255, 0.45);
+  transform: translateY(-4px);
+  box-shadow: 
+    0 20px 45px -10px rgba(0, 0, 0, 0.7),
+    0 0 25px -5px rgba(118, 103, 255, 0.25);
+}
+.card-spotlight-radial-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(
+    400px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(118, 103, 255, 0.18),
+    rgba(0, 210, 255, 0.08) 40%,
+    transparent 80%
+  );
+  z-index: 1;
+}
+.aceternity-card-spotlight:hover .card-spotlight-radial-glow {
+  opacity: 1;
+}
+
+/* AI Match Pill on Hackathon Cards */
+.ai-match-score-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0, 210, 255, 0.12);
+  border: 1px solid rgba(0, 210, 255, 0.35);
+  color: #38e1ff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0, 210, 255, 0.15);
+}
+.ai-match-score-pill svg { color: #00d2ff; }
+
+/* ─── 9. Moving Border Box ─────────────────────────────────────────────────────── */
+.moving-border-container {
+  position: relative;
+  border-radius: 18px;
+  padding: 1px;
+  overflow: hidden;
+  background: #151d36;
+}
+.moving-border-beam {
+  position: absolute;
+  inset: -150%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 280deg,
+    #00d2ff 320deg,
+    #7667ff 360deg
+  );
+  animation: rotateConic 4s linear infinite;
+}
+@keyframes rotateConic {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.moving-border-content {
+  position: relative;
+  z-index: 2;
+  background: #0f152b;
+  border-radius: 17px;
+  height: 100%;
+}
+
+/* ─── 10. Tracing Beam Timeline ────────────────────────────────────────────────── */
+.tracing-beam-timeline {
+  display: flex;
+  gap: 20px;
+  position: relative;
+}
+.tracing-beam-line {
+  width: 2px;
+  background: linear-gradient(180deg, #00d2ff, #7667ff, transparent);
+  position: relative;
+  flex-shrink: 0;
+  border-radius: 99px;
+  margin: 8px 0;
+}
+.tracing-beam-glow-dot {
+  position: absolute;
+  top: 0;
+  left: -4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #00d2ff;
+  box-shadow: 0 0 12px #00d2ff;
+  animation: tracingBeamTravel 3.5s ease-in-out infinite alternate;
+}
+@keyframes tracingBeamTravel {
+  0% { top: 0%; }
+  100% { top: 90%; }
+}
+.tracing-beam-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  flex: 1;
+}
+.tracing-step-item {
+  display: flex;
+  gap: 12px;
+}
+.step-indicator {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(118, 103, 255, 0.2);
+  border: 1px solid rgba(118, 103, 255, 0.5);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.step-content b {
+  display: block;
+  font-size: 13.5px;
+  color: #fff;
+  margin-bottom: 2px;
+}
+.step-content p {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* ─── 11. Live Radar Section with Filtering ────────────────────────────────────── */
+.live-radar-section {
+  padding: 60px 0;
+  background: 
+    radial-gradient(circle at 50% 10%, rgba(118, 103, 255, 0.1) 0%, transparent 60%),
+    rgba(6, 9, 20, 0.9);
+  border-top: 1px solid rgba(118, 103, 255, 0.15);
+  border-bottom: 1px solid rgba(118, 103, 255, 0.15);
+  position: relative;
+}
+.radar-pulse-indicator-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 210, 255, 0.08);
+  border: 1px solid rgba(0, 210, 255, 0.3);
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: 12px;
+  color: #6ee6ff;
+  font-weight: 600;
+}
+.radar-filter-bar {
+  margin: 24px 0 28px;
+}
+.radar-filter-scroller {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: none;
+}
+.radar-filter-scroller::-webkit-scrollbar { display: none; }
+.radar-filter-pill {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: 8px 18px;
+  border-radius: 11px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.25s ease;
+}
+.radar-filter-pill:hover {
+  background: rgba(118, 103, 255, 0.15);
+  color: #fff;
+  border-color: rgba(118, 103, 255, 0.4);
+}
+.radar-filter-pill.active {
+  background: linear-gradient(135deg, rgba(118, 103, 255, 0.35) 0%, rgba(0, 210, 255, 0.35) 100%);
+  color: #fff;
+  border-color: #00d2ff;
+  box-shadow: 0 0 20px rgba(0, 210, 255, 0.25);
+}
+
+.radar-big-map-container {
+  background: linear-gradient(145deg, #0e1329 0%, #070a18 100%);
+  border: 1px solid #232d4b;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Selected Hub Focused Drawer */
+.radar-focused-event-drawer {
+  position: relative;
+  margin-top: 24px;
+  background: #111730;
+  border: 1px solid rgba(0, 210, 255, 0.4);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 210, 255, 0.15);
+}
+.drawer-glow-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #7667ff, #00d2ff, #7667ff);
+}
+.drawer-content {
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 200px 1fr 220px;
+  gap: 24px;
+  align-items: center;
+}
+.drawer-meta-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.drawer-tag {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cyan);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.drawer-ai-score {
+  font-size: 11px;
+  font-weight: 700;
+  color: #a78bfa;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(167, 139, 250, 0.12);
+  padding: 3px 8px;
+  border-radius: 6px;
+  width: fit-content;
+}
+.drawer-main-col {
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0 20px;
+}
+.drawer-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 6px;
+}
+.drawer-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+.drawer-tags-list {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.drawer-tag-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #c0c9de;
+}
+.drawer-prize-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.drawer-prize-card small {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+}
+.drawer-prize-card b {
+  display: block;
+  font-size: 22px;
+  color: #ffbe3b;
+  font-family: "Space Grotesk", sans-serif;
+}
+.drawer-prize-card span {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+}
+.drawer-actions-row {
+  display: flex;
+  gap: 8px;
+}
+
+@media(max-width: 900px) {
+  .drawer-content {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .drawer-main-col {
+    border: 0;
+    padding: 0;
+  }
+}
+
+/* ─── 12. Magnetic Button Microinteraction ─────────────────────────────────────── */
+.magnetic-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+
+
