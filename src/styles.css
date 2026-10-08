@@ -2824,6 +2824,249 @@ button, input, select { font: inherit; }
 }
 
 
+
+
+/* ═════════════════════════════════════════════════════════════════════════════
+   UIVERSE.IO MODERN COMPONENT ENHANCEMENTS & MOTION DESIGNS
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+/* ─── Uiverse Animated Conic Border Beam Cards ────────────────────────────── */
+.event-card-v2, .spotlight-card, .prediction-full-card, .organizer-showcase-card {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(155deg, rgba(16, 22, 42, 0.95) 0%, rgba(12, 16, 32, 0.98) 100%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+.event-card-v2::before, .spotlight-card::before, .prediction-full-card::before, .organizer-showcase-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(from 0deg, transparent 65%, #7667ff 80%, #00d2ff 90%, transparent 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  animation: uiverse-rotate 4s linear infinite;
+}
+
+.event-card-v2:hover::before, .spotlight-card:hover::before, .prediction-full-card:hover::before, .organizer-showcase-card:hover::before {
+  opacity: 1;
+}
+
+@keyframes uiverse-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Uiverse Shimmering Hologram Buttons ──────────────────────────────────── */
+.btn-primary, .search-cta-btn {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #7667ff 0%, #9b7cff 50%, #6353ea 100%);
+  box-shadow: 0 0 20px rgba(118, 103, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  letter-spacing: 0.2px;
+}
+
+.btn-primary::after, .search-cta-btn::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 40%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transform: rotate(25deg);
+  pointer-events: none;
+  animation: uiverse-shimmer 4s infinite;
+}
+
+@keyframes uiverse-shimmer {
+  0% { left: -60%; }
+  30%, 100% { left: 160%; }
+}
+
+.btn-primary:hover, .search-cta-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 0 35px rgba(118, 103, 255, 0.65), 0 0 15px rgba(0, 210, 255, 0.4);
+}
+
+.btn-primary:active, .search-cta-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ─── Uiverse Secondary Glass Button ───────────────────────────────────────── */
+.btn-secondary {
+  position: relative;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.btn-secondary:hover {
+  background: rgba(118, 103, 255, 0.12);
+  border-color: rgba(118, 103, 255, 0.4);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(118, 103, 255, 0.2);
+}
+
+/* ─── Uiverse Cyber Search Command Bar ─────────────────────────────────────── */
+.hero-search-bar {
+  position: relative;
+  background: rgba(15, 21, 40, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(118, 103, 255, 0.25);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(118, 103, 255, 0.05);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-search-bar:focus-within {
+  border-color: #7667ff;
+  box-shadow: 0 0 30px rgba(118, 103, 255, 0.35), 0 0 15px rgba(0, 210, 255, 0.2), inset 0 0 15px rgba(118, 103, 255, 0.1);
+  transform: scale(1.01);
+}
+
+/* ─── Uiverse 3D Countdown Digital Digit Blocks ────────────────────────────── */
+.digit-box {
+  background: linear-gradient(180deg, #18223c 0%, #0d1222 100%);
+  border: 1px solid rgba(118, 103, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.digit-box::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.6);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.digit-box.accent-box {
+  background: linear-gradient(180deg, rgba(0, 210, 255, 0.15) 0%, rgba(13, 18, 34, 0.95) 100%);
+  border-color: rgba(0, 210, 255, 0.5);
+  box-shadow: 0 0 20px rgba(0, 210, 255, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.digit-box.accent-box b {
+  color: #00d2ff;
+  text-shadow: 0 0 12px rgba(0, 210, 255, 0.7);
+}
+
+/* ─── Uiverse Animated Progress Flow ───────────────────────────────────────── */
+.meter-fill {
+  background: linear-gradient(90deg, #7667ff, #00d2ff 50%, #10b981 100%);
+  background-size: 200% 100%;
+  animation: uiverse-gradient-flow 3s ease infinite;
+  box-shadow: 0 0 12px rgba(0, 210, 255, 0.6);
+}
+
+@keyframes uiverse-gradient-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ─── Uiverse HUD Metric Cells with Cyber Accents ──────────────────────────── */
+.metric-cell {
+  position: relative;
+  background: linear-gradient(145deg, #10162a, #0b0f1d);
+  border: 1px solid rgba(118, 103, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  overflow: hidden;
+}
+
+.metric-cell::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 45px;
+  height: 2px;
+  background: linear-gradient(90deg, #7667ff, transparent);
+}
+
+.metric-cell::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 45px;
+  height: 2px;
+  background: linear-gradient(270deg, #00d2ff, transparent);
+}
+
+.metric-cell:hover {
+  transform: translateY(-4px);
+  border-color: rgba(118, 103, 255, 0.5);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 25px rgba(118, 103, 255, 0.2);
+}
+
+/* ─── Uiverse Micro-Interactive Tags & Pills ───────────────────────────────── */
+.quick-pill {
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.quick-pill:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 0 15px rgba(118, 103, 255, 0.4);
+  border-color: #7667ff;
+  background: rgba(118, 103, 255, 0.2);
+}
+
+.tab-btn {
+  transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.tab-btn:hover {
+  transform: translateY(-2px);
+}
+
+.tab-btn.active {
+  box-shadow: 0 0 20px rgba(118, 103, 255, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* ─── Uiverse Glowing Trophy Badge ─────────────────────────────────────────── */
+.trophy-glow {
+  animation: uiverse-float 3s ease-in-out infinite;
+}
+
+@keyframes uiverse-float {
+  0%, 100% { transform: translateY(0); filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.4)); }
+  50% { transform: translateY(-6px); filter: drop-shadow(0 0 30px rgba(245, 158, 11, 0.7)); }
+}
+
+/* ─── Uiverse Interactive Radar Sweep Enhanced ─────────────────────────────── */
+.radar-sweep-screen {
+  border: 2px solid rgba(118, 103, 255, 0.4);
+  box-shadow: 0 0 60px rgba(118, 103, 255, 0.25), inset 0 0 45px rgba(0, 210, 255, 0.15);
+}
+
+.radar-sweep-line {
+  box-shadow: 0 0 25px #00d2ff, 0 0 50px rgba(0, 210, 255, 0.5);
+}
+
+/* ─── End Uiverse.io Enhancements ──────────────────────────────────────────── */
+
+
 /* ─── Admin CSS Variables ─────────────────────────────────────────────────────── */
 :root{--purple-grad:linear-gradient(135deg,#7667ff,#9b7cff);--cyan-grad:linear-gradient(135deg,#22d3ee,#67e8f9);--green-grad:linear-gradient(135deg,#22c55e,#4ade80);--orange-grad:linear-gradient(135deg,#f97316,#fb923c);--red-grad:linear-gradient(135deg,#ef4444,#f87171)}
 
