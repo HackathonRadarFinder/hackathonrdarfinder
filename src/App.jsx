@@ -4,9 +4,16 @@ import {
   Search, Home as HomeIcon, Compass, Sparkles, Building2, Bookmark,
   CalendarDays, MapPin, Users, ArrowRight, CheckCircle2, Clock3,
   ExternalLink, SlidersHorizontal, ChevronDown, Bell, Menu, X,
-  BrainCircuit, ShieldCheck, TrendingUp, Award, Globe2
+  BrainCircuit, ShieldCheck, TrendingUp, Award, Globe2, LayoutDashboard
 } from "lucide-react";
 import { events, predictions, organizers } from "./data";
+import { useUser } from "./UserContext";
+import { EventCard, StatusBadge, logoText } from "./components";
+import { getInitials } from "./userData";
+import {
+  AccountLayout, Dashboard, SavedEvents, Recommendations,
+  Notifications, Profile, Preferences,
+} from "./AccountPages";
 
 function Layout({ children }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -15,7 +22,9 @@ function Layout({ children }) {
     { to: "/explore", label: "Explore", icon: Compass },
     { to: "/predictions", label: "Predictions", icon: Sparkles },
     { to: "/organizer/microsoft", label: "Organizers", icon: Building2 },
+    { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   ];
+  const { profile, unreadCount } = useUser();
 
   return (
     <div className="app-shell">
@@ -39,8 +48,10 @@ function Layout({ children }) {
         </nav>
 
         <div className="nav-actions">
-          <button className="icon-btn" title="Notifications"><Bell size={18}/></button>
-          <button className="profile-chip"><span>NK</span><b>My Profile</b></button>
+          <Link className="icon-btn" to="/notifications" title="Notifications">
+            <Bell size={18}/>{unreadCount > 0 && <i className="nav-badge">{unreadCount}</i>}
+          </Link>
+          <Link className="profile-chip" to="/profile"><span>{getInitials(profile.name)}</span><b>My Profile</b></Link>
         </div>
       </header>
       <main>{children}</main>
@@ -49,37 +60,6 @@ function Layout({ children }) {
         <span>Discover opportunities. Prepare earlier.</span>
       </footer>
     </div>
-  );
-}
-
-function StatusBadge({status}) {
-  return <span className={`status ${status.toLowerCase()}`}>
-    <span className="status-dot"/>{status}
-  </span>;
-}
-
-function EventCard({event}) {
-  const [saved, setSaved] = useState(false);
-  return (
-    <article className="event-card">
-      <div className={`event-logo ${event.color}`}>{event.organizer.split(" ").map(x=>x[0]).slice(0,2).join("")}</div>
-      <div className="event-card-body">
-        <div className="card-top">
-          <StatusBadge status={event.status}/>
-          <button className={saved ? "save-btn saved" : "save-btn"} onClick={() => setSaved(!saved)}>
-            <Bookmark size={17} fill={saved ? "currentColor" : "none"}/>
-          </button>
-        </div>
-        <Link to={`/event/${event.id}`} className="event-title">{event.title}</Link>
-        <p className="organizer-name">{event.organizer}</p>
-        <div className="event-meta">
-          <span><CalendarDays size={15}/>{event.date}</span>
-          <span><MapPin size={15}/>{event.location}</span>
-          <span><Award size={15}/>{event.prize}</span>
-        </div>
-        <div className="tags">{event.tags.map(tag=><span key={tag}>{tag}</span>)}</div>
-      </div>
-    </article>
   );
 }
 
@@ -179,18 +159,19 @@ function Explore() {
 function EventDetails() {
   const {id} = useParams();
   const event = events.find(e=>e.id===id) || events[0];
-  const [saved,setSaved] = useState(false);
+  const {isSaved, toggleSaved} = useUser();
+  const saved = isSaved(event.id);
 
   return <div className="page">
     <Link to="/explore" className="back-link">← Back to Explore</Link>
     <div className="detail-hero">
-      <div className={`big-event-logo ${event.color}`}>{event.organizer.split(" ").map(x=>x[0]).slice(0,2).join("")}</div>
+      <div className={`big-event-logo ${event.color}`}>{logoText(event)}</div>
       <div className="detail-heading">
         <div><StatusBadge status={event.status}/><span className="verified"><CheckCircle2 size={15}/> Verified {event.verified}</span></div>
         <h1>{event.title}</h1>
         <p>{event.organizer}</p>
       </div>
-      <button className={saved ? "primary-btn saved-main" : "primary-btn"} onClick={()=>setSaved(!saved)}><Bookmark size={17} fill={saved ? "currentColor":"none"}/> {saved ? "Saved" : "Save event"}</button>
+      <button className={saved ? "primary-btn saved-main" : "primary-btn"} onClick={()=>toggleSaved(event.id)}><Bookmark size={17} fill={saved ? "currentColor":"none"}/> {saved ? "Saved" : "Save event"}</button>
     </div>
 
     <div className="detail-grid">
@@ -259,6 +240,14 @@ function App() {
     <Route path="/event/:id" element={<EventDetails/>}/>
     <Route path="/predictions" element={<Predictions/>}/>
     <Route path="/organizer/:name" element={<OrganizerProfile/>}/>
+    <Route element={<AccountLayout/>}>
+      <Route path="/dashboard" element={<Dashboard/>}/>
+      <Route path="/saved" element={<SavedEvents/>}/>
+      <Route path="/recommendations" element={<Recommendations/>}/>
+      <Route path="/notifications" element={<Notifications/>}/>
+      <Route path="/profile" element={<Profile/>}/>
+      <Route path="/preferences" element={<Preferences/>}/>
+    </Route>
     <Route path="*" element={<Home/>}/>
   </Routes></Layout>;
 }
