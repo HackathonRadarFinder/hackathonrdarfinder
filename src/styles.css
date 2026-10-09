@@ -739,7 +739,7 @@ button, input, select { font: inherit; }
 }
 .spotlight-card {
   position: relative;
-  background: #FFFFFF;
+  background: #0A0F1D;
   border: 1px solid var(--border);
   border-radius: 20px;
   padding: 40px;
@@ -747,7 +747,7 @@ button, input, select { font: inherit; }
   grid-template-columns: 1.3fr 0.7fr;
   gap: 36px;
   overflow: hidden;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.07);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6);
 }
 .spotlight-glow {
   position: absolute;
@@ -755,7 +755,7 @@ button, input, select { font: inherit; }
   left: 10%;
   width: 500px;
   height: 300px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.08) 0%, transparent 60%);
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 60%);
   pointer-events: none;
 }
 .spotlight-content { position: relative; z-index: 1; }
@@ -768,9 +768,9 @@ button, input, select { font: inherit; }
   margin-bottom: 14px;
 }
 .spotlight-tag {
-  background: rgba(245, 158, 11, 0.12);
-  color: #D97706;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
   padding: 4px 10px;
   border-radius: 6px;
   font-size: 11px;
@@ -792,7 +792,7 @@ button, input, select { font: inherit; }
   font-size: 32px;
   font-weight: 700;
   margin: 0 0 12px;
-  color: #0F172A;
+  color: #F8FAFC;
 }
 .spotlight-desc {
   font-size: 14.5px;
@@ -811,7 +811,7 @@ button, input, select { font: inherit; }
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #F8FAFC;
+  background: #11172A;
   border: 1px solid var(--border);
   padding: 5px 12px;
   border-radius: 8px;
@@ -822,7 +822,7 @@ button, input, select { font: inherit; }
 
 /* Countdown Clock Display */
 .countdown-widget {
-  background: #F8FAFC;
+  background: #11172A;
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 14px 18px;
@@ -845,24 +845,24 @@ button, input, select { font: inherit; }
   gap: 8px;
 }
 .digit-box {
-  background: #FFFFFF;
+  background: #070A14;
   border: 1px solid var(--border);
   border-radius: 8px;
   padding: 6px 10px;
   text-align: center;
   min-width: 48px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 .digit-box.accent-box {
-  background: rgba(99, 102, 241, 0.08);
-  border-color: rgba(99, 102, 241, 0.3);
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.4);
 }
 .digit-box b {
   display: block;
   font-family: "JetBrains Mono", monospace;
   font-size: 20px;
   font-weight: 700;
-  color: #0F172A;
+  color: #F8FAFC;
 }
 .digit-box small {
   display: block;
@@ -874,7 +874,7 @@ button, input, select { font: inherit; }
 .colon {
   font-family: "JetBrains Mono", monospace;
   font-weight: 700;
-  color: #94A3B8;
+  color: #64748B;
   font-size: 18px;
 }
 
@@ -895,7 +895,7 @@ button, input, select { font: inherit; }
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  border: 2px solid #FFFFFF;
+  border: 2px solid #0A0F1D;
   display: grid;
   place-items: center;
   font-size: 9px;
@@ -908,7 +908,7 @@ button, input, select { font: inherit; }
 .avatar-mini.a3 { background: #10b981; }
 .avatar-mini.a4 { background: #f59e0b; }
 .registered-stack small { font-size: 12px; color: var(--text-secondary); }
-.registered-stack b { color: #0F172A; }
+.registered-stack b { color: #F8FAFC; }
 
 /* Spotlight Prize Box Card */
 .spotlight-prize-card {
@@ -919,12 +919,12 @@ button, input, select { font: inherit; }
 }
 .prize-badge-card {
   width: 100%;
-  background: #FFFFFF;
+  background: #080C17;
   border: 1px solid var(--border);
   border-radius: 16px;
   padding: 30px;
   text-align: center;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
 }
 .trophy-glow {
   color: #f59e0b;
@@ -942,7 +942,7 @@ button, input, select { font: inherit; }
   font-family: "Space Grotesk", sans-serif;
   font-size: 44px;
   font-weight: 700;
-  color: #0F172A;
+  color: #F8FAFC;
   margin: 6px 0 18px;
 }
 .prize-perks-list {
@@ -950,7 +950,7 @@ button, input, select { font: inherit; }
   flex-direction: column;
   gap: 8px;
   text-align: left;
-  background: #F8FAFC;
+  background: #0F1528;
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 12px 16px;
@@ -961,7 +961,7 @@ button, input, select { font: inherit; }
   justify-content: space-between;
   color: var(--text-secondary);
 }
-.prize-perks-list b { color: #0F172A; }
+.prize-perks-list b { color: #F8FAFC; }
 .sponsor-tag {
   margin-top: 16px;
   font-size: 11px;
