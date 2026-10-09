@@ -1,12 +1,12 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { Link, NavLink, Route, Routes, useNavigate, useParams, useLocation } from "react-router-dom";
 import {
-  Search, Home as HomeIcon, Compass, Sparkles, Building2, Bookmark,
+  Search, Home as HomeIcon, Compass, Sparkles, Building2, Bookmark, BookmarkCheck,
   CalendarDays, MapPin, Users, ArrowRight, CheckCircle2, Clock3,
   ExternalLink, SlidersHorizontal, ChevronDown, Bell, Menu, X,
   BrainCircuit, ShieldCheck, TrendingUp, Award, Globe2, LayoutDashboard,
   Share2, Heart, Filter, Flame, Zap, Trophy, Briefcase, GraduationCap,
-  ArrowUpRight, Check, Copy, AlertCircle, RefreshCw, Layers, Grid, List
+  ArrowUpRight, Check, Copy, AlertCircle, RefreshCw, Layers, Grid, List, Laptop
 } from "lucide-react";
 import { events, predictions, organizers } from "./data";
 import AdminRouter from "./Admin";
@@ -716,6 +716,7 @@ function Home() {
   const [activeTab, setActiveTab] = useState("all");
   const [modalEvent, setModalEvent] = useState(null);
   const navigate = useNavigate();
+  const { isSaved, toggleSaved } = useSaved();
 
   const heroCountdown = useCountdown(4);
 
@@ -891,7 +892,12 @@ function Home() {
       </section>
 
       {/* ─── LIVE HACKATHON RADAR (Aceternity World Map & Telemetry) ───────────── */}
-      <LiveRadarSection events={events} onRegister={setModalEvent} />
+      <LiveRadarSection
+        events={events}
+        onRegister={setModalEvent}
+        isSaved={isSaved}
+        onToggleSave={toggleSaved}
+      />
 
       {/* ─── ACETERNITY BENTO GRID (Intelligence Suite) ───────────────────────── */}
       <AceternityBentoGrid />
@@ -1780,111 +1786,457 @@ function EventDetails() {
   );
 }
 
-// ─── Predictions Page ───────────────────────────────────────────────────────────
+// ─── Predictions & Personalized AI Recommendations Page ─────────────────────────
 function Predictions() {
   const { showToast } = useToast();
+  const { isSaved, toggleSaved } = useSaved();
+  const [modalEvent, setModalEvent] = useState(null);
+  const [activeTab, setActiveTab] = useState("personalized"); // "personalized" | "cadence"
+
+  // Builder Profile State
+  const [selectedSkills, setSelectedSkills] = useState([
+    "Generative AI",
+    "Python",
+    "Cloud Architecture",
+  ]);
+  const [experienceLevel, setExperienceLevel] = useState("Student");
+  const [preferredMode, setPreferredMode] = useState("ALL");
+
+  const skillOptions = [
+    "Generative AI",
+    "Python",
+    "Cloud Architecture",
+    "React & Frontend",
+    "Web3 & Solidity",
+    "Robotics & CUDA",
+    "Cybersecurity",
+    "Open Source & Linux",
+  ];
+
+  const experienceOptions = [
+    { id: "Student", label: "Student & Recent Grad" },
+    { id: "Junior", label: "Early Career (1-3 yrs)" },
+    { id: "Senior", label: "Experienced Engineer" },
+    { id: "Founder", label: "Founder / Solo Hacker" },
+  ];
+
+  const toggleSkill = (skill) => {
+    setSelectedSkills((prev) =>
+      prev.includes(skill)
+        ? prev.filter((s) => s !== skill)
+        : [...prev, skill]
+    );
+  };
+
+  // Compute dynamic personalized recommendations for verified events
+  const personalizedEvents = useMemo(() => {
+    return events
+      .map((e) => {
+        // Matched skills calculation
+        const matchedSkills = selectedSkills.filter((s) => {
+          const key = s.toLowerCase().split(" ")[0];
+          return (
+            e.tags?.some((t) => t.toLowerCase().includes(key)) ||
+            e.theme?.toLowerCase().includes(key) ||
+            e.description?.toLowerCase().includes(key)
+          );
+        });
+
+        // Compute tailored match score
+        let score = 72;
+        score += matchedSkills.length * 8;
+        if (
+          experienceLevel === "Student" &&
+          (e.eligibility?.toLowerCase().includes("student") ||
+            e.eligibility?.toLowerCase().includes("all"))
+        ) {
+          score += 7;
+        }
+        if (preferredMode !== "ALL" && e.mode?.toLowerCase() === preferredMode.toLowerCase()) {
+          score += 5;
+        }
+        score = Math.min(99, Math.max(68, score));
+
+        // Formulate personalized match reasoning
+        const reasons = [];
+        if (matchedSkills.length > 0) {
+          reasons.push(`Aligned with your ${matchedSkills.slice(0, 2).join(" & ")} skills`);
+        } else {
+          reasons.push(`Relevant tech domain: ${e.category || e.radarCategory}`);
+        }
+
+        if (
+          experienceLevel === "Student" &&
+          e.eligibility?.toLowerCase().includes("student")
+        ) {
+          reasons.push("Eligibility tailored for university builders");
+        } else {
+          reasons.push(`Eligibility: ${e.eligibility || "Open to All"}`);
+        }
+
+        if (e.deadlineDays && e.deadlineDays <= 5) {
+          reasons.push(`Closing in ${e.deadlineDays}d — active submission window`);
+        } else {
+          reasons.push(`${e.deadlineDays} days to ideate and submit`);
+        }
+
+        return {
+          ...e,
+          computedScore: score,
+          matchedSkills,
+          matchReason: reasons.join(" · "),
+        };
+      })
+      .filter((e) => {
+        if (preferredMode !== "ALL" && e.mode?.toLowerCase() !== preferredMode.toLowerCase()) {
+          return false;
+        }
+        return true;
+      })
+      .sort((a, b) => b.computedScore - a.computedScore);
+  }, [events, selectedSkills, experienceLevel, preferredMode]);
 
   const handleSetAlert = (eventName) => {
-    showToast(`Radar alert enabled for "${eventName}"! 🔔`, "success");
+    showToast(`Radar recurrence alert active for "${eventName}"! 🔔`, "success");
   };
 
   return (
     <div className="predictions-page">
+      {/* Hero Header */}
       <div className="predictions-hero">
         <div className="pred-container">
           <div className="section-eyebrow">
-            <Sparkles size={14} /> RADAR AI FORECASTING
+            <Sparkles size={14} /> RADAR AI RECOMMENDATIONS & INTELLIGENCE
           </div>
-          <h1 className="pred-page-title">AI Hackathon Predictions</h1>
+          <h1 className="pred-page-title">Personalized AI Discovery</h1>
           <p className="pred-page-subtitle">
-            Statistical forecasting of upcoming hackathons based on annual cadence patterns, organizer blog teasers, and DNS registrations.
+            Match high-impact hackathons to your exact developer skills, experience level, and preferred format. Clearly distinguished between verified active hackathons and probabilistic recurrence forecasts.
           </p>
 
           <div className="model-stats-pill-row">
             <div className="model-stat-chip">
-              <BrainCircuit size={15} /> <b>Model:</b> radar-cadence-v2.4
+              <BrainCircuit size={15} /> <b>Matching Engine:</b> radar-personalize-v3.1
             </div>
             <div className="model-stat-chip">
-              <TrendingUp size={15} /> <b>Accuracy:</b> 94.2% historical match
+              <TrendingUp size={15} /> <b>Verification:</b> 100% Confirmed Sources
             </div>
             <div className="model-stat-chip">
-              <Clock3 size={15} /> <b>Advantage:</b> ~28 days advance lead
+              <Clock3 size={15} /> <b>Cadence Lead:</b> ~28 days advance notice
             </div>
           </div>
         </div>
       </div>
 
       <div className="pred-container pred-main-body">
-        <div className="disclaimer-alert-card">
-          <AlertCircle size={22} />
-          <div>
-            <b>Predictive Intelligence Notice</b>
-            <p>
-              Predictions are probabilistic forecasts and are not official sponsor announcements until verified. Use these signals to prepare team formations and study prerequisites early.
-            </p>
+        {/* Interactive Builder Profile Customizer */}
+        <section className="builder-profile-matcher-panel">
+          <div className="matcher-panel-header">
+            <div className="matcher-header-left">
+              <Sparkles size={16} className="text-cyan" />
+              <h3>Customize Your AI Match Profile</h3>
+            </div>
+            <span className="matcher-live-tag">Live Dynamic Scoring</span>
           </div>
+
+          <div className="matcher-grid">
+            {/* Skills selection */}
+            <div className="matcher-block">
+              <label className="matcher-label">Select Your Skills & Interests:</label>
+              <div className="matcher-chips-wrap">
+                {skillOptions.map((skill) => {
+                  const isSelected = selectedSkills.includes(skill);
+                  return (
+                    <button
+                      key={skill}
+                      type="button"
+                      className={`matcher-skill-chip ${isSelected ? "selected" : ""}`}
+                      onClick={() => toggleSkill(skill)}
+                    >
+                      {skill} {isSelected ? "✓" : "+"}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Experience & Format Row */}
+            <div className="matcher-controls-row">
+              <div className="matcher-block half">
+                <label className="matcher-label">Career / Experience Level:</label>
+                <div className="matcher-btn-group">
+                  {experienceOptions.map((exp) => (
+                    <button
+                      key={exp.id}
+                      type="button"
+                      className={`matcher-option-btn ${experienceLevel === exp.id ? "active" : ""}`}
+                      onClick={() => setExperienceLevel(exp.id)}
+                    >
+                      {exp.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="matcher-block half">
+                <label className="matcher-label">Format Preference:</label>
+                <div className="matcher-btn-group">
+                  {[
+                    { id: "ALL", label: "All Formats" },
+                    { id: "Remote", label: "Remote Only" },
+                    { id: "Hybrid", label: "Hybrid" },
+                  ].map((mode) => (
+                    <button
+                      key={mode.id}
+                      type="button"
+                      className={`matcher-option-btn ${preferredMode === mode.id ? "active" : ""}`}
+                      onClick={() => setPreferredMode(mode.id)}
+                    >
+                      {mode.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Tab Switcher: Personalized Live Matches vs Recurrence Forecasts */}
+        <div className="predictions-mode-tabs">
+          <button
+            type="button"
+            className={`pred-mode-tab ${activeTab === "personalized" ? "active" : ""}`}
+            onClick={() => setActiveTab("personalized")}
+          >
+            <Sparkles size={15} />
+            <span>Personalized Live Matches ({personalizedEvents.length})</span>
+            <span className="tab-fact-tag verified">Verified Live</span>
+          </button>
+          <button
+            type="button"
+            className={`pred-mode-tab ${activeTab === "cadence" ? "active" : ""}`}
+            onClick={() => setActiveTab("cadence")}
+          >
+            <TrendingUp size={15} />
+            <span>AI Recurrence Radar ({predictions.length})</span>
+            <span className="tab-fact-tag forecast">Probabilistic Forecasts</span>
+          </button>
         </div>
 
-        <div className="predictions-cards-grid">
-          {predictions.map((p) => (
-            <MovingBorderBox key={p.id} className="prediction-full-moving-card">
-              <article className="prediction-full-card">
-                <div className="pred-card-top-row">
-                  <div className="pred-org-tag">
-                    <Building2 size={13} /> {p.organizer}
-                  </div>
-                  <div className="probability-gauge">
-                    <span className="gauge-fill" style={{ width: `${Math.round(p.probability * 100)}%` }} />
-                    <b>{Math.round(p.probability * 100)}% Probability</b>
-                  </div>
-                </div>
+        {/* ─── TAB 1: Personalized Live Recommendations (Verified Facts) ─────────── */}
+        {activeTab === "personalized" && (
+          <div className="personalized-results-section">
+            <div className="verified-fact-banner">
+              <ShieldCheck size={20} className="text-emerald" />
+              <div>
+                <b>Verified Live Opportunities · Confirmed Deadlines & Prize Pools</b>
+                <p>
+                  These events are active and accepting registrations now. Recommendations and match scores are computed dynamically from your selected skills and profile.
+                </p>
+              </div>
+            </div>
 
-                <h2 className="pred-card-title">{p.event}</h2>
+            <div className="personalized-cards-grid">
+              {personalizedEvents.map((item) => {
+                const saved = isSaved(item.id);
+                return (
+                  <article key={item.id} className="personalized-card">
+                    <div className="card-top-row">
+                      <div className="match-score-badge">
+                        <Sparkles size={13} />
+                        <b>{item.computedScore}% Match</b>
+                      </div>
 
-                <div className="pred-specs-grid">
-                  <div className="spec-tile">
-                    <CalendarDays size={14} />
-                    <div>
-                      <small>Predicted Window</small>
-                      <b>{p.window}</b>
+                      <div className="card-status-badges">
+                        <span className={`status-pill ${item.badgeType}`}>
+                          {item.status}
+                        </span>
+                        <span className="format-pill">
+                          {item.mode === "Remote" ? <Globe2 size={11} /> : <Laptop size={11} />}
+                          {item.mode}
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        className={`opp-bookmark-btn ${saved ? "saved" : ""}`}
+                        onClick={() => toggleSaved(item.id)}
+                        title={saved ? "Remove bookmark" : "Save opportunity"}
+                      >
+                        {saved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+                      </button>
                     </div>
-                  </div>
-                  <div className="spec-tile">
-                    <Trophy size={14} />
-                    <div>
-                      <small>Expected Prize</small>
-                      <b>{p.expectedPrize}</b>
-                    </div>
-                  </div>
-                  <div className="spec-tile">
-                    <Clock3 size={14} />
-                    <div>
-                      <small>Cadence</small>
-                      <b>{p.historicalCadence}</b>
-                    </div>
-                  </div>
-                </div>
 
-                <div className="evidence-signals-box">
-                  <b>Detected Evidence & Radar Signals:</b>
-                  <TracingBeamTimeline
-                    steps={p.signals.map((sig, idx) => ({
-                      title: `Signal Beacon #${idx + 1}`,
-                      desc: sig,
-                    }))}
-                  />
-                </div>
+                    <div className="card-org-row">
+                      <span className="org-avatar">
+                        {item.organizerInitials || item.organizer.slice(0, 2).toUpperCase()}
+                      </span>
+                      <span className="org-name">{item.organizer}</span>
+                      <span className="dot-sep">·</span>
+                      <span className="loc-text">
+                        <MapPin size={11} /> {item.city || item.location}
+                      </span>
+                    </div>
 
-                <div className="pred-card-footer">
-                  <button className="btn-primary full-width" onClick={() => handleSetAlert(p.event)}>
-                    <Bell size={15} /> Set Instant Radar Alert
-                  </button>
-                </div>
-              </article>
-            </MovingBorderBox>
-          ))}
-        </div>
+                    <h2 className="personalized-card-title">
+                      <Link to={`/event/${item.id}`}>{item.title}</Link>
+                    </h2>
+
+                    {/* Why This Matches You Callout */}
+                    <div className="personalized-why-match-box">
+                      <div className="why-match-header">
+                        <BrainCircuit size={13} />
+                        <b>Why this matches you:</b>
+                      </div>
+                      <p className="why-match-text">{item.matchReason}</p>
+                    </div>
+
+                    {/* Metrics Grid */}
+                    <div className="pers-metrics-row">
+                      <div className="pers-metric">
+                        <small>Prize Pool</small>
+                        <b className="prize-cyan">{item.prize}</b>
+                      </div>
+                      <div className="pers-metric">
+                        <small>Deadline</small>
+                        <b>{item.deadline}</b>
+                      </div>
+                      <div className="pers-metric">
+                        <small>Countdown</small>
+                        <span className={`pers-countdown ${item.deadlineDays <= 4 ? "urgent" : ""}`}>
+                          {item.deadlineDays <= 4 ? <Flame size={12} /> : <Clock3 size={12} />}
+                          <b>{item.deadlineDays}d remaining</b>
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="pers-tags-row">
+                      {item.tags?.map((tag) => {
+                        const isMatched = item.matchedSkills?.some((ms) =>
+                          tag.toLowerCase().includes(ms.toLowerCase().split(" ")[0])
+                        );
+                        return (
+                          <span
+                            key={tag}
+                            className={`pers-tag-chip ${isMatched ? "matched" : ""}`}
+                          >
+                            {isMatched ? "✦ " : ""}#{tag}
+                          </span>
+                        );
+                      })}
+                    </div>
+
+                    <div className="pers-footer-actions">
+                      <Link to={`/event/${item.id}`} className="btn-secondary btn-sm">
+                        View Details
+                      </Link>
+                      <button
+                        type="button"
+                        className="btn-primary btn-sm"
+                        onClick={() => setModalEvent(item)}
+                      >
+                        Apply / Register <ArrowRight size={13} />
+                      </button>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ─── TAB 2: AI Recurrence Radar (Probabilistic Forecasts) ─────────────── */}
+        {activeTab === "cadence" && (
+          <div className="forecasts-results-section">
+            <div className="disclaimer-alert-card">
+              <AlertCircle size={22} />
+              <div>
+                <b>Probabilistic AI Forecast Notice</b>
+                <p>
+                  These signals are statistical estimates based on historical cadence, developer forum teasers, and DNS domain registrations. They are not official sponsor announcements until verified. Use them to form teams and prepare prerequisites early.
+                </p>
+              </div>
+            </div>
+
+            <div className="predictions-cards-grid">
+              {predictions.map((p) => (
+                <MovingBorderBox key={p.id} className="prediction-full-moving-card">
+                  <article className="prediction-full-card">
+                    <div className="pred-card-top-row">
+                      <div className="pred-org-tag">
+                        <Building2 size={13} /> {p.organizer}
+                      </div>
+                      <div className="probability-gauge">
+                        <span
+                          className="gauge-fill"
+                          style={{ width: `${Math.round(p.probability * 100)}%` }}
+                        />
+                        <b>{Math.round(p.probability * 100)}% Probability</b>
+                      </div>
+                    </div>
+
+                    <div className="pred-forecast-badge">
+                      <BrainCircuit size={12} /> Probabilistic Forecast · Unverified
+                    </div>
+
+                    <h2 className="pred-card-title">{p.event}</h2>
+
+                    <div className="pred-specs-grid">
+                      <div className="spec-tile">
+                        <CalendarDays size={14} />
+                        <div>
+                          <small>Predicted Window</small>
+                          <b>{p.window}</b>
+                        </div>
+                      </div>
+                      <div className="spec-tile">
+                        <Trophy size={14} />
+                        <div>
+                          <small>Expected Prize</small>
+                          <b>{p.expectedPrize}</b>
+                        </div>
+                      </div>
+                      <div className="spec-tile">
+                        <Clock3 size={14} />
+                        <div>
+                          <small>Cadence</small>
+                          <b>{p.historicalCadence}</b>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="evidence-signals-box">
+                      <b>Detected Evidence & Radar Signals:</b>
+                      <TracingBeamTimeline
+                        steps={p.signals.map((sig, idx) => ({
+                          title: `Signal Beacon #${idx + 1}`,
+                          desc: sig,
+                        }))}
+                      />
+                    </div>
+
+                    <div className="pred-card-footer">
+                      <button
+                        type="button"
+                        className="btn-primary full-width"
+                        onClick={() => handleSetAlert(p.event)}
+                      >
+                        <Bell size={15} /> Set Instant Radar Alert
+                      </button>
+                    </div>
+                  </article>
+                </MovingBorderBox>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Registration Modal */}
+      <RegistrationModal
+        event={modalEvent}
+        isOpen={Boolean(modalEvent)}
+        onClose={() => setModalEvent(null)}
+      />
     </div>
   );
 }

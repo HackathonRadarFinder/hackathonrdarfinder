@@ -3,7 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import {
   Sparkles, Globe2, Compass, ArrowRight, Trophy, Clock3,
   Building2, Zap, BrainCircuit, ShieldCheck, TrendingUp,
-  MapPin, CheckCircle2, ChevronRight, Filter, Flame
+  MapPin, CheckCircle2, ChevronRight, Filter, Flame,
+  Bookmark, BookmarkCheck, Search, ZoomIn, ZoomOut, RotateCcw,
+  SlidersHorizontal, ArrowUpRight, X, Calendar, Laptop, Radio
 } from "lucide-react";
 
 // ─── 1. Aceternity Spotlight Cone ──────────────────────────────────────────────
@@ -164,47 +166,61 @@ function geoToSvg(lat, lng, width = 1000, height = 500) {
   return { x, y };
 }
 
-// Sample continent dot matrix grid for high-tech holographic world look
-const CONTINENT_DOTS = [
+// Conflict-free label offsets to prevent overlapping labels
+const HUB_LABEL_CONFIG = {
+  "Seattle": { dx: 0, dy: -18, anchor: "middle" },
+  "San Francisco": { dx: -12, dy: 18, anchor: "end" },
+  "San Jose": { dx: -12, dy: 18, anchor: "end" },
+  "New York": { dx: 12, dy: -12, anchor: "start" },
+  "London": { dx: -14, dy: -16, anchor: "end" },
+  "Geneva": { dx: 14, dy: 18, anchor: "start" },
+  "Mumbai": { dx: -14, dy: -14, anchor: "end" },
+  "Bengaluru": { dx: 14, dy: 18, anchor: "start" },
+  "Singapore": { dx: 12, dy: 16, anchor: "start" },
+  "Tokyo": { dx: 14, dy: -12, anchor: "start" },
+};
+
+// Recognizable world map continent outlines (Equirectangular 1000x500)
+const WORLD_CONTINENTS = [
   // North America
-  { x: 160, y: 120 }, { x: 180, y: 110 }, { x: 200, y: 100 }, { x: 220, y: 95 },
-  { x: 150, y: 140 }, { x: 170, y: 135 }, { x: 195, y: 130 }, { x: 220, y: 125 },
-  { x: 245, y: 120 }, { x: 270, y: 125 }, { x: 290, y: 135 }, { x: 160, y: 160 },
-  { x: 185, y: 155 }, { x: 210, y: 150 }, { x: 235, y: 155 }, { x: 260, y: 165 },
-  { x: 200, y: 180 }, { x: 220, y: 190 }, { x: 240, y: 210 },
+  "M 110,65 L 140,55 L 180,50 L 220,55 L 260,70 L 300,90 L 315,120 L 295,140 L 270,145 L 245,175 L 255,205 L 235,215 L 210,195 L 185,160 L 145,150 L 130,120 L 105,95 Z",
+  // Greenland
+  "M 340,40 L 380,35 L 400,55 L 375,80 L 340,70 Z",
   // South America
-  { x: 280, y: 260 }, { x: 300, y: 280 }, { x: 320, y: 295 }, { x: 310, y: 320 },
-  { x: 330, y: 340 }, { x: 320, y: 370 }, { x: 310, y: 400 }, { x: 300, y: 430 },
+  "M 270,250 L 315,260 L 350,290 L 345,340 L 320,390 L 295,445 L 285,420 L 290,360 L 265,300 L 260,265 Z",
   // Europe
-  { x: 480, y: 95 }, { x: 500, y: 105 }, { x: 520, y: 100 }, { x: 540, y: 95 },
-  { x: 490, y: 120 }, { x: 510, y: 120 }, { x: 535, y: 125 }, { x: 560, y: 115 },
-  { x: 480, y: 140 }, { x: 505, y: 140 }, { x: 525, y: 145 }, { x: 550, y: 140 },
+  "M 460,110 L 490,90 L 525,85 L 560,95 L 565,135 L 530,150 L 495,155 L 465,145 L 455,125 Z",
+  // British Isles
+  "M 460,95 L 475,85 L 470,115 L 455,110 Z",
   // Africa
-  { x: 485, y: 180 }, { x: 510, y: 180 }, { x: 540, y: 185 }, { x: 565, y: 200 },
-  { x: 490, y: 210 }, { x: 515, y: 225 }, { x: 545, y: 235 }, { x: 580, y: 230 },
-  { x: 520, y: 270 }, { x: 540, y: 285 }, { x: 560, y: 295 }, { x: 530, y: 330 },
-  { x: 550, y: 350 }, { x: 540, y: 380 },
+  "M 470,175 L 540,175 L 585,210 L 595,270 L 550,360 L 515,365 L 480,270 L 460,210 Z",
+  // Madagascar
+  "M 605,325 L 615,320 L 610,360 L 600,355 Z",
   // Asia
-  { x: 600, y: 90 }, { x: 630, y: 95 }, { x: 670, y: 100 }, { x: 710, y: 105 },
-  { x: 750, y: 100 }, { x: 790, y: 110 }, { x: 830, y: 120 }, { x: 870, y: 115 },
-  { x: 620, y: 130 }, { x: 660, y: 135 }, { x: 700, y: 140 }, { x: 740, y: 145 },
-  { x: 780, y: 140 }, { x: 820, y: 150 }, { x: 860, y: 145 }, { x: 890, y: 155 },
-  { x: 640, y: 170 }, { x: 680, y: 180 }, { x: 715, y: 195 }, { x: 750, y: 190 },
-  { x: 785, y: 210 }, { x: 825, y: 210 }, { x: 705, y: 215 }, { x: 725, y: 230 },
-  { x: 790, y: 250 }, { x: 830, y: 260 },
+  "M 565,95 L 630,80 L 720,75 L 810,85 L 880,105 L 890,145 L 850,170 L 810,195 L 755,190 L 730,220 L 695,210 L 670,175 L 610,170 L 575,135 Z",
+  // Indian Subcontinent
+  "M 685,185 L 725,185 L 735,225 L 715,265 L 690,225 Z",
+  // Japan / East Asia
+  "M 875,130 L 895,145 L 885,175 L 870,165 Z",
+  // Southeast Asia / Malay
+  "M 760,230 L 805,240 L 830,265 L 780,285 L 750,250 Z",
   // Australia
-  { x: 820, y: 340 }, { x: 850, y: 330 }, { x: 880, y: 345 }, { x: 830, y: 375 },
-  { x: 865, y: 380 }, { x: 890, y: 385 }
+  "M 795,335 L 860,320 L 900,345 L 885,405 L 825,410 L 790,375 Z",
+  // New Zealand
+  "M 920,410 L 935,405 L 930,440 L 915,435 Z"
 ];
 
 export function AceternityWorldMap({
   events = [],
   selectedCategory = "ALL",
+  selectedCity = null,
   onSelectEvent,
+  onSelectCity,
   className = "",
   compact = false,
 }) {
-  const [hoveredEvent, setHoveredEvent] = useState(null);
+  const [hoveredHub, setHoveredHub] = useState(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
   const navigate = useNavigate();
 
   // Filter events based on category
@@ -218,28 +234,46 @@ export function AceternityWorldMap({
     );
   }, [events, selectedCategory]);
 
-  // Construct global hubs and connecting telemetry arcs
-  const activeHubs = useMemo(() => {
-    return filteredEvents
-      .filter((e) => e.coordinates && e.coordinates.lat)
-      .map((e) => {
-        const { x, y } = geoToSvg(e.coordinates.lat, e.coordinates.lng, 1000, 500);
-        return { ...e, svgX: x, svgY: y };
-      });
+  // Aggregate events by City Hubs so beacons never duplicate or collide
+  const cityHubs = useMemo(() => {
+    const hubsMap = new Map();
+    filteredEvents.forEach((evt) => {
+      if (!evt.coordinates || !evt.coordinates.lat) return;
+      const cityName = evt.city || evt.location.split("(")[0].trim();
+      const { x, y } = geoToSvg(evt.coordinates.lat, evt.coordinates.lng, 1000, 500);
+
+      if (!hubsMap.has(cityName)) {
+        hubsMap.set(cityName, {
+          id: `hub-${cityName.toLowerCase().replace(/\s+/g, "-")}`,
+          city: cityName,
+          country: evt.country || "Global",
+          coordinates: evt.coordinates,
+          svgX: x,
+          svgY: y,
+          events: [evt],
+          totalPrizeNumeric: evt.prizeNumeric || 0,
+          labelConfig: HUB_LABEL_CONFIG[cityName] || { dx: 0, dy: -14, anchor: "middle" }
+        });
+      } else {
+        const hub = hubsMap.get(cityName);
+        hub.events.push(evt);
+        hub.totalPrizeNumeric += evt.prizeNumeric || 0;
+      }
+    });
+    return Array.from(hubsMap.values());
   }, [filteredEvents]);
 
-  // Precomputed telemetry arcs between premier global nodes
+  // Arcs between active global city hubs
   const arcs = useMemo(() => {
-    if (activeHubs.length < 2) return [];
+    if (cityHubs.length < 2) return [];
     const connections = [];
-    for (let i = 0; i < activeHubs.length - 1; i++) {
-      const from = activeHubs[i];
-      const to = activeHubs[i + 1];
-      // Quadratic bezier arc midpoint arched upwards
+    for (let i = 0; i < cityHubs.length - 1; i++) {
+      const from = cityHubs[i];
+      const to = cityHubs[i + 1];
       const dx = to.svgX - from.svgX;
       const dy = to.svgY - from.svgY;
       const midX = (from.svgX + to.svgX) / 2;
-      const midY = (from.svgY + to.svgY) / 2 - Math.min(80, Math.max(30, Math.abs(dx) * 0.22));
+      const midY = (from.svgY + to.svgY) / 2 - Math.min(60, Math.max(25, Math.abs(dx) * 0.18));
       connections.push({
         id: `arc-${from.id}-${to.id}`,
         d: `M ${from.svgX} ${from.svgY} Q ${midX} ${midY} ${to.svgX} ${to.svgY}`,
@@ -248,15 +282,26 @@ export function AceternityWorldMap({
       });
     }
     return connections;
-  }, [activeHubs]);
+  }, [cityHubs]);
 
-  const handleMarkerClick = (event) => {
-    if (onSelectEvent) {
-      onSelectEvent(event);
-    } else {
-      navigate(`/event/${event.id}`);
+  const handleHubClick = (hub) => {
+    if (onSelectCity) {
+      onSelectCity(hub.city);
+    }
+    if (onSelectEvent && hub.events.length > 0) {
+      onSelectEvent(hub.events[0]);
     }
   };
+
+  const handleZoomIn = () => setZoomLevel((z) => Math.min(2.2, z + 0.35));
+  const handleZoomOut = () => setZoomLevel((z) => Math.max(1, z - 0.35));
+  const handleResetZoom = () => setZoomLevel(1);
+
+  // Compute zoomed viewBox around center or hovered hub
+  const viewWidth = 1000 / zoomLevel;
+  const viewHeight = 500 / zoomLevel;
+  const viewX = (1000 - viewWidth) / 2;
+  const viewY = (500 - viewHeight) / 2;
 
   return (
     <div className={`world-map-wrapper ${compact ? "compact" : ""} ${className}`}>
@@ -264,23 +309,36 @@ export function AceternityWorldMap({
       <div className="map-ambient-glow" />
       <div className="map-grid-overlay" />
 
+      {/* Interactive Map Controls */}
+      <div className="map-zoom-controls">
+        <button type="button" onClick={handleZoomIn} className="map-ctrl-btn" title="Zoom In">
+          <ZoomIn size={14} />
+        </button>
+        <button type="button" onClick={handleZoomOut} className="map-ctrl-btn" title="Zoom Out">
+          <ZoomOut size={14} />
+        </button>
+        <button type="button" onClick={handleResetZoom} className="map-ctrl-btn" title="Reset Projection">
+          <RotateCcw size={13} />
+        </button>
+      </div>
+
       <svg
-        viewBox="0 0 1000 500"
+        viewBox={`${viewX} ${viewY} ${viewWidth} ${viewHeight}`}
         className="world-map-svg"
         preserveAspectRatio="xMidYMid meet"
       >
         <defs>
-          <radialGradient id="beaconGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#00d2ff" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="#7667ff" stopOpacity="0" />
+          <radialGradient id="beaconGlowCyan" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#00d2ff" stopOpacity="0.95" />
+            <stop offset="100%" stopColor="#6366f1" stopOpacity="0" />
           </radialGradient>
-          <linearGradient id="arcGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#00d2ff" stopOpacity="0.8" />
-            <stop offset="50%" stopColor="#9b7cff" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="#00d2ff" stopOpacity="0.8" />
+          <linearGradient id="arcBeamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#00d2ff" stopOpacity="0.9" />
+            <stop offset="50%" stopColor="#818cf8" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#00d2ff" stopOpacity="0.9" />
           </linearGradient>
-          <filter id="glowFilter" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
+          <filter id="mapGlowFilter" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="3.5" result="blur" />
             <feMerge>
               <feMergeNode in="blur" />
               <feMergeNode in="SourceGraphic" />
@@ -288,79 +346,123 @@ export function AceternityWorldMap({
           </filter>
         </defs>
 
-        {/* Global Dot Matrix Landmass Pattern */}
-        <g className="continent-dots-group">
-          {CONTINENT_DOTS.map((dot, i) => (
-            <circle
-              key={i}
-              cx={dot.x}
-              cy={dot.y}
-              r="2.2"
-              className="continent-dot"
+        {/* Global Coordinate Grid (Meridians & Parallels) */}
+        <g className="map-geo-grid" stroke="rgba(0, 210, 255, 0.07)" strokeWidth="0.8" strokeDasharray="3 4">
+          {/* Parallels */}
+          <line x1="0" y1="125" x2="1000" y2="125" />
+          <line x1="0" y1="250" x2="1000" y2="250" stroke="rgba(0, 210, 255, 0.12)" strokeWidth="1" />
+          <line x1="0" y1="375" x2="1000" y2="375" />
+          {/* Meridians */}
+          <line x1="166" y1="0" x2="166" y2="500" />
+          <line x1="333" y1="0" x2="333" y2="500" />
+          <line x1="500" y1="0" x2="500" y2="500" stroke="rgba(0, 210, 255, 0.12)" strokeWidth="1" />
+          <line x1="666" y1="0" x2="666" y2="500" />
+          <line x1="833" y1="0" x2="833" y2="500" />
+        </g>
+
+        {/* Recognizable Continent Silhouettes */}
+        <g className="world-continents-group">
+          {WORLD_CONTINENTS.map((pathD, idx) => (
+            <path
+              key={`continent-${idx}`}
+              d={pathD}
+              className="world-continent-path"
+              fill="#080E1C"
+              stroke="#1C2844"
+              strokeWidth="1.2"
+              strokeLinejoin="round"
             />
           ))}
         </g>
 
-        {/* Animated Telemetry Connecting Arcs */}
+        {/* Telemetry Connecting Arcs */}
         <g className="telemetry-arcs-group">
           {arcs.map((arc) => (
             <g key={arc.id}>
-              {/* Underlying subtle trace */}
               <path
                 d={arc.d}
                 fill="none"
-                stroke="rgba(118, 103, 255, 0.25)"
+                stroke="rgba(99, 102, 241, 0.2)"
                 strokeWidth="1.2"
                 strokeDasharray="4 4"
               />
-              {/* Glowing animated beam */}
               <path
                 d={arc.d}
                 fill="none"
-                stroke="url(#arcGradient)"
-                strokeWidth="2"
+                stroke="url(#arcBeamGrad)"
+                strokeWidth="1.6"
                 strokeLinecap="round"
-                filter="url(#glowFilter)"
                 className="animated-arc-beam"
               />
             </g>
           ))}
         </g>
 
-        {/* Pulsing Event Location Markers */}
+        {/* Global City Hub Beacons with Smart Label Positions */}
         <g className="location-markers-group">
-          {activeHubs.map((e) => {
-            const isHovered = hoveredEvent?.id === e.id;
+          {cityHubs.map((hub) => {
+            const isHovered = hoveredHub?.id === hub.id;
+            const isSelected = selectedCity === hub.city;
+            const { dx, dy, anchor } = hub.labelConfig;
+
             return (
               <g
-                key={e.id}
-                className={`map-beacon-node ${isHovered ? "hovered" : ""}`}
-                transform={`translate(${e.svgX}, ${e.svgY})`}
-                onMouseEnter={() => setHoveredEvent(e)}
-                onMouseLeave={() => setHoveredEvent(null)}
-                onClick={() => handleMarkerClick(e)}
+                key={hub.id}
+                className={`map-beacon-node ${isHovered || isSelected ? "hovered" : ""}`}
+                transform={`translate(${hub.svgX}, ${hub.svgY})`}
+                onMouseEnter={() => setHoveredHub(hub)}
+                onMouseLeave={() => setHoveredHub(null)}
+                onClick={() => handleHubClick(hub)}
                 style={{ cursor: "pointer" }}
               >
-                {/* Outer ping concentric circles */}
+                {/* Concentric Pulsing Radar Rings */}
                 <circle r="14" className="beacon-ping-ring ping-1" />
                 <circle r="22" className="beacon-ping-ring ping-2" />
 
-                {/* Radar beacon central core */}
+                {/* Central Beacon Core */}
                 <circle
-                  r={isHovered ? "7" : "5.5"}
-                  fill="#00d2ff"
+                  r={isSelected ? "8" : isHovered ? "7" : "5.5"}
+                  fill={isSelected ? "#38bdf8" : "#00d2ff"}
                   className="beacon-core-dot"
-                  filter="url(#glowFilter)"
+                  filter="url(#mapGlowFilter)"
                 />
-                <circle r="2.5" fill="#ffffff" />
+                <circle r="2" fill="#ffffff" />
 
-                {/* City label on map */}
+                {/* Event Count Pill Indicator */}
+                {hub.events.length > 1 && (
+                  <g transform="translate(6, -6)">
+                    <rect
+                      x="0"
+                      y="-7"
+                      width="13"
+                      height="12"
+                      rx="3"
+                      fill="#6366f1"
+                      stroke="#05070d"
+                      strokeWidth="1"
+                    />
+                    <text
+                      x="6.5"
+                      y="2"
+                      fill="#ffffff"
+                      fontSize="8"
+                      fontWeight="bold"
+                      textAnchor="middle"
+                      fontFamily="JetBrains Mono, monospace"
+                    >
+                      {hub.events.length}
+                    </text>
+                  </g>
+                )}
+
+                {/* City Label with collision-free offset */}
                 <text
-                  y="-12"
-                  textAnchor="middle"
-                  className={`beacon-city-label ${isHovered ? "active" : ""}`}
+                  x={dx}
+                  y={dy}
+                  textAnchor={anchor}
+                  className={`beacon-city-label ${isHovered || isSelected ? "active" : ""}`}
                 >
-                  {e.city || e.location.split("(")[0].trim()}
+                  {hub.city}
                 </text>
               </g>
             );
@@ -368,65 +470,59 @@ export function AceternityWorldMap({
         </g>
       </svg>
 
-      {/* Floating Animated Tooltip with Event Intelligence */}
-      {hoveredEvent && (
+      {/* Floating Tooltip upon Hub Hover */}
+      {hoveredHub && (
         <div
           className="map-animated-tooltip"
           style={{
-            left: `${(hoveredEvent.svgX / 1000) * 100}%`,
-            top: `${(hoveredEvent.svgY / 500) * 100}%`,
+            left: `${(hoveredHub.svgX / 1000) * 100}%`,
+            top: `${(hoveredHub.svgY / 500) * 100}%`,
           }}
-          onClick={() => handleMarkerClick(hoveredEvent)}
+          onClick={() => handleHubClick(hoveredHub)}
         >
           <div className="tooltip-glass-panel">
             <div className="tooltip-top-row">
               <span className="tooltip-org">
-                <Building2 size={12} /> {hoveredEvent.organizer}
+                <MapPin size={12} /> {hoveredHub.city}, {hoveredHub.country}
               </span>
               <span className="tooltip-ai-badge">
-                <Sparkles size={11} /> {hoveredEvent.aiMatchScore || 95}% Match
+                <Sparkles size={11} /> {hoveredHub.events.length} {hoveredHub.events.length === 1 ? "Event" : "Events"}
               </span>
             </div>
 
-            <h4 className="tooltip-title">{hoveredEvent.title}</h4>
+            <h4 className="tooltip-title">{hoveredHub.events[0]?.title}</h4>
 
             <div className="tooltip-details-grid">
               <div>
-                <small>Prize Pool</small>
-                <b className="prize-gold">{hoveredEvent.prize}</b>
+                <small>Combined Prize</small>
+                <b className="prize-gold">${(hoveredHub.totalPrizeNumeric).toLocaleString()}</b>
               </div>
               <div>
-                <small>Location</small>
-                <b>{hoveredEvent.city || "Global Hub"}</b>
+                <small>Organizer</small>
+                <b>{hoveredHub.events[0]?.organizer}</b>
               </div>
               <div>
                 <small>Closes in</small>
-                <b>{hoveredEvent.deadlineDays || 4} days</b>
+                <b>{hoveredHub.events[0]?.deadlineDays || 4} days</b>
               </div>
             </div>
 
-            <div className="tooltip-tags-row">
-              {hoveredEvent.tags?.slice(0, 2).map((t) => (
-                <span key={t} className="tooltip-mini-tag">{t}</span>
-              ))}
-            </div>
-
             <div className="tooltip-cta-line">
-              <span>Click to view challenge</span>
+              <span>Click beacon to explore local events</span>
               <ChevronRight size={13} />
             </div>
           </div>
         </div>
       )}
 
-      {/* Live Radar Coordinates Telemetry Strip */}
+      {/* Live Radar Telemetry Status Bar */}
       <div className="map-status-overlay">
         <div className="map-telemetry-badge">
           <span className="live-pulse-dot" />
-          <span><b>{activeHubs.length}</b> LIVE GLOBAL BEACONS</span>
+          <span><b>{cityHubs.length}</b> ACTIVE HUBS · <b>{filteredEvents.length}</b> VERIFIED BEACONS</span>
         </div>
         <div className="map-coverage-text">
-          SF • Seattle • London • Geneva • Bengaluru • Singapore • Tokyo
+          <span>Click any city beacon to filter opportunities</span>
         </div>
       </div>
     </div>
@@ -754,10 +850,18 @@ export function AnimatedCounter({
   );
 }
 
-// ─── 12. Aceternity Live Radar Section with Filtering ──────────────────────────
-export function LiveRadarSection({ events = [], onRegister }) {
+// ─── 12. Aceternity Live Radar Section with Filtering & Opportunity Grid ──────────
+export function LiveRadarSection({
+  events = [],
+  onRegister,
+  isSaved = () => false,
+  onToggleSave = () => {},
+}) {
   const [activeFilter, setActiveFilter] = useState("ALL");
-  const [selectedEvent, setSelectedEvent] = useState(events[0] || null);
+  const [selectedCity, setSelectedCity] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedMode, setSelectedMode] = useState("ALL");
+  const [sortBy, setSortBy] = useState("deadline");
 
   const filters = [
     "ALL",
@@ -769,23 +873,91 @@ export function LiveRadarSection({ events = [], onRegister }) {
     "OPEN SOURCE",
   ];
 
+  // Genuine multi-criteria filtering for opportunities
+  const filteredOpportunities = useMemo(() => {
+    return events
+      .filter((e) => {
+        // Category filter
+        if (activeFilter !== "ALL") {
+          const cat = activeFilter.toLowerCase();
+          const matchCat =
+            (e.radarCategory && e.radarCategory.toLowerCase() === cat) ||
+            (e.category && e.category.toLowerCase().includes(cat)) ||
+            (e.tags && e.tags.some((t) => t.toLowerCase().includes(cat)));
+          if (!matchCat) return false;
+        }
+
+        // City beacon filter
+        if (selectedCity) {
+          const cityName = (e.city || "").toLowerCase();
+          const locName = (e.location || "").toLowerCase();
+          const target = selectedCity.toLowerCase();
+          if (!cityName.includes(target) && !locName.includes(target)) {
+            return false;
+          }
+        }
+
+        // Mode filter
+        if (selectedMode !== "ALL") {
+          if ((e.mode || "").toLowerCase() !== selectedMode.toLowerCase()) {
+            return false;
+          }
+        }
+
+        // Search query
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase();
+          const matchSearch =
+            (e.title && e.title.toLowerCase().includes(q)) ||
+            (e.organizer && e.organizer.toLowerCase().includes(q)) ||
+            (e.city && e.city.toLowerCase().includes(q)) ||
+            (e.description && e.description.toLowerCase().includes(q)) ||
+            (e.tags && e.tags.some((t) => t.toLowerCase().includes(q)));
+          if (!matchSearch) return false;
+        }
+
+        return true;
+      })
+      .sort((a, b) => {
+        if (sortBy === "deadline") {
+          return (a.deadlineDays || 99) - (b.deadlineDays || 99);
+        }
+        if (sortBy === "prize") {
+          return (b.prizeNumeric || 0) - (a.prizeNumeric || 0);
+        }
+        if (sortBy === "match") {
+          return (b.aiMatchScore || 0) - (a.aiMatchScore || 0);
+        }
+        return 0;
+      });
+  }, [events, activeFilter, selectedCity, selectedMode, searchQuery, sortBy]);
+
+  const handleCitySelect = (city) => {
+    if (selectedCity === city) {
+      setSelectedCity(null); // toggle off
+    } else {
+      setSelectedCity(city);
+    }
+  };
+
   return (
-    <section className="live-radar-section">
+    <section className="live-radar-section" id="radar-explorer">
       <div className="section-container">
+        {/* Section Header */}
         <div className="section-header-flex">
           <div>
             <div className="section-eyebrow">
               <Zap size={14} /> REAL-TIME SATELLITE TELEMETRY
             </div>
-            <h2 className="section-heading">Live Hackathon Radar</h2>
+            <h2 className="section-heading">Global Hackathon Radar</h2>
             <p className="section-subtext">
-              Track global hackathon signals, developer hubs, and cash prize deployments across worldwide innovation epicenters.
+              Track live hackathon signals, developer hubs, and cash prize deployments across worldwide innovation epicenters. Select any beacon to explore local opportunities.
             </p>
           </div>
 
           <div className="radar-pulse-indicator-pill">
             <span className="live-pulse-dot" />
-            <span>Telemetry Active · Refreshing Hourly</span>
+            <span>Telemetry Active · 12 Verified Hubs</span>
           </div>
         </div>
 
@@ -809,55 +981,242 @@ export function LiveRadarSection({ events = [], onRegister }) {
           <AceternityWorldMap
             events={events}
             selectedCategory={activeFilter}
-            onSelectEvent={(evt) => setSelectedEvent(evt)}
+            selectedCity={selectedCity}
+            onSelectCity={handleCitySelect}
           />
         </div>
 
-        {/* Selected Hub Intelligence Card Drawer */}
-        {selectedEvent && (
-          <div className="radar-focused-event-drawer">
-            <div className="drawer-glow-border" />
-            <div className="drawer-content">
-              <div className="drawer-meta-col">
-                <span className="drawer-tag">
-                  <MapPin size={13} /> {selectedEvent.city || selectedEvent.location}
-                </span>
-                <span className="drawer-ai-score">
-                  <Sparkles size={13} /> {selectedEvent.aiMatchScore || 96}% AI Radar Match
-                </span>
+        {/* ─── Opportunity Discovery Panel Directly Below Map ─────────── */}
+        <div className="radar-opportunities-panel">
+          {/* Header & City Filter Notice */}
+          <div className="opp-discovery-header">
+            <div className="opp-title-group">
+              <div className="opp-eyebrow">
+                <Sparkles size={13} /> VERIFIED OPPORTUNITIES
               </div>
+              <h3 className="opp-section-title">
+                {selectedCity ? `Opportunities in ${selectedCity}` : "Explore Opportunities Worldwide"}
+              </h3>
+              <p className="opp-section-desc">
+                Displaying <b>{filteredOpportunities.length}</b> verified competitions
+                {selectedCity ? ` centered around ${selectedCity}` : ""}. Real deadlines, prizes, and application links.
+              </p>
+            </div>
 
-              <div className="drawer-main-col">
-                <h3 className="drawer-title">{selectedEvent.title}</h3>
-                <p className="drawer-desc">{selectedEvent.description}</p>
-                <div className="drawer-tags-list">
-                  {selectedEvent.tags?.map((t) => (
-                    <span key={t} className="drawer-tag-chip">{t}</span>
-                  ))}
-                </div>
+            {selectedCity && (
+              <div className="active-city-filter-badge">
+                <MapPin size={13} />
+                <span>Beacon: <b>{selectedCity}</b></span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedCity(null)}
+                  className="clear-city-btn"
+                  title="Clear city filter"
+                >
+                  <X size={13} />
+                </button>
               </div>
+            )}
+          </div>
 
-              <div className="drawer-prize-col">
-                <div className="drawer-prize-card">
-                  <small>Prize Pool</small>
-                  <b>{selectedEvent.prize}</b>
-                  <span>Closes in {selectedEvent.deadlineDays || 4} days</span>
-                </div>
-                <div className="drawer-actions-row">
-                  <Link to={`/event/${selectedEvent.id}`} className="btn-secondary btn-sm">
-                    View Details
-                  </Link>
-                  <button
-                    className="btn-primary btn-sm"
-                    onClick={() => onRegister && onRegister(selectedEvent)}
-                  >
-                    Register <ArrowRight size={13} />
-                  </button>
-                </div>
-              </div>
+          {/* Search, Format & Sort Controls Toolbar */}
+          <div className="opp-controls-toolbar">
+            <div className="opp-search-box">
+              <Search size={15} />
+              <input
+                type="text"
+                placeholder="Search by title, skills, or organizer..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="opp-search-input"
+              />
+              {searchQuery && (
+                <button onClick={() => setSearchQuery("")} className="opp-clear-search">
+                  <X size={14} />
+                </button>
+              )}
+            </div>
+
+            <div className="opp-format-pills">
+              {["ALL", "Remote", "In-Person", "Hybrid"].map((mode) => (
+                <button
+                  key={mode}
+                  className={`opp-format-btn ${selectedMode === mode ? "active" : ""}`}
+                  onClick={() => setSelectedMode(mode)}
+                >
+                  {mode === "ALL" ? "All Formats" : mode}
+                </button>
+              ))}
+            </div>
+
+            <div className="opp-sort-select-wrapper">
+              <SlidersHorizontal size={14} />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="opp-sort-select"
+              >
+                <option value="deadline">Closing Soonest</option>
+                <option value="prize">Highest Prize Pool</option>
+                <option value="match">Highest AI Match</option>
+              </select>
             </div>
           </div>
-        )}
+
+          {/* Opportunities Cards Grid */}
+          {filteredOpportunities.length > 0 ? (
+            <div className="opp-cards-grid">
+              {filteredOpportunities.map((item) => {
+                const saved = isSaved(item.id);
+                return (
+                  <div key={item.id} className="opportunity-cyber-card">
+                    <div className="opp-card-glow-bar" />
+
+                    <div className="opp-card-header">
+                      <div className="opp-header-tags">
+                        <span className={`opp-mode-pill mode-${(item.mode || "remote").toLowerCase()}`}>
+                          {item.mode === "Remote" ? (
+                            <Globe2 size={12} />
+                          ) : item.mode === "Hybrid" ? (
+                            <Laptop size={12} />
+                          ) : (
+                            <MapPin size={12} />
+                          )}
+                          {item.mode || "Remote"}
+                        </span>
+                        <span className="opp-category-pill">
+                          {item.radarCategory || item.category}
+                        </span>
+                        <span className="opp-verified-pill">
+                          <CheckCircle2 size={11} /> Verified
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        className={`opp-bookmark-btn ${saved ? "saved" : ""}`}
+                        onClick={() => onToggleSave(item.id)}
+                        title={saved ? "Remove from bookmarks" : "Save hackathon"}
+                      >
+                        {saved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+                      </button>
+                    </div>
+
+                    <div className="opp-body">
+                      <div className="opp-org-line">
+                        <span className="opp-org-avatar">
+                          {item.organizerInitials || item.organizer.slice(0, 2).toUpperCase()}
+                        </span>
+                        <span className="opp-org-name">{item.organizer}</span>
+                        <span className="opp-dot-sep">·</span>
+                        <span className="opp-location-tag">
+                          <MapPin size={11} /> {item.city || item.location}
+                        </span>
+                      </div>
+
+                      <h3 className="opp-title">
+                        <Link to={`/event/${item.id}`}>{item.title}</Link>
+                      </h3>
+
+                      <p className="opp-desc-snippet">{item.description}</p>
+                    </div>
+
+                    {/* Key Metrics Row: Prize, Deadline, Countdown, Eligibility */}
+                    <div className="opp-metrics-grid">
+                      <div className="opp-metric-cell">
+                        <small>Prize Pool</small>
+                        <b className="prize-cyan">{item.prize}</b>
+                      </div>
+                      <div className="opp-metric-cell">
+                        <small>Deadline</small>
+                        <b>{item.deadline}</b>
+                      </div>
+                      <div className="opp-metric-cell countdown-cell">
+                        <small>Countdown</small>
+                        <span className={`countdown-chip ${item.deadlineDays <= 3 ? "urgent" : ""}`}>
+                          {item.deadlineDays <= 3 ? (
+                            <Flame size={12} className="flame-pulse" />
+                          ) : (
+                            <Clock3 size={12} />
+                          )}
+                          <b>{item.deadlineDays}d left</b>
+                        </span>
+                      </div>
+                      <div className="opp-metric-cell">
+                        <small>Eligibility</small>
+                        <span className="opp-eligibility-text">{item.eligibility || "Open to All"}</span>
+                      </div>
+                    </div>
+
+                    {/* AI Match Reason Banner */}
+                    <div className="opp-ai-match-banner">
+                      <div className="ai-match-score-pill">
+                        <Sparkles size={11} /> {item.aiMatchScore || 94}% AI Match
+                      </div>
+                      <span className="ai-match-reason">
+                        {item.radarCategory === "AI"
+                          ? "Matches generative AI, multimodal agents, and LLM orchestration tracks"
+                          : item.radarCategory === "CLOUD"
+                          ? "High alignment with cloud infrastructure and enterprise deployment models"
+                          : item.radarCategory === "WEB3"
+                          ? "Optimal fit for decentralized protocols, smart contracts, and ZK proofs"
+                          : item.radarCategory === "ROBOTICS"
+                          ? "Direct match for microservice acceleration, inference pipelines, and IoT"
+                          : "Strong timing match with verified student and developer eligibility"}
+                      </span>
+                    </div>
+
+                    {/* Footer Tags & Actions */}
+                    <div className="opp-footer-actions">
+                      <div className="opp-tags-row">
+                        {item.tags?.slice(0, 3).map((tag) => (
+                          <span key={tag} className="opp-tag-chip">
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+
+                      <div className="opp-action-buttons">
+                        <Link to={`/event/${item.id}`} className="btn-secondary btn-sm">
+                          View Details
+                        </Link>
+                        <button
+                          type="button"
+                          className="btn-primary btn-sm"
+                          onClick={() => onRegister && onRegister(item)}
+                        >
+                          Apply Now <ArrowRight size={13} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="opp-empty-state">
+              <div className="opp-empty-icon">
+                <Compass size={32} />
+              </div>
+              <h4>No Hackathons Found</h4>
+              <p>
+                No verified opportunities currently match your filter criteria in this view.
+              </p>
+              <button
+                type="button"
+                className="btn-secondary btn-sm"
+                onClick={() => {
+                  setActiveFilter("ALL");
+                  setSelectedCity(null);
+                  setSearchQuery("");
+                  setSelectedMode("ALL");
+                }}
+              >
+                Reset All Filters
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );
