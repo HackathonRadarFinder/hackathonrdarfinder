@@ -7,6 +7,7 @@ import {
   Bookmark, BookmarkCheck, Search, ZoomIn, ZoomOut, RotateCcw,
   SlidersHorizontal, ArrowUpRight, X, Calendar, Laptop, Radio
 } from "lucide-react";
+import { CompanyLogo } from "./CompanyLogo";
 
 // ─── 1. Aceternity Spotlight Cone ──────────────────────────────────────────────
 export function AceternitySpotlight({ className = "", fill = "#6366F1" }) {
@@ -734,7 +735,7 @@ export function HeroInteractiveRadar({ events = [] }) {
             onClick={() => navigate(`/event/${item.id}`)}
           >
             <div className="stream-avatar">
-              {item.organizerInitials || item.organizer.slice(0, 2)}
+              <CompanyLogo organizerKey={item.organizerKey} name={item.organizer} size={22} />
             </div>
             <div className="stream-info">
               <div className="stream-title-row">
@@ -1147,7 +1148,7 @@ export function LiveRadarSection({
                     <div className="opp-body">
                       <div className="opp-org-line">
                         <span className="opp-org-avatar">
-                          {item.organizerInitials || item.organizer.slice(0, 2).toUpperCase()}
+                          <CompanyLogo organizerKey={item.organizerKey} name={item.organizer} size={18} />
                         </span>
                         <span className="opp-org-name">{item.organizer}</span>
                         <span className="opp-dot-sep">·</span>
@@ -1416,22 +1417,30 @@ export function AceternityBentoGrid() {
             </div>
             <div className="bento-organizers-row">
               <div className="org-mini-tile">
-                <span className="org-avatar ms">MS</span>
+                <span className="org-avatar">
+                  <CompanyLogo organizerKey="microsoft" size={24} />
+                </span>
                 <b>Microsoft</b>
                 <small>$1.4M+ Given · 42K Followers</small>
               </div>
               <div className="org-mini-tile">
-                <span className="org-avatar goog">GD</span>
+                <span className="org-avatar">
+                  <CompanyLogo organizerKey="google" size={24} />
+                </span>
                 <b>Google Devs</b>
                 <small>$2.1M+ Given · 68K Followers</small>
               </div>
               <div className="org-mini-tile">
-                <span className="org-avatar aws">AWS</span>
+                <span className="org-avatar">
+                  <CompanyLogo organizerKey="aws" size={24} />
+                </span>
                 <b>AWS Bedrock</b>
                 <small>$950K+ Given · 38K Followers</small>
               </div>
               <div className="org-mini-tile">
-                <span className="org-avatar nv">NV</span>
+                <span className="org-avatar">
+                  <CompanyLogo organizerKey="nvidia" size={24} />
+                </span>
                 <b>NVIDIA</b>
                 <small>$1.1M+ Given · 51K Followers</small>
               </div>

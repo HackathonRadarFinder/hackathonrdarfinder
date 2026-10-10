@@ -6,10 +6,13 @@ import {
   ExternalLink, SlidersHorizontal, ChevronDown, Bell, Menu, X,
   BrainCircuit, ShieldCheck, TrendingUp, Award, Globe2, LayoutDashboard,
   Share2, Heart, Filter, Flame, Zap, Trophy, Briefcase, GraduationCap,
-  ArrowUpRight, Check, Copy, AlertCircle, RefreshCw, Layers, Grid, List, Laptop
+  ArrowUpRight, Check, Copy, AlertCircle, RefreshCw, Layers, Grid, List, Laptop,
+  Sun, Moon
 } from "lucide-react";
 import { events, predictions, organizers } from "./data";
 import AdminRouter from "./Admin";
+import { useTheme } from "./ThemeContext";
+import { CompanyLogo, CompanyAvatar } from "./CompanyLogo";
 import {
   AceternitySpotlight,
   TextGenerateEffect,
@@ -359,8 +362,8 @@ function EventCard({ event, onRegister, viewMode = "grid" }) {
   if (viewMode === "list") {
     return (
       <article className="event-list-row">
-        <div className={`list-logo-mark ${event.color}`}>
-          {event.organizerInitials || event.organizer.slice(0, 2)}
+        <div className="list-logo-mark">
+          <CompanyLogo organizerKey={event.organizerKey} name={event.organizer} size={24} />
         </div>
         <div className="list-main-info">
           <div className="list-header-row">
@@ -435,8 +438,8 @@ function EventCard({ event, onRegister, viewMode = "grid" }) {
 
         <div className="card-body-content">
           <div className="organizer-header-row">
-            <div className={`org-avatar-chip ${event.color}`}>
-              {event.organizerInitials || event.organizer.slice(0, 2)}
+            <div className="org-avatar-chip">
+              <CompanyLogo organizerKey={event.organizerKey} name={event.organizer} size={20} />
             </div>
             <div className="org-details">
               <Link to={`/organizer/${event.organizerKey || "microsoft"}`} className="org-link">
@@ -454,25 +457,22 @@ function EventCard({ event, onRegister, viewMode = "grid" }) {
 
           <div className="card-metrics-grid">
             <div className="metric-box">
-              <div className="metric-icon prize-icon"><Trophy size={14} /></div>
-              <div>
-                <small>Prizes</small>
-                <b>{event.prize}</b>
-              </div>
+              <span className="metric-label-row">
+                <Trophy size={13} className="prize-icon" /> Prizes
+              </span>
+              <b>{event.prize}</b>
             </div>
             <div className="metric-box">
-              <div className="metric-icon"><Users size={14} /></div>
-              <div>
-                <small>Hackers</small>
-                <b>{event.participants ? `${(event.participants / 1000).toFixed(1)}k` : "1.2k"}</b>
-              </div>
+              <span className="metric-label-row">
+                <Users size={13} /> Hackers
+              </span>
+              <b>{event.participants ? `${(event.participants / 1000).toFixed(1)}k` : "1.2k"}</b>
             </div>
             <div className="metric-box">
-              <div className="metric-icon"><Clock3 size={14} /></div>
-              <div>
-                <small>Closes in</small>
-                <b>{countdown.days}d {countdown.hours}h</b>
-              </div>
+              <span className="metric-label-row">
+                <Clock3 size={13} /> Closes in
+              </span>
+              <b>{countdown.days}d {countdown.hours}h</b>
             </div>
           </div>
 
@@ -520,6 +520,7 @@ function Layout({ children }) {
   const [scrolled, setScrolled] = useState(false);
   const { savedIds } = useSaved();
   const location = useLocation();
+  const { theme, toggleTheme, isDark } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -591,6 +592,21 @@ function Layout({ children }) {
                 {badge && <span className="nav-mini-badge">{badge}</span>}
               </NavLink>
             ))}
+
+            {/* Mobile Theme Toggle */}
+            <div className="mobile-theme-row">
+              <span className="mobile-theme-label">
+                {isDark ? <Moon size={16} className="moon-icon" /> : <Sun size={16} className="sun-icon" />}
+                Theme: {isDark ? "Dark Mode" : "Light Mode"}
+              </span>
+              <button
+                className="theme-toggle-btn"
+                onClick={toggleTheme}
+                aria-label="Toggle Theme"
+              >
+                {isDark ? <Sun size={16} className="sun-icon" /> : <Moon size={16} className="moon-icon" />}
+              </button>
+            </div>
           </nav>
 
           <div className="nav-actions">
@@ -642,6 +658,20 @@ function Layout({ children }) {
                 </div>
               )}
             </div>
+
+            {/* Theme Switcher Toggle */}
+            <button
+              className="theme-toggle-btn"
+              onClick={toggleTheme}
+              aria-label={`Switch to ${isDark ? "Light" : "Dark"} Mode`}
+              title={`Switch to ${isDark ? "Light" : "Dark"} Mode`}
+            >
+              {isDark ? (
+                <Sun size={17} className="theme-toggle-icon sun-icon" />
+              ) : (
+                <Moon size={17} className="theme-toggle-icon moon-icon" />
+              )}
+            </button>
 
             <div className="profile-chip">
               <div className="avatar-gradient">NK</div>
@@ -1073,8 +1103,8 @@ function Home() {
           {Object.values(organizers).map((org) => (
             <div key={org.name} className="organizer-showcase-card">
               <div className="org-card-top">
-                <div className="org-big-avatar" style={{ background: org.logoColor + "22", color: org.logoColor, borderColor: org.logoColor + "44" }}>
-                  {org.initials}
+                <div className="org-big-avatar">
+                  <CompanyLogo organizerKey={org.key} name={org.name} size={28} />
                 </div>
                 <div className="org-meta-info">
                   <Link to={`/organizer/${org.key}`} className="org-meta-name">
@@ -1497,6 +1527,7 @@ function EventDetails() {
 
               <h1 className="detail-hero-title">{event.title}</h1>
               <div className="detail-organizer-row">
+                <CompanyAvatar organizerKey={event.organizerKey} name={event.organizer} size={32} />
                 <span className="organizer-prefix">Organized by</span>
                 <Link to={`/organizer/${event.organizerKey || "microsoft"}`} className="organizer-name-link">
                   {event.organizer} <ArrowUpRight size={14} />
@@ -2059,7 +2090,7 @@ function Predictions() {
 
                     <div className="card-org-row">
                       <span className="org-avatar">
-                        {item.organizerInitials || item.organizer.slice(0, 2).toUpperCase()}
+                        <CompanyLogo organizerKey={item.organizerKey} name={item.organizer} size={18} />
                       </span>
                       <span className="org-name">{item.organizer}</span>
                       <span className="dot-sep">·</span>
@@ -2154,7 +2185,8 @@ function Predictions() {
                   <article className="prediction-full-card">
                     <div className="pred-card-top-row">
                       <div className="pred-org-tag">
-                        <Building2 size={13} /> {p.organizer}
+                        <CompanyLogo organizerKey={p.organizerKey} name={p.organizer} size={15} />
+                        <span>{p.organizer}</span>
                       </div>
                       <div className="probability-gauge">
                         <span
@@ -2252,8 +2284,8 @@ function OrganizerProfile() {
       <div className="org-profile-hero">
         <div className="org-container">
           <div className="org-hero-box">
-            <div className="org-big-logo" style={{ color: org.logoColor, background: org.logoColor + "22", borderColor: org.logoColor + "55" }}>
-              {org.initials}
+            <div className="org-big-logo">
+              <CompanyLogo organizerKey={org.key} name={org.name} size={44} />
             </div>
 
             <div className="org-hero-details">
