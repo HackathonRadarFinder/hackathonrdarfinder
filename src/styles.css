@@ -4749,20 +4749,58 @@ input:focus, select:focus, textarea:focus {
   margin-top: auto;
 }
 
+.footer-content-wrap,
 .footer-top-grid {
   max-width: 1240px;
   margin: 0 auto 48px;
   display: grid;
-  grid-template-columns: 2fr repeat(3, 1fr);
-  gap: 48px;
+  grid-template-columns: 1.4fr 2.6fr;
+  gap: 56px;
+  align-items: flex-start;
 }
 
-.footer-brand-col p {
+.footer-brand-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.footer-desc {
   font-size: 13.5px;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   line-height: 1.6;
-  max-width: 320px;
-  margin: 12px 0 20px;
+  max-width: 340px;
+}
+
+.footer-social-row {
+  margin-top: 8px;
+}
+
+.platform-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary);
+  background: var(--primary-glow);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+}
+
+.footer-links-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 36px;
 }
 
 .footer-links-col h4 {
@@ -5643,8 +5681,14 @@ input:focus, select:focus, textarea:focus {
   .admin-sidebar.open {
     left: 0;
   }
+  .footer-content-wrap,
   .footer-top-grid {
     grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .footer-links-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
   }
 }
 

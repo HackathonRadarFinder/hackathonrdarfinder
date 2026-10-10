@@ -523,6 +523,10 @@ function Layout({ children }) {
   const { theme, toggleTheme, isDark } = useTheme();
 
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [location.pathname]);
+
+  useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 40);
     };
