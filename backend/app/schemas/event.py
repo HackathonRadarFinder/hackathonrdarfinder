@@ -23,3 +23,12 @@ class EventResponse(EventBase):
     id: int
 
     model_config = ConfigDict(from_attributes=True)
+
+class EventListResponse(BaseModel):
+    items: list[EventResponse]
+    total: int
+    page: int
+    page_size: int
+
+class ErrorResponse(BaseModel):
+    detail: str
