@@ -3874,60 +3874,166 @@ input:focus, select:focus, textarea:focus {
   width: 100%;
 }
 
-.org-hero-banner {
+/* ─── 19. Organizer Profile Page ─────────────────────────────────────────── */
+.organizer-profile-page {
+  max-width: 1240px;
+  margin: 0 auto 64px;
+  padding: 0 24px;
+  width: 100%;
+}
+
+.org-profile-hero {
+  margin: 32px 0;
+}
+
+.org-hero-box {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-2xl);
-  padding: 40px;
+  padding: 36px 40px;
   box-shadow: var(--shadow-sm);
-  margin: 24px 0 32px;
+  display: flex;
+  align-items: flex-start;
+  gap: 28px;
+  margin-bottom: 24px;
 }
 
-.org-big-badge {
-  width: 60px;
-  height: 60px;
+.org-big-logo {
+  width: 72px;
+  height: 72px;
+  min-width: 72px;
   border-radius: var(--radius-xl);
-  font-size: 20px;
-  font-weight: 800;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xs);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
+  flex-shrink: 0;
 }
 
-.org-title-block h1 {
-  font-size: 28px;
+.org-hero-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.org-eyebrow-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.org-type-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+  background: var(--primary-glow);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+}
+
+.org-location-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.org-profile-title {
+  font-size: clamp(28px, 3.2vw, 36px);
   font-weight: 800;
+  letter-spacing: -0.02em;
   color: var(--text);
   margin-bottom: 8px;
+  line-height: 1.2;
 }
 
-.org-desc {
-  font-size: 14px;
+.org-profile-desc {
+  font-size: 15px;
   color: var(--text-secondary);
-  line-height: 1.6;
-  max-width: 700px;
+  line-height: 1.65;
+  max-width: 760px;
+  margin-bottom: 14px;
 }
 
-.org-kpi-strip {
+.org-website-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--primary);
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.org-website-link:hover {
+  text-decoration: underline;
+  color: var(--primary-hover);
+}
+
+.org-follow-action {
+  display: flex;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.org-follow-action .btn-primary {
+  min-width: 160px;
+  justify-content: center;
+}
+
+.btn-following {
+  background: var(--emerald-light) !important;
+  color: var(--emerald) !important;
+  border-color: var(--emerald) !important;
+}
+
+/* Dedicated 3-column Organizer Profile Metrics Strip */
+.organizer-profile-page .org-metrics-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-top: 28px;
-  padding-top: 24px;
-  border-top: 1px solid var(--border);
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 22px 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xs);
+  margin-bottom: 32px;
 }
 
-.org-kpi-strip small {
-  font-size: 12px;
+.organizer-profile-page .org-metrics-row > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.organizer-profile-page .org-metrics-row small {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: var(--text-muted);
   display: block;
 }
 
-.org-kpi-strip b {
-  font-size: 22px;
-  font-weight: 700;
+.organizer-profile-page .org-metrics-row b {
+  font-size: 20px;
+  font-weight: 800;
   color: var(--text);
+  line-height: 1.2;
+}
+
+.organizer-profile-page .org-metrics-row b.green-text {
+  color: var(--emerald);
 }
 
 .org-layout-grid {
