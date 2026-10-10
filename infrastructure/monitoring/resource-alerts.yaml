@@ -1,0 +1,106 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: hackathon-radar-resource-alerts
+  namespace: monitoring
+  labels:
+    app: hackathon-radar
+    role: alert-rules
+spec:
+  groups:
+    - name: hackathon-radar-system-resources
+      rules:
+        # ----------------------------------------------------------------------
+        # CPU Alerts
+        # ----------------------------------------------------------------------
+        - alert: BackendHighCpuWarning
+          expr: sum(rate(container_cpu_usage_seconds_total{container="backend"}[5m])) by (pod) / sum(kube_pod_container_resource_limits{resource="cpu", container="backend"}) by (pod) * 100 > 75
+          for: 5m
+          labels:
+            severity: warning
+            team: devops
+          annotations:
+            summary: "Backend pod CPU utilization is above 75%"
+            description: "Pod {{ $labels.pod }} is running at {{ $value | printf \"%.1f\" }}% CPU."
+
+        - alert: BackendHighCpuCritical
+          expr: sum(rate(container_cpu_usage_seconds_total{container="backend"}[5m])) by (pod) / sum(kube_pod_container_resource_limits{resource="cpu", container="backend"}) by (pod) * 100 > 90
+          for: 2m
+          labels:
+            severity: critical
+            team: devops
+          annotations:
+            summary: "Backend pod CPU critical (> 90%)"
+            description: "Pod {{ $labels.pod }} is experiencing severe CPU pressure."
+
+        # ----------------------------------------------------------------------
+        # Memory Alerts
+        # ----------------------------------------------------------------------
+        - alert: BackendHighMemoryWarning
+          expr: sum(container_memory_working_set_bytes{container="backend"}) by (pod) / sum(kube_pod_container_resource_limits{resource="memory", container="backend"}) by (pod) * 100 > 80
+          for: 5m
+          labels:
+            severity: warning
+            team: devops
+          annotations:
+            summary: "Backend pod memory utilization is above 80%"
+            description: "Pod {{ $labels.pod }} memory is at {{ $value | printf \"%.1f\" }}%."
+
+        - alert: BackendHighMemoryCritical
+          expr: sum(container_memory_working_set_bytes{container="backend"}) by (pod) / sum(kube_pod_container_resource_limits{resource="memory", container="backend"}) by (pod) * 100 > 92
+          for: 2m
+          labels:
+            severity: critical
+            team: devops
+          annotations:
+            summary: "Backend pod memory critical (> 92%) - OOM imminent"
+            description: "Pod {{ $labels.pod }} memory saturation threatens OOMKill."
+
+        # ----------------------------------------------------------------------
+        # Database Resource Alerts
+        # ----------------------------------------------------------------------
+        - alert: DatabaseConnectionPoolHigh
+          expr: pg_stat_database_numbackends{datname="hackathonradar"} / pg_settings_max_connections * 100 > 75
+          for: 5m
+          labels:
+            severity: warning
+            team: devops
+          annotations:
+            summary: "PostgreSQL active connections above 75% capacity"
+            description: "Database connection pool utilization has reached {{ $value | printf \"%.1f\" }}%."
+
+        - alert: DatabaseSlowQueriesDetected
+          expr: rate(pg_stat_database_xact_commit{datname="hackathonradar"}[5m]) < 10 and rate(pg_stat_activity_max_tx_duration{datname="hackathonradar"}[5m]) > 2
+          for: 3m
+          labels:
+            severity: warning
+            team: devops
+          annotations:
+            summary: "Long-running database transactions detected (> 2s)"
+            description: "Queries exceeding safe latency thresholds, risking lock escalation."
+
+        # ----------------------------------------------------------------------
+        # Scraper & Worker Queue Alerts
+        # ----------------------------------------------------------------------
+        - alert: ScraperWorkerQueueBacklog
+          expr: redis_queue_length{queue="scraper_tasks"} > 200
+          for: 10m
+          labels:
+            severity: warning
+            team: devops
+          annotations:
+            summary: "Scraper worker backlog exceeding 200 jobs"
+            description: "Queue depth is {{ $value }} jobs. Collector workers may be degraded."
+
+        # ----------------------------------------------------------------------
+        # Prediction Service Latency Alert
+        # ----------------------------------------------------------------------
+        - alert: PredictionServiceHighLatency
+          expr: histogram_quantile(0.95, sum(rate(prediction_request_duration_seconds_bucket[5m])) by (le)) > 0.8
+          for: 5m
+          labels:
+            severity: warning
+            team: ml-ops
+          annotations:
+            summary: "AI prediction P95 latency is above 800ms"
+            description: "Match scoring endpoint latency has degraded to {{ $value | printf \"%.2f\" }}s."
