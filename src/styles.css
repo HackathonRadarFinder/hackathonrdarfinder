@@ -505,7 +505,7 @@ input:focus, select:focus, textarea:focus {
 }
 
 .mobile-theme-row {
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
@@ -5619,6 +5619,9 @@ input:focus, select:focus, textarea:focus {
     box-shadow: var(--shadow-lg);
   }
   .nav-links.open {
+    display: flex;
+  }
+  .nav-links.open .mobile-theme-row {
     display: flex;
   }
   .metrics-strip-v2 {
