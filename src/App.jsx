@@ -20,7 +20,6 @@ import {
   MovingBorderBox,
   TracingBeamTimeline,
   AnimatedCounter,
-  LiveRadarSection,
   MagneticButton,
   AceternityBentoGrid,
   AIPredictionSignalFlow
@@ -890,14 +889,6 @@ function Home() {
           </div>
         </CardSpotlightWrapper>
       </section>
-
-      {/* ─── LIVE HACKATHON RADAR (Aceternity World Map & Telemetry) ───────────── */}
-      <LiveRadarSection
-        events={events}
-        onRegister={setModalEvent}
-        isSaved={isSaved}
-        onToggleSave={toggleSaved}
-      />
 
       {/* ─── ACETERNITY BENTO GRID (Intelligence Suite) ───────────────────────── */}
       <AceternityBentoGrid />

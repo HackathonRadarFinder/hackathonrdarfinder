@@ -675,10 +675,22 @@ export function Aceternity3DGlobe({ events = [], onSelectEvent }) {
   );
 }
 
-// ─── 7. Right Hero Visual Switcher (World Map & 3D Globe) ───────────────────────
+// ─── 7. Right Hero Visual: Live Radar Signal Monitor ─────────────────────────────
 export function HeroInteractiveRadar({ events = [] }) {
-  const [mode, setMode] = useState("map"); // "map" or "globe"
+  const [filter, setFilter] = useState("trending"); // "trending" | "prize" | "closing"
   const navigate = useNavigate();
+
+  const displayedList = useMemo(() => {
+    let list = [...events];
+    if (filter === "prize") {
+      list.sort((a, b) => (b.prizeNumeric || 0) - (a.prizeNumeric || 0));
+    } else if (filter === "closing") {
+      list.sort((a, b) => (a.deadlineDays || 99) - (b.deadlineDays || 99));
+    } else {
+      list = list.filter((e) => e.trending || e.featured);
+    }
+    return list.slice(0, 4);
+  }, [events, filter]);
 
   return (
     <div className="hero-interactive-radar-card">
@@ -686,33 +698,63 @@ export function HeroInteractiveRadar({ events = [] }) {
       <div className="radar-card-topbar">
         <div className="radar-status-badge">
           <span className="radar-pulse-dot" />
-          <span><b>LIVE RADAR TELEMETRY</b></span>
+          <span><b>LIVE RADAR STREAM</b></span>
         </div>
         <div className="radar-view-mode-toggle">
           <button
-            className={`view-mode-btn ${mode === "map" ? "active" : ""}`}
-            onClick={() => setMode("map")}
-            title="World Map Mode"
+            type="button"
+            className={`radar-mode-btn ${filter === "trending" ? "active" : ""}`}
+            onClick={() => setFilter("trending")}
           >
-            <Compass size={14} /> Map
+            Trending
           </button>
           <button
-            className={`view-mode-btn ${mode === "globe" ? "active" : ""}`}
-            onClick={() => setMode("globe")}
-            title="3D Globe Mode"
+            type="button"
+            className={`radar-mode-btn ${filter === "prize" ? "active" : ""}`}
+            onClick={() => setFilter("prize")}
           >
-            <Globe2 size={14} /> 3D Globe
+            Top Prizes
+          </button>
+          <button
+            type="button"
+            className={`radar-mode-btn ${filter === "closing" ? "active" : ""}`}
+            onClick={() => setFilter("closing")}
+          >
+            Closing
           </button>
         </div>
       </div>
 
-      {/* Main Interactive Canvas */}
-      <div className="radar-canvas-container">
-        {mode === "map" ? (
-          <AceternityWorldMap events={events} compact />
-        ) : (
-          <Aceternity3DGlobe events={events} />
-        )}
+      {/* Main Interactive Stream List */}
+      <div className="radar-stream-list">
+        {displayedList.map((item) => (
+          <div
+            key={item.id}
+            className="radar-stream-row"
+            onClick={() => navigate(`/event/${item.id}`)}
+          >
+            <div className="stream-avatar">
+              {item.organizerInitials || item.organizer.slice(0, 2)}
+            </div>
+            <div className="stream-info">
+              <div className="stream-title-row">
+                <span className="stream-title">{item.title}</span>
+                <ArrowUpRight size={13} className="stream-arrow" />
+              </div>
+              <div className="stream-meta">
+                <span className="stream-org">{item.organizer}</span>
+                <span className="meta-bullet">•</span>
+                <span className="stream-deadline">
+                  <Clock3 size={11} /> {item.deadlineDays || 4}d left
+                </span>
+              </div>
+            </div>
+            <div className="stream-badges">
+              <span className="stream-prize">{item.prize}</span>
+              <span className="stream-match">{item.aiMatchScore || 95}% Match</span>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Floating Signal Indicator Banner */}
