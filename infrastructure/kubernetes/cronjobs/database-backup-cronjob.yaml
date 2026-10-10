@@ -1,0 +1,58 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: hackathon-radar-database-backup
+  namespace: production
+  labels:
+    app: hackathon-radar
+    component: database-backup
+spec:
+  schedule: "0 2 * * *" # Daily at 02:00 UTC
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: postgres-backup
+              image: postgres:15-alpine
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+                  TIMESTAMP=$(date -u +"%Y%m%d_%H%M%S")
+                  BACKUP_FILE="/tmp/hackathonradar_${TIMESTAMP}.dump"
+                  echo "Starting automated database backup: ${BACKUP_FILE}"
+                  pg_dump -h $DB_HOST -p 5432 -U $DB_USER -d $DB_NAME --format=custom --blobs --file=$BACKUP_FILE
+                  echo "Generating checksum"
+                  sha256sum $BACKUP_FILE > ${BACKUP_FILE}.sha256
+                  echo "Backup complete: ${BACKUP_FILE}"
+              env:
+                - name: DB_HOST
+                  valueFrom:
+                    secretKeyRef:
+                      name: database-credentials
+                      key: host
+                - name: DB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: database-credentials
+                      key: username
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: database-credentials
+                      key: password
+                - name: DB_NAME
+                  value: "hackathonradar"
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 1Gi
