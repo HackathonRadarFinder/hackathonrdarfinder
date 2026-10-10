@@ -1,41 +1,50 @@
-<<<<<<< HEAD
-# Hackathon Radar AI - Frontend
+# Hackathon Radar AI
 
-React + Vite frontend for the Hackathon Radar AI internship project.
+**Hackathon Radar AI** is an intelligent hackathon discovery, tracking, and prediction platform. It combines real-time global event tracking, automated source ingestion, personalized AI skill matching, and an operations suite for administrators.
 
-## Pages
+---
 
-- Home
-- Explore
-- Event Details
-- Predictions
-- Organizer Profile
+## 🧭 Key Platform Features
 
-## Run in VS Code
+- **Global Innovation Radar**: Interactive geospatial command center tracking hackathon hubs worldwide.
+- **Live Opportunity Engine**: Filter competitions by prize pool, modality (Remote, Hybrid, In-Person), and deadline countdown.
+- **Personalized AI Predictions**: Skill-based matching for developers and builders with clear match reasoning.
+- **10-View Admin Operations**: Review queues, scraper ingestion telemetry, duplicate resolution, and feature flags.
+- **Compliance Collector Engine (v2.2)**: Automated web scrapers with strict rate limiting and robots.txt compliance.
 
-1. Install Node.js LTS.
-2. Open this folder in VS Code.
-3. Open Terminal.
-4. Run:
+---
 
+## 🛠️ Quick Start
+
+### Prerequisites
+- Node.js 18+ LTS
+- Python 3.10+ (for backend collector engine)
+
+### Run Frontend Locally
 ```bash
+# 1. Install dependencies
 npm install
+
+# 2. Start Vite development server
 npm run dev
+
+# 3. Build production bundle
+npm run build
 ```
 
-5. Open the localhost URL shown by Vite.
+---
 
-## Notes
+## 🚀 DevOps & Production Readiness
 
-The project currently uses mock data in `src/data.js`.
-When the backend is ready, replace the mock data with API calls.
+Hackathon Radar enforces a formal release management and production readiness process:
 
-The UI follows the supplied Hackathon Radar AI SRS:
-- confirmed/official and reported event states
-- prediction confidence and evidence
-- event provenance/freshness
-- organizer history
-- search/filter discovery
-=======
-# hackathonrdarfinder
->>>>>>> ae76ea402eee7dc9b69955641ff2172241f09041
+- **[Release Management Policy](docs/devops/release-management-policy.md)**: Semantic Versioning (SemVer 2.0.0), branching strategy, RACI matrix, and deployment gates.
+- **[Production Readiness Checklist](docs/devops/production-readiness-checklist.md)**: 12-Gate verification covering CI/CD, testing, security audits, database migrations, monitoring, and rollback readiness.
+- **[Release Notes Template](docs/devops/release-notes-template.md)**: Standardized template for communicating production releases.
+- **[Changelog](CHANGELOG.md)**: Complete changelog tracking all released and unreleased milestones.
+
+### Verify Release Readiness
+Run the automated verification script prior to creating a release pull request:
+```bash
+./scripts/verify-release-readiness.sh
+```
