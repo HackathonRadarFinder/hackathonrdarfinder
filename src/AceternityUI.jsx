@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 // ─── 1. Aceternity Spotlight Cone ──────────────────────────────────────────────
-export function AceternitySpotlight({ className = "", fill = "#7667ff" }) {
+export function AceternitySpotlight({ className = "", fill = "#6366F1" }) {
   return (
     <svg
       className={`aceternity-spotlight ${className}`}
@@ -26,7 +26,7 @@ export function AceternitySpotlight({ className = "", fill = "#7667ff" }) {
           ry="273.501"
           transform="matrix(-0.822377 -0.568943 -0.568943 0.822377 3631.88 2291.09)"
           fill={fill}
-          fillOpacity="0.22"
+          fillOpacity="0.08"
         />
       </g>
       <defs>
@@ -347,15 +347,15 @@ export function AceternityWorldMap({
         </defs>
 
         {/* Global Coordinate Grid (Meridians & Parallels) */}
-        <g className="map-geo-grid" stroke="rgba(0, 210, 255, 0.07)" strokeWidth="0.8" strokeDasharray="3 4">
+        <g className="map-geo-grid" stroke="rgba(15, 23, 42, 0.05)" strokeWidth="0.8" strokeDasharray="3 4">
           {/* Parallels */}
           <line x1="0" y1="125" x2="1000" y2="125" />
-          <line x1="0" y1="250" x2="1000" y2="250" stroke="rgba(0, 210, 255, 0.12)" strokeWidth="1" />
+          <line x1="0" y1="250" x2="1000" y2="250" stroke="rgba(79, 70, 229, 0.1)" strokeWidth="1" />
           <line x1="0" y1="375" x2="1000" y2="375" />
           {/* Meridians */}
           <line x1="166" y1="0" x2="166" y2="500" />
           <line x1="333" y1="0" x2="333" y2="500" />
-          <line x1="500" y1="0" x2="500" y2="500" stroke="rgba(0, 210, 255, 0.12)" strokeWidth="1" />
+          <line x1="500" y1="0" x2="500" y2="500" stroke="rgba(79, 70, 229, 0.1)" strokeWidth="1" />
           <line x1="666" y1="0" x2="666" y2="500" />
           <line x1="833" y1="0" x2="833" y2="500" />
         </g>
@@ -367,8 +367,8 @@ export function AceternityWorldMap({
               key={`continent-${idx}`}
               d={pathD}
               className="world-continent-path"
-              fill="#080E1C"
-              stroke="#1C2844"
+              fill="#F1F5F9"
+              stroke="#CBD5E1"
               strokeWidth="1.2"
               strokeLinejoin="round"
             />
@@ -580,20 +580,20 @@ export function Aceternity3DGlobe({ events = [], onSelectEvent }) {
       <div className="globe-atmosphere-halo" />
       <svg viewBox="0 0 400 400" className="globe-3d-svg">
         <defs>
-          <radialGradient id="globeSphereGrad" cx="40%" cy="35%" r="65%">
-            <stop offset="0%" stopColor="#1a2444" stopOpacity="0.8" />
-            <stop offset="60%" stopColor="#0b0f20" stopOpacity="0.95" />
-            <stop offset="100%" stopColor="#050711" stopOpacity="1" />
+          <radialGradient id="globeSphereGrad" cx="35%" cy="30%" r="70%">
+            <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.9" />
+            <stop offset="60%" stopColor="#F8FAFC" stopOpacity="0.95" />
+            <stop offset="100%" stopColor="#E2E8F0" stopOpacity="1" />
           </radialGradient>
           <radialGradient id="globeAtmosphere" cx="50%" cy="50%" r="50%">
-            <stop offset="85%" stopColor="#7667ff" stopOpacity="0" />
-            <stop offset="100%" stopColor="#00d2ff" stopOpacity="0.4" />
+            <stop offset="85%" stopColor="#4F46E5" stopOpacity="0" />
+            <stop offset="100%" stopColor="#4F46E5" stopOpacity="0.15" />
           </radialGradient>
         </defs>
 
         {/* Outer Globe Sphere */}
         <circle cx={cx} cy={cy} r={R} fill="url(#globeSphereGrad)" />
-        <circle cx={cx} cy={cy} r={R} fill="url(#globeAtmosphere)" stroke="rgba(0, 210, 255, 0.4)" strokeWidth="1.5" />
+        <circle cx={cx} cy={cy} r={R} fill="url(#globeAtmosphere)" stroke="rgba(79, 70, 229, 0.25)" strokeWidth="1.2" />
 
         {/* Latitude Rings */}
         {[-60, -30, 0, 30, 60].map((lat) => {
@@ -607,7 +607,7 @@ export function Aceternity3DGlobe({ events = [], onSelectEvent }) {
               rx={rLat}
               ry={rLat * 0.28}
               fill="none"
-              stroke="rgba(118, 103, 255, 0.18)"
+              stroke="rgba(79, 70, 229, 0.18)"
               strokeWidth="0.9"
               strokeDasharray="2 3"
             />
@@ -626,7 +626,7 @@ export function Aceternity3DGlobe({ events = [], onSelectEvent }) {
               rx={Math.abs(rxLong)}
               ry={R}
               fill="none"
-              stroke="rgba(0, 210, 255, 0.16)"
+              stroke="rgba(2, 132, 199, 0.18)"
               strokeWidth="0.9"
             />
           );
