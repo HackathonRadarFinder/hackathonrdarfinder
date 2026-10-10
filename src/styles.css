@@ -2023,7 +2023,7 @@ input:focus, select:focus, textarea:focus {
 /* ─── 13. Top Organizers Showcase ────────────────────────────────────────── */
 .organizers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
   gap: 20px;
 }
 
@@ -2033,6 +2033,9 @@ input:focus, select:focus, textarea:focus {
   border-radius: var(--radius-xl);
   padding: 24px;
   box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   transition: all var(--transition-normal);
 }
 
@@ -2045,24 +2048,26 @@ input:focus, select:focus, textarea:focus {
 .org-card-top {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 14px;
+  margin-bottom: 14px;
 }
 
 .org-big-avatar {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius-lg);
-  font-size: 15px;
-  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid transparent;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xs);
+  flex-shrink: 0;
 }
 
 .org-meta-info {
   flex: 1;
+  min-width: 0;
 }
 
 .org-meta-name {
@@ -2072,6 +2077,7 @@ input:focus, select:focus, textarea:focus {
   display: flex;
   align-items: center;
   gap: 4px;
+  margin-bottom: 2px;
 }
 
 .org-meta-name:hover {
@@ -2079,51 +2085,79 @@ input:focus, select:focus, textarea:focus {
 }
 
 .org-meta-info small {
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--text-muted);
+  display: block;
 }
 
 .hiring-badge {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
-  font-size: 10px;
+  gap: 4px;
+  font-size: 10.5px;
   font-weight: 700;
-  padding: 2px 7px;
+  padding: 3px 8px;
   background: var(--primary-light);
   color: var(--primary);
   border-radius: var(--radius-full);
 }
 
+.org-description-snippet {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 18px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.org-stats-row,
 .org-metrics-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  padding: 10px;
+  gap: 12px;
+  padding: 12px 14px;
   background: var(--bg-subtle);
-  border-radius: var(--radius-md);
-  margin-bottom: 14px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  margin-bottom: 18px;
 }
 
+.org-stats-row > div,
+.org-metric-box {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.org-stats-row small,
 .org-metric-box small {
-  font-size: 11px;
+  font-size: 10.5px;
   color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   display: block;
 }
 
+.org-stats-row b,
 .org-metric-box b {
-  font-size: 13px;
-  color: var(--text);
+  font-size: 14.5px;
   font-weight: 700;
+  color: var(--text);
+  line-height: 1.25;
 }
 
-.org-link-footer {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
+.org-stats-row .green-text {
+  color: var(--emerald);
+}
+
+.org-card-footer .btn-secondary {
+  width: 100%;
   font-size: 12.5px;
-  font-weight: 600;
-  color: var(--primary);
+  padding: 9px 12px;
 }
 
 /* ─── 14. Explore Page ───────────────────────────────────────────────────── */
