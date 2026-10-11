@@ -1,128 +1,36 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from app.api.deps import require_admin
 from app.core.database import get_db
-from app.models.organization import Organization
-from app.schemas.organization import OrganizationCreate
+from app.schemas.organization import OrganizationCreate, OrganizationResponse
+from app.schemas.responses import DatabaseId, DataResponse, ERROR_RESPONSES, MessageResponse
+from app.services import organization_service
 
-router = APIRouter(
-    prefix="/organizations",
-    tags=["Organizations"]
-)
+router = APIRouter(prefix="/organizations", tags=["Organizations"], responses=ERROR_RESPONSES)
 
 
-@router.get("/")
+@router.get("/", response_model=DataResponse[list[OrganizationResponse]])
 def get_organizations(db: Session = Depends(get_db)):
-    organizations = db.query(Organization).all()
-
-    return {
-        "message": "Organizations fetched successfully",
-        "data": organizations
-    }
+    return {"message": "Organizations fetched successfully", "data": organization_service.get_organizations(db)}
 
 
-@router.get("/{organization_id}")
-def get_organization(
-    organization_id: int,
-    db: Session = Depends(get_db)
-):
-    organization = (
-        db.query(Organization)
-        .filter(Organization.id == organization_id)
-        .first()
-    )
-
-    if not organization:
-        raise HTTPException(status_code=404, detail="Organization not found")
-
-    return {
-        "message": "Organization fetched successfully",
-        "data": organization
-    }
+@router.get("/{organization_id}", response_model=DataResponse[OrganizationResponse])
+def get_organization(organization_id: DatabaseId, db: Session = Depends(get_db)):
+    return {"message": "Organization fetched successfully", "data": organization_service.get_organization(db, organization_id)}
 
 
-@router.post("/")
-def create_organization(
-    organization: OrganizationCreate,
-    db: Session = Depends(get_db)
-):
-    existing = (
-        db.query(Organization)
-        .filter(Organization.name == organization.name)
-        .first()
-    )
-
-    if existing:
-        raise HTTPException(
-            status_code=400,
-            detail="Organization already exists"
-        )
-
-    db_organization = Organization(
-        name=organization.name,
-        website=str(organization.website) if organization.website else None,
-        industry=organization.industry,
-        location=organization.location,
-        description=organization.description
-    )
-
-    db.add(db_organization)
-    db.commit()
-    db.refresh(db_organization)
-
-    return {
-        "message": "Organization created successfully",
-        "data": db_organization
-    }
+@router.post("/", response_model=DataResponse[OrganizationResponse], dependencies=[Depends(require_admin)])
+def create_organization(organization: OrganizationCreate, db: Session = Depends(get_db)):
+    return {"message": "Organization created successfully", "data": organization_service.create_organization(db, organization)}
 
 
-@router.put("/{organization_id}")
-def update_organization(
-    organization_id: int,
-    organization: OrganizationCreate,
-    db: Session = Depends(get_db)
-):
-    db_organization = (
-        db.query(Organization)
-        .filter(Organization.id == organization_id)
-        .first()
-    )
-
-    if not db_organization:
-        raise HTTPException(status_code=404, detail="Organization not found")
-
-    db_organization.name = organization.name
-    db_organization.website = str(organization.website) if organization.website else None
-    db_organization.industry = organization.industry
-    db_organization.location = organization.location
-    db_organization.description = organization.description
-
-    db.commit()
-    db.refresh(db_organization)
-
-    return {
-        "message": "Organization updated successfully",
-        "data": db_organization
-    }
+@router.put("/{organization_id}", response_model=DataResponse[OrganizationResponse], dependencies=[Depends(require_admin)])
+def update_organization(organization_id: DatabaseId, organization: OrganizationCreate, db: Session = Depends(get_db)):
+    return {"message": "Organization updated successfully", "data": organization_service.update_organization(db, organization_id, organization)}
 
 
-@router.delete("/{organization_id}")
-def delete_organization(
-    organization_id: int,
-    db: Session = Depends(get_db)
-):
-    organization = (
-        db.query(Organization)
-        .filter(Organization.id == organization_id)
-        .first()
-    )
-
-    if not organization:
-        raise HTTPException(status_code=404, detail="Organization not found")
-
-    db.delete(organization)
-    db.commit()
-
-    return {
-        "message": "Organization deleted successfully"
-    }
+@router.delete("/{organization_id}", response_model=MessageResponse, dependencies=[Depends(require_admin)])
+def delete_organization(organization_id: DatabaseId, db: Session = Depends(get_db)):
+    organization_service.delete_organization(db, organization_id)
+    return {"message": "Organization deleted successfully"}

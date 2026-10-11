@@ -1,133 +1,36 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from app.api.deps import require_admin
 from app.core.database import get_db
-from app.models.hackathon import Hackathon
-from app.models.organization import Organization
-from app.schemas.hackathon import HackathonCreate
+from app.schemas.event import EventCreate, EventResponse
+from app.schemas.responses import DatabaseId, DataResponse, ERROR_RESPONSES, MessageResponse
+from app.services import event_service
 
-router = APIRouter(
-    prefix="/events",
-    tags=["Events"]
-)
+router = APIRouter(prefix="/events", tags=["Events"], responses=ERROR_RESPONSES)
 
 
-@router.get("/")
+@router.get("/", response_model=DataResponse[list[EventResponse]])
 def get_events(db: Session = Depends(get_db)):
-    events = db.query(Hackathon).all()
-    return {
-        "message": "Events fetched successfully",
-        "data": events
-    }
+    return {"message": "Events fetched successfully", "data": event_service.get_events(db)}
 
 
-@router.get("/{event_id}")
-def get_event(event_id: int, db: Session = Depends(get_db)):
-    event = db.query(Hackathon).filter(Hackathon.id == event_id).first()
-
-    if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
-
-    return {
-        "message": "Event fetched successfully",
-        "data": event
-    }
+@router.get("/{event_id}", response_model=DataResponse[EventResponse])
+def get_event(event_id: DatabaseId, db: Session = Depends(get_db)):
+    return {"message": "Event fetched successfully", "data": event_service.get_event(db, event_id)}
 
 
-@router.post("/")
-def create_event(
-    event: HackathonCreate,
-    db: Session = Depends(get_db)
-):
-    organization = (
-        db.query(Organization)
-        .filter(Organization.name == event.organization)
-        .first()
-    )
-
-    if not organization:
-        raise HTTPException(
-            status_code=404,
-            detail="Organization not found. Create the organization first."
-        )
-
-    db_event = Hackathon(
-        title=event.title,
-        organization_id=organization.id,
-        start_date=event.start_date,
-        end_date=event.end_date,
-        registration_deadline=event.registration_deadline,
-        location=event.location,
-        mode=event.mode,
-        prize=event.prize,
-        description=event.description,
-        url=str(event.url) if event.url else None,
-        source=event.source,
-        scraped_at=event.scraped_at
-    )
-
-    db.add(db_event)
-    db.commit()
-    db.refresh(db_event)
-
-    return {
-        "message": "Event created successfully",
-        "data": db_event
-    }
+@router.post("/", response_model=DataResponse[EventResponse], dependencies=[Depends(require_admin)])
+def create_event(event: EventCreate, db: Session = Depends(get_db)):
+    return {"message": "Event created successfully", "data": event_service.create_event(db, event)}
 
 
-@router.put("/{event_id}")
-def update_event(
-    event_id: int,
-    event: HackathonCreate,
-    db: Session = Depends(get_db)
-):
-    db_event = db.query(Hackathon).filter(Hackathon.id == event_id).first()
-
-    if not db_event:
-        raise HTTPException(status_code=404, detail="Event not found")
-
-    organization = (
-        db.query(Organization)
-        .filter(Organization.name == event.organization)
-        .first()
-    )
-
-    if not organization:
-        raise HTTPException(status_code=404, detail="Organization not found")
-
-    db_event.title = event.title
-    db_event.organization_id = organization.id
-    db_event.start_date = event.start_date
-    db_event.end_date = event.end_date
-    db_event.registration_deadline = event.registration_deadline
-    db_event.location = event.location
-    db_event.mode = event.mode
-    db_event.prize = event.prize
-    db_event.description = event.description
-    db_event.url = str(event.url) if event.url else None
-    db_event.source = event.source
-    db_event.scraped_at = event.scraped_at
-
-    db.commit()
-    db.refresh(db_event)
-
-    return {
-        "message": "Event updated successfully",
-        "data": db_event
-    }
+@router.put("/{event_id}", response_model=DataResponse[EventResponse], dependencies=[Depends(require_admin)])
+def update_event(event_id: DatabaseId, event: EventCreate, db: Session = Depends(get_db)):
+    return {"message": "Event updated successfully", "data": event_service.update_event(db, event_id, event)}
 
 
-@router.delete("/{event_id}")
-def delete_event(event_id: int, db: Session = Depends(get_db)):
-    event = db.query(Hackathon).filter(Hackathon.id == event_id).first()
-
-    if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
-
-    db.delete(event)
-    db.commit()
-
-    return {
-        "message": "Event deleted successfully"
-    }
+@router.delete("/{event_id}", response_model=MessageResponse, dependencies=[Depends(require_admin)])
+def delete_event(event_id: DatabaseId, db: Session = Depends(get_db)):
+    event_service.delete_event(db, event_id)
+    return {"message": "Event deleted successfully"}
