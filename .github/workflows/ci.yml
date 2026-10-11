@@ -118,6 +118,7 @@ jobs:
           docker run -d --name frontend --network radar-ci hackathon-radar-frontend:test
           docker exec frontend wget -qO- http://127.0.0.1:8080/health
           for attempt in $(seq 1 30); do
+            printf 'Backend proxy health check attempt %s/30\n' "$attempt"
             if docker exec frontend wget -qO- http://127.0.0.1:8080/api/health; then exit 0; fi
             sleep 2
           done

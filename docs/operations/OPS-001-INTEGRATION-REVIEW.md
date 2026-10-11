@@ -1,5 +1,53 @@
 # OPS-001 / PR #64 integration review
 
+## PR #75 infrastructure-check correction (2026-10-11)
+
+The corrected integration is now committed at
+`0a5c7cf1a2e97ef1c1731b8f893ff75416e4cf2e` and proposed in PR #75.
+This follow-up is an uncommitted local correction; the original review below
+records the earlier integration snapshot.
+
+Authenticated GitHub API access retrieved run `38139043901` and its log archive.
+The [infrastructure-check job](https://github.com/HackathonRadarFinder/hackathonrdarfinder/actions/runs/38139043901/job/114468886119)
+passed dependency setup and all overlay validation, then failed at
+`python scripts/run_actionlint.py` with exit code 1:
+
+```text
+.github/workflows/ci.yml:114:9: shellcheck reported issue in this script:
+SC2034:warning:6:1: attempt appears unused. Verify use (or export if used externally) [shellcheck]
+```
+
+The Docker proxy retry loop declared `attempt` without reading it. The Ubuntu
+runner had ShellCheck available, whereas the earlier Windows actionlint run
+omitted optional ShellCheck because it was not installed. Add one quoted printf
+using the counter to report retry progress. No lint suppression, test removal,
+permissions change or retry/control-flow change is needed.
+
+`docker-build` was skipped because it requires backend-test, frontend-test and
+infrastructure-check. The first two passed; infrastructure-check failed. The
+existing `needs` gate is correct and remains unchanged: Docker builds and smoke
+tests run when all three prerequisites succeed.
+
+Follow-up validation:
+
+- Reproduced SC2034 from the committed workflow using official, checksum-verified
+  ShellCheck 0.11.0, then passed actionlint 1.7.7 with ShellCheck enabled on all
+  six corrected workflows. The runner image lists ShellCheck 0.9.0-1.
+- Operations: 31 passed in 2.30s; backend: 39 passed in 23.01s, with one existing
+  Starlette/httpx deprecation warning; pip check passed.
+- Infrastructure validation, all four overlays, Compose config --quiet, and
+  git diff --check passed.
+- Review against fetched origin/develop (`6dac9d5`) confirms AUTH code, config,
+  dependencies, models and migrations remain unchanged. The integration still
+  spans 59 files; this follow-up changes only ci.yml and this report.
+
+Remaining validation: Docker's local daemon is unavailable, and remote checks
+still describe the pre-fix commit. After approval, commit/push this correction
+to the same PR branch and let CI run all jobs. Re-running the old SHA alone will
+repeat the failure. No commit, push, deployment, real database operation or Git
+reset was performed during this follow-up. The index and unrelated untracked
+`-files -u` file were preserved.
+
 Recommendation: **REQUEST CHANGES on the original PR**. The corrected local
 integration is ready for code review, with available local checks passing.
 Approval for merge/deployment should wait for remote CI, Docker image smoke
