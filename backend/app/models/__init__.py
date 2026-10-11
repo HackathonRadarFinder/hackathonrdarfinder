@@ -14,3 +14,5 @@ from app.models.core import (
     Model,
     AuditLog,
 )
+
+from app.models.revoked_token import RevokedToken

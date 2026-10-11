@@ -1,6 +1,8 @@
 
 from functools import lru_cache
+from typing import Literal
 
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -9,7 +11,13 @@ class Settings(BaseSettings):
     DATABASE_URL: str
 
     # Authentication
-    SECRET_KEY: str = "change-this-secret-key"
+    SECRET_KEY: str = Field(min_length=32)
+    ALGORITHM: Literal["HS256"] = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(
+        default=30,
+        ge=5,
+        le=120,
+    )
 
     # Application
     APP_NAME: str = "Hackathon Radar AI"
