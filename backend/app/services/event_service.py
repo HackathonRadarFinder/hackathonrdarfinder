@@ -1,11 +1,11 @@
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.models.core import EventVersion, Prediction, SavedItem
 from app.models.hackathon import Hackathon
 from app.models.organization import Organization
-from app.schemas.event import EventCreate
+from app.schemas.event import EventCreate, EventListParams
 from app.services.database import database_operation
 
 
@@ -32,6 +32,32 @@ def _event_values(db: Session, event: EventCreate) -> dict:
 def get_events(db: Session):
     with database_operation(db):
         return db.scalars(select(Hackathon).order_by(Hackathon.id)).all()
+
+
+def get_event_page(db: Session, query: EventListParams):
+    """Count the filtered set, then fetch only the requested page in stable ID order."""
+    page = query.page if query.page is not None else 1
+    page_size = query.page_size if query.page_size is not None else 10
+    filters = []
+    if query.location is not None:
+        filters.append(Hackathon.location.icontains(query.location, autoescape=True))
+    if query.mode is not None:
+        filters.append(Hackathon.mode.icontains(query.mode, autoescape=True))
+    if query.organization_id is not None:
+        filters.append(Hackathon.organization_id == query.organization_id)
+
+    # Reuse exactly the same predicates for the count and page. Autoescape treats
+    # %, _ and the escape character as literal text, not client-supplied wildcards.
+    with database_operation(db):
+        total = db.scalar(select(func.count()).select_from(Hackathon).where(*filters))
+        items = db.scalars(
+            select(Hackathon)
+            .where(*filters)
+            .order_by(Hackathon.id)
+            .offset((page - 1) * page_size)
+            .limit(page_size)
+        ).all()
+        return {"data": items, "total": total, "page": page, "page_size": page_size}
 
 
 def get_event(db: Session, event_id: int):
