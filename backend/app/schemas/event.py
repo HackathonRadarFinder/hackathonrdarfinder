@@ -5,6 +5,7 @@ from typing import Annotated
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, StringConstraints, field_validator, model_validator
 
 from app.schemas.hackathon import HackathonCreate
+from app.schemas.responses import DataResponse
 
 RequiredName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)]
 
@@ -57,3 +58,25 @@ class EventResponse(BaseModel):
     url: str | None = None
     source: str | None = None
     scraped_at: datetime | None = None
+
+
+class EventListParams(BaseModel):
+    """Any supported query parameter opts into pagination; omitted values default later."""
+
+    page: int | None = Field(default=None, ge=1, le=2_147_483_647)
+    page_size: int | None = Field(default=None, ge=1, le=100)
+    location: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)
+    ] | None = None
+    mode: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=50)
+    ] | None = None
+    organization_id: int | None = Field(default=None, ge=1, le=2_147_483_647)
+
+
+class EventListResponse(DataResponse[list[EventResponse]]):
+    """Add pagination metadata while retaining the established message/data envelope."""
+
+    total: int = Field(ge=0)
+    page: int = Field(ge=1, le=2_147_483_647)
+    page_size: int = Field(ge=1, le=100)
