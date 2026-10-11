@@ -1,7 +1,10 @@
-from enum import Enum
-from pydantic import BaseModel, EmailStr
+
 from datetime import datetime
-from pydantic import BaseModel, EmailStr, ConfigDict
+from enum import Enum
+from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+
 
 class UserRole(str, Enum):
     VISITOR = "visitor"
@@ -12,31 +15,49 @@ class UserRole(str, Enum):
     DATA_SCIENTIST = "data_scientist"
     ADMINISTRATOR = "administrator"
 
+
 class UserBase(BaseModel):
-    name: str
+    name: str = Field(min_length=1, max_length=100)
     email: EmailStr
 
+
 class UserCreate(UserBase):
-    password: str
-    role: UserRole = UserRole.USER  # Defaults to standard student/user
+    # The public registration API must not accept a privileged role.
+    password: str = Field(min_length=8)
+
+    model_config = ConfigDict(extra="forbid")
+
+    @field_validator("password")
+    @classmethod
+    def validate_password_length(cls, value: str) -> str:
+        if len(value.encode("utf-8")) > 72:
+            raise ValueError(
+                "Password must not exceed 72 bytes"
+            )
+        return value
+
 
 class UserResponse(UserBase):
-    id: int
+    id: UUID
     role: UserRole
     created_at: datetime | None = None
 
     model_config = ConfigDict(from_attributes=True)
 
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
 
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
     role: UserRole
 
+
 class TokenPayload(BaseModel):
-    sub: str | None = None
-    role: str | None = None
-    jti: str | None = None  # Unique token ID for logout/revocation tracking
+    sub: str
+    role: str
+    jti: str
+    exp: int

@@ -5,12 +5,37 @@ import jwt
 import bcrypt
 from app.core.config import settings
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password.encode("utf-8"))
+def verify_password(
+    plain_password: str,
+    hashed_password: str,
+) -> bool:
+    password_bytes = plain_password.encode("utf-8")
+
+    if len(password_bytes) > 72:
+        return False
+
+    try:
+        return bcrypt.checkpw(
+            password_bytes,
+            hashed_password.encode("utf-8"),
+        )
+    except ValueError:
+        return False
+
 
 def get_password_hash(password: str) -> str:
+    password_bytes = password.encode("utf-8")
+
+    if len(password_bytes) > 72:
+        raise ValueError("Password must not exceed 72 bytes")
+
     salt = bcrypt.gensalt()
-    return bcrypt.hashpw(password.encode("utf-8"), salt).decode("utf-8")
+
+    return bcrypt.hashpw(
+        password_bytes,
+        salt,
+    ).decode("utf-8")
+
 
 def create_access_token(subject: str | Any, role: str, expires_delta: timedelta | None = None) -> str:
     """Generate a signed JWT access token containing user UUID, role, and a unique JTI."""
