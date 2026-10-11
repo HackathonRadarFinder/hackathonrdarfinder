@@ -1,0 +1,52 @@
+# Example configuration for an externally managed Prometheus and blackbox exporter.
+# No application /metrics endpoint is assumed. Mount both keys in /etc/prometheus.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: observability
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: observability
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 15s
+    rule_files:
+      - /etc/prometheus/alerts.yml
+    scrape_configs:
+      - job_name: radar-http-probes
+        metrics_path: /probe
+        params:
+          module: [http_2xx]
+        static_configs:
+          - targets:
+              - http://backend.hackathon-dev.svc.cluster.local:8000/health
+              - http://frontend-service.hackathon-dev.svc.cluster.local/health
+        relabel_configs:
+          - source_labels: [__address__]
+            target_label: __param_target
+          - source_labels: [__param_target]
+            target_label: instance
+          - target_label: __address__
+            replacement: blackbox-exporter.observability.svc.cluster.local:9115
+  alerts.yml: |
+    groups:
+      - name: radar-availability
+        rules:
+          - alert: RadarEndpointUnavailable
+            expr: probe_success{job="radar-http-probes"} == 0
+            for: 5m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Radar endpoint {{ $labels.instance }} is unavailable"
+          - alert: RadarProbeExporterUnavailable
+            expr: up{job="radar-http-probes"} == 0
+            for: 5m
+            labels:
+              severity: critical
+            annotations:
+              summary: "Radar probe scrape failed"

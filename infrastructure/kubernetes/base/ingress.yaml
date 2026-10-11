@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hackathon-radar
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts: [hackathon.example.invalid]
+      secretName: hackathon-tls
+  rules:
+    - host: hackathon.example.invalid
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
