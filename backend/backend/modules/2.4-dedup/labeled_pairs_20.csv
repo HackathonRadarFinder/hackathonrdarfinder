@@ -1,0 +1,21 @@
+pair_id,title_a,title_b,organizer_a,organizer_b,date_a,date_b,location_a,location_b,link_a,link_b,label,data_type
+1,Hack On Hills 8.0,Hack On Hills 8.0,App Team NIT Hamirpur,,2026-10-31,2026-10-31,NIT Hamirpur,"Hamirpur, India",https://hackonhills8.devfolio.co/,https://allai.events/event/hack-on-hills-80,Duplicate,real
+2,Hack in Hills ’26,Hack in Hills ’26,"Galgotias University (GU), Greater Noida","Galgotias University (GU), Greater Noida",2026-09-10,2026-09-20,"Manali, Himachal Pradesh, India",Online,https://unstop.com/hackathons/hack-in-hills-26-galgotias-university-gu-greater-noida-1752595,https://www.nx-913.com/external-hackathons/hack-in-hills-26-1752595,Duplicate,real
+3,Hack the Hills Hackathon,Hack the Hills Hackathon,"Indian Institute of Information Technology (IIIT), Una",,,,"Una, Himachal Pradesh",,https://unstop.com/hackathons/hack-the-hills-hackathon-e-summit-iiit-una-indian-institute-of-information-technology-iiit-una-himachal-prade-1372511,https://digitomize.com/hackathons/1372511,Duplicate,real
+4,Hack On Hills 8.0,hackodisha-6.0,App Team NIT Hamirpur,Webwiz NIT Rourkela,2026-10-31,2026-10-31,NIT Hamirpur,Online,https://hackonhills8.devfolio.co/,https://hackodisha-6a.devfolio.co/,Non-Duplicate,real
+5,HackOdisha 5.0,hackodisha-6.0,Webwiz NIT Rourkela,Webwiz NIT Rourkela,2025-09-06,2026-10-31,Online,Online,https://hackodisha-4.devfolio.co/,https://hackodisha-6a.devfolio.co/,Non-Duplicate,real
+6,Hack On Hills 7.0,Hack On Hills 8.0,App Team NIT Hamirpur,App Team NIT Hamirpur,,2026-10-31,NIT Hamirpur,NIT Hamirpur,https://hackonhills7.devfolio.co,https://hackonhills8.devfolio.co/,Non-Duplicate,real
+7,Hack in Hills ’26,Hack On Hills 8.0,"Galgotias University (GU), Greater Noida",App Team NIT Hamirpur,2026-09-10,2026-10-31,"Manali, Himachal Pradesh, India",NIT Hamirpur,https://unstop.com/hackathons/hack-in-hills-26-galgotias-university-gu-greater-noida-1752595,https://hackonhills8.devfolio.co/,Non-Duplicate,real
+8,Hack the Hills Hackathon,Hack in Hills ’26,"Indian Institute of Information Technology (IIIT), Una","Galgotias University (GU), Greater Noida",,2026-09-10,"Una, Himachal Pradesh","Manali, Himachal Pradesh, India",https://unstop.com/hackathons/hack-the-hills-hackathon-e-summit-iiit-una-indian-institute-of-information-technology-iiit-una-himachal-prade-1372511,https://unstop.com/hackathons/hack-in-hills-26-galgotias-university-gu-greater-noida-1752595,Non-Duplicate,real
+9,Zero Day Apocalypse,Devlympics,NSUT,NSUT,,,Delhi,Delhi,,,Non-Duplicate,real
+10,Zero Day Apocalypse,AutoPilot,NSUT,NSUT,,,Delhi,Delhi,,,Non-Duplicate,real
+11,Devlympics,AutoPilot,NSUT,NSUT,,,Delhi,Delhi,,,Non-Duplicate,real
+12,Vihaan X: Software Track,Zero Day Apocalypse,DTU,NSUT,,,New Delhi,Delhi,,,Non-Duplicate,real
+13,CodeHive: 1v1 Real-Time DSA Duel Championship,CodeNeuraX: NeuraKnockout 2026,Code Hive,CodeNeuraX,,,Online,Rajkot,,,Non-Duplicate,real
+14,CodeStorm 2026: FutureForge,The DevForge - Hackathon,,Scaler School of Technology,,,Online,Bengaluru,,,Non-Duplicate,real
+15,CodeStorm 2026,CodeStorm Hackathon,NIT Warangal,NIT Warangal,2026-11-14,2026-11-14,Warangal,Warangal,https://unstop.com/example/codestorm,https://devfolio.co/example/codestorm-hack,Duplicate,practice
+16,Smart Campus Innovathon,SCI 2026 - Smart Campus Innovathon,VIT Vellore,VIT,2026-12-02,2026-12-03,Vellore,Vellore,https://unstop.com/example/smart-campus,https://devfolio.co/example/sci-2026,Duplicate,practice
+17,Open Source Summit India,OSS India 2026,Linux Foundation,Linux Foundation,2026-11-20,2026-11-20,Bengaluru,Bangalore,https://meetup.com/example/oss-summit,https://devfolio.co/example/oss-india,Duplicate,practice
+18,Cloud Native Workshop,Cloud Native Workshop,CNCF Hyderabad,CNCF Hyd,2026-10-18,2026-10-18,Hyderabad,Hyd,https://meetup.com/example/cloud-native,https://unstop.com/example/cloud-native-ws,Duplicate,practice
+19,Women in Tech Hackathon,WiT Hackathon,Google Developer Groups,Google Developer Groups,2026-12-15,2026-12-15,Mumbai,Mumbai,https://unstop.com/example/women-in-tech,https://devfolio.co/example/wit-hack,Duplicate,practice
+20,CodeSprint Finals,CodeSprint,CodeChef,CodeChef,2026-05-25,2026-05-20,Online,Online,https://codechef.com/example/cs-finals,https://unstop.com/example/codesprint,Uncertain,practice
