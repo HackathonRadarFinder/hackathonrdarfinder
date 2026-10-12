@@ -103,8 +103,9 @@ def test_migration_roundtrip_isolated_database(tmp_path, monkeypatch):
     engine = create_engine(url)
     try:
         assert 'revoked_tokens' in inspect(engine).get_table_names()
+        assert 'email_deliveries' in inspect(engine).get_table_names()
         with engine.connect() as connection:
-            assert connection.scalar(text('SELECT version_num FROM alembic_version')) == 'b7c8d9e0f1a2'
+            assert connection.scalar(text('SELECT version_num FROM alembic_version')) == 'c8d9e0f1a2b3'
         columns = inspect(engine).get_columns('revoked_tokens')
         assert {column['name'] for column in columns} == {'jti', 'expires_at', 'revoked_at'}
         assert all(not column['nullable'] for column in columns)
@@ -114,6 +115,7 @@ def test_migration_roundtrip_isolated_database(tmp_path, monkeypatch):
     engine = create_engine(url)
     try:
         assert 'revoked_tokens' not in inspect(engine).get_table_names()
+        assert 'email_deliveries' not in inspect(engine).get_table_names()
         assert 'users' in inspect(engine).get_table_names()
     finally:
         engine.dispose()
