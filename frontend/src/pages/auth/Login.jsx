@@ -18,7 +18,7 @@ export default function Login() {
         <div className="auth-header">
           <h1 className="auth-title">Welcome Back</h1>
           <p className="auth-subtitle">
-            Sign in to track live hackathons, match with teams, and submit your builds.
+            Sign in with your backend account. This session ends when you reload the page.
           </p>
         </div>
 

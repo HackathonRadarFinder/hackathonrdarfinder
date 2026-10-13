@@ -15,6 +15,7 @@ from app.api.routes import (
     auth,
     notifications,
     admin,
+    account,
 )
 from app.core.config import settings
 from app.core.exceptions import AppException
@@ -40,6 +41,7 @@ app.include_router(predictions.router)
 app.include_router(auth.router)
 app.include_router(notifications.router)
 app.include_router(admin.router)
+app.include_router(account.router)
 # Versioned API routes
 app.include_router(
     api_router,

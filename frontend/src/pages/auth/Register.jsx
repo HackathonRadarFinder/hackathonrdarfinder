@@ -18,7 +18,7 @@ export default function Register() {
         <div className="auth-header">
           <h1 className="auth-title">Create Account</h1>
           <p className="auth-subtitle">
-            Join thousands of hackers discovering global opportunities with AI intelligence.
+            Create a regular account to access supported portal features.
           </p>
         </div>
 
@@ -27,15 +27,15 @@ export default function Register() {
         <div className="auth-perks-list">
           <div className="auth-perk-item">
             <span className="auth-perk-dot" />
-            <span>AI hackathon matching</span>
+            <span>Explore the event catalog</span>
           </div>
           <div className="auth-perk-item">
             <span className="auth-perk-dot" />
-            <span>Real-time deadline radar</span>
+            <span>Check event deadlines</span>
           </div>
           <div className="auth-perk-item">
             <span className="auth-perk-dot" />
-            <span>Global builder squad finder</span>
+            <span>Follow organizer links</span>
           </div>
         </div>
       </div>

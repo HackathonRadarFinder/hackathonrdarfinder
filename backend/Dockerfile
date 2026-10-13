@@ -2,10 +2,14 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
 WORKDIR /app
 COPY requirements.txt ./requirements.txt
-RUN pip install -r requirements.txt && groupadd --gid 10001 appuser && useradd --uid 10001 --gid 10001 --create-home appuser
+COPY modules/2.2-collector/requirements.txt ./collector-requirements.txt
+RUN pip install -r requirements.txt -r collector-requirements.txt && groupadd --gid 10001 appuser && useradd --uid 10001 --gid 10001 --create-home appuser
 COPY app ./app
 COPY ai ./ai
 COPY database ./database
+COPY scraper ./scraper
+COPY workers ./workers
+COPY modules/2.2-collector ./modules/2.2-collector
 COPY alembic.ini ./alembic.ini
 USER 10001:10001
 EXPOSE 8000

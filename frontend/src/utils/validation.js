@@ -100,7 +100,7 @@ export function validateRegisterForm({
     errors.email = emailError;
   }
 
-  const passwordError = validatePassword(password, 6);
+  const passwordError = validatePassword(password, 8) || (new TextEncoder().encode(password).length > 72 ? 'Password must not exceed 72 bytes.' : null);
   if (passwordError) {
     errors.password = passwordError;
   }

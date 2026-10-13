@@ -361,7 +361,7 @@ def test_openapi_describes_query_bounds_success_variants_and_global_errors(api):
     document = api.client.get("/openapi.json").json()
     operation = document["paths"]["/events/"]["get"]
     parameters = {parameter["name"]: parameter for parameter in operation["parameters"]}
-    assert set(parameters) == {"page", "page_size", "location", "mode", "organization_id"}
+    assert set(parameters) == {"page", "page_size", "q", "location", "mode", "organization_id"}
     assert all(parameter["in"] == "query" and not parameter.get("required", False) for parameter in parameters.values())
 
     def resolve(schema):

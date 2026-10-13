@@ -4,7 +4,7 @@
  * Manages in-memory UI authentication state (user, loading, error, success).
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { authService } from '../services/authService';
 import { AuthContext } from './AuthContext';
 
@@ -13,6 +13,7 @@ export function AuthProvider({ children }) {
   const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState(null);
   const [authSuccess, setAuthSuccess] = useState(null);
+  useEffect(() => authService.subscribe(setUser), []);
 
   const clearMessages = useCallback(() => {
     setAuthError(null);
@@ -99,6 +100,9 @@ export function AuthProvider({ children }) {
       await authService.logout();
       setUser(null);
       clearMessages();
+    } catch {
+      setUser(null);
+      setAuthError('Signed out on this device. Server revocation could not be confirmed.');
     } finally {
       setIsLoading(false);
     }

@@ -1,0 +1,72 @@
+"""Account-owned saved events and explicit email consent; no SMTP in requests."""
+from fastapi import APIRouter, Depends
+from pydantic import BaseModel, ConfigDict, StrictBool
+from sqlalchemy import select, delete
+from sqlalchemy.orm import Session
+
+from app.api.deps import get_current_db_user
+from app.core.database import get_db
+from app.models.core import Preference, SavedItem
+from app.models.hackathon import Hackathon
+from app.schemas.event import EventResponse
+from app.schemas.responses import DatabaseId, DataResponse, MessageResponse
+from app.services.database import database_operation
+from app.services.event_service import get_event
+
+router = APIRouter(prefix="/account", tags=["Account"])
+
+
+class ReminderPreferences(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    email_reminders: StrictBool = False
+    email_registration_reminders: StrictBool = True
+    email_upcoming_reminders: StrictBool = True
+
+
+@router.get("/saved", response_model=DataResponse[list[EventResponse]])
+def saved_events(user=Depends(get_current_db_user), db: Session = Depends(get_db)):
+    with database_operation(db):
+        rows = db.scalars(select(Hackathon).join(SavedItem).where(
+            SavedItem.user_id == user.id).order_by(Hackathon.id)).all()
+        return {"message": "Saved events fetched", "data": rows}
+
+
+@router.put("/saved/{event_id}", response_model=MessageResponse)
+def save_event(event_id: DatabaseId, user=Depends(get_current_db_user), db: Session = Depends(get_db)):
+    get_event(db, event_id)
+    with database_operation(db, "Event is already saved; refresh saved events"):
+        if db.scalar(select(SavedItem.id).where(
+                SavedItem.user_id == user.id, SavedItem.hackathon_id == event_id)) is None:
+            db.add(SavedItem(user_id=user.id, hackathon_id=event_id))
+            db.commit()
+        return {"message": "Event saved"}
+
+
+@router.delete("/saved/{event_id}", response_model=MessageResponse)
+def unsave_event(event_id: DatabaseId, user=Depends(get_current_db_user), db: Session = Depends(get_db)):
+    with database_operation(db):
+        db.execute(delete(SavedItem).where(SavedItem.user_id == user.id, SavedItem.hackathon_id == event_id))
+        db.commit()
+        return {"message": "Event removed from saved events"}
+
+
+@router.get("/preferences", response_model=ReminderPreferences)
+def preferences(user=Depends(get_current_db_user), db: Session = Depends(get_db)):
+    with database_operation(db):
+        values = dict(db.execute(select(Preference.key, Preference.value).where(
+            Preference.user_id == user.id, Preference.key.in_(ReminderPreferences.model_fields))).all())
+        return {key: values.get(key, "true" if field.default else "false") == "true"
+                for key, field in ReminderPreferences.model_fields.items()}
+
+
+@router.put("/preferences", response_model=ReminderPreferences)
+def update_preferences(body: ReminderPreferences, user=Depends(get_current_db_user), db: Session = Depends(get_db)):
+    with database_operation(db, "Preferences changed concurrently; reload and retry"):
+        for key, value in body.model_dump().items():
+            row = db.scalar(select(Preference).where(Preference.user_id == user.id, Preference.key == key))
+            if row is None:
+                row = Preference(user_id=user.id, key=key)
+                db.add(row)
+            row.value = "true" if value else "false"
+        db.commit()
+        return body

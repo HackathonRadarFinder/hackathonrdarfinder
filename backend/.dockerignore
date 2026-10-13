@@ -15,7 +15,10 @@ env/
 **/node_modules/
 **/*.db
 **/*.sqlite*
-modules/
+modules/*
+!modules/2.2-collector/
+**/tests/
+**/.pytest_cache/
 backend/
 frontend/
 tests/
