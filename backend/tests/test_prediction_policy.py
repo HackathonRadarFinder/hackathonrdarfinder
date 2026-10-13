@@ -49,5 +49,3 @@ def test_anonymous_and_regular_user_cannot_bypass_public_suppression(api):
 def test_invalid_and_future_history_is_rejected(history):
     with pytest.raises(ValidationError):
         PredictionRequest(organization='Test', historical_dates=history)
-
-

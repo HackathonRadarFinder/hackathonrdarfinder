@@ -22,6 +22,8 @@ def get_events(
     Paginated responses retain message/data and add total, page and page_size.
     The defaults are page 1 and size 10 (maximum 100). Location and mode match
     literal, case-insensitive substrings; all supplied filters are combined.
+    start_from and start_to are inclusive UTC calendar dates (YYYY-MM-DD).
+    Events with an unknown start date are excluded only when a date filter is supplied.
     A page beyond the matching results returns an empty data list.
     """
     if any(value is not None for value in query.model_dump().values()):

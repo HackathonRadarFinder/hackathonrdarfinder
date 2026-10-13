@@ -1,3 +1,5 @@
+from datetime import datetime, time
+
 from fastapi import HTTPException
 from sqlalchemy import func, select, or_
 from sqlalchemy.orm import Session
@@ -49,6 +51,13 @@ def get_event_page(db: Session, query: EventListParams):
         filters.append(Hackathon.mode.icontains(query.mode, autoescape=True))
     if query.organization_id is not None:
         filters.append(Hackathon.organization_id == query.organization_id)
+    # Event datetime columns use UTC-naive storage. Compare complete calendar
+    # day boundaries without truncating the column, so its index remains usable.
+    # time.max also handles date.max without overflowing to the following day.
+    if query.start_from is not None:
+        filters.append(Hackathon.start_date >= datetime.combine(query.start_from, time.min))
+    if query.start_to is not None:
+        filters.append(Hackathon.start_date <= datetime.combine(query.start_to, time.max))
 
     # Reuse exactly the same predicates for the count and page. Autoescape treats
     # %, _ and the escape character as literal text, not client-supplied wildcards.

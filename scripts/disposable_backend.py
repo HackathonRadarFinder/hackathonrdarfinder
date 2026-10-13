@@ -6,6 +6,11 @@ temporary = tempfile.TemporaryDirectory(prefix='radar-disposable-')
 os.environ.update(DATABASE_URL=f"sqlite:///{Path(temporary.name).as_posix()}/fixture.db", SECRET_KEY='disposable-frontend-test-secret-key-123456789', DEBUG='false', EMAIL_MODE='disabled')
 subprocess.run([sys.executable, '-m', 'alembic', 'upgrade', 'head'], cwd=root / 'backend', env=os.environ, check=True)
 from app.main import app
+
+@app.get('/__disposable_fixture', include_in_schema=False)
+def disposable_fixture_marker():
+    return {'database': 'temporary-sqlite-frontend-tests'}
+
 from app.core.database import engine, SessionLocal
 from app.models.core import User, Role
 from app.models.organization import Organization

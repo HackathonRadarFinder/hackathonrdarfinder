@@ -1,5 +1,6 @@
 """BE-002 pagination/filtering contracts against an isolated, FK-enabled database."""
 
+from datetime import datetime
 from types import SimpleNamespace
 
 import pytest
@@ -260,6 +261,80 @@ def test_filters_combine_with_and_and_total_is_counted_before_slicing(api):
     assert empty["total"] == 0
 
 
+@pytest.mark.parametrize("params,expected_slice", [
+    ({"start_from": "2026-10-01"}, slice(1, 5)),
+    ({"start_to": "2026-10-03"}, slice(0, 4)),
+    ({"start_from": "2026-10-01", "start_to": "2026-10-03"}, slice(1, 4)),
+    ({"start_from": "2026-10-02", "start_to": "2026-10-02"}, slice(2, 3)),
+])
+def test_date_filters_use_inclusive_utc_days_and_exclude_unknown_starts(api, params, expected_slice):
+    expected = seed_rows(api, [{"start_date": started} for started in (
+        datetime(2026, 9, 30, 23, 59, 59, 999999),
+        datetime(2026, 10, 1),
+        datetime(2026, 10, 2, 12),
+        datetime(2026, 10, 3, 23, 59, 59, 999999),
+        datetime(2026, 10, 4),
+        None,
+    )])
+    body = page(api, **params)
+    assert ids(body) == expected[expected_slice]
+    assert (body["total"], body["page"], body["page_size"]) == (len(expected[expected_slice]), 1, 10)
+    # Date uncertainty stays visible in unfiltered pages and the legacy list.
+    assert ids(page(api, page=1)) == expected
+    assert ids(api.client.get("/events/").json()) == expected
+
+
+def test_date_filters_combine_with_text_and_organization_before_pagination(api):
+    first, second = api.organization_ids
+    base = {"title": "Radar builders", "location": "Pune", "mode": "online", "start_date": datetime(2026, 10, 14)}
+    expected = seed_rows(api, [
+        base,
+        {**base, "start_date": datetime(2026, 10, 15, 23, 59, 59, 999999)},
+        {**base, "start_date": datetime(2026, 10, 16)},
+        {**base, "organization_id": second},
+        {**base, "mode": "onsite"},
+        {**base, "location": "Mumbai"},
+        {**base, "title": "Other event"},
+        {**base, "start_date": None},
+    ])
+    api.statements.clear()
+    query = dict(q="Radar", organization_id=first, mode="online", location="Pune",
+                 start_from="2026-10-14", start_to="2026-10-15", page_size=1)
+    assert ids(page(api, **query, page=2)) == expected[1:2]
+    assert page(api, **query, page=1)["total"] == 2
+    assert ids(page(api, **query, page=3)) == []
+    # Counting and fetching retain bound date predicates, stable order and LIMIT.
+    assert all("2026-10" not in statement for statement, _ in api.statements)
+    assert all("hackathons.start_date" in statement for statement, _ in api.statements)
+    assert any("LIMIT" in statement and "ORDER BY hackathons.id" in statement for statement, _ in api.statements)
+
+
+def test_supported_minimum_and_maximum_date_boundaries_do_not_overflow(api):
+    expected = seed_rows(api, [{"start_date": datetime.min}, {"start_date": datetime.max}, {"start_date": None}])
+    assert ids(page(api, start_from="0001-01-01", start_to="0001-01-01")) == expected[:1]
+    assert ids(page(api, start_from="9999-12-31", start_to="9999-12-31")) == expected[1:2]
+
+
+@pytest.mark.parametrize("params", [
+    {"start_from": "2026-10-16", "start_to": "2026-10-14"},
+    {"start_from": "2026-02-29"},
+    {"start_to": "2026-13-01"},
+    {"start_to": "2026-10-32"},
+    {"start_from": "20261014"},
+    {"start_from": "2026-1-1"},
+    {"start_to": "2026-10-14T00:00:00Z"},
+    {"start_from": "1791936000"},
+    {"start_to": ""},
+    {"start_to": " 2026-10-14 "},
+])
+def test_invalid_date_windows_fail_validation_before_catalog_query(api, params):
+    seed(api, 1)
+    api.statements.clear()
+    body = assert_error(api.client.get("/events/", params=params), 422)
+    assert body["code"] == "VALIDATION_ERROR"
+    assert api.statements == []
+
+
 @pytest.mark.parametrize(
     "name,value",
     [
@@ -361,7 +436,7 @@ def test_openapi_describes_query_bounds_success_variants_and_global_errors(api):
     document = api.client.get("/openapi.json").json()
     operation = document["paths"]["/events/"]["get"]
     parameters = {parameter["name"]: parameter for parameter in operation["parameters"]}
-    assert set(parameters) == {"page", "page_size", "q", "location", "mode", "organization_id"}
+    assert set(parameters) == {"page", "page_size", "q", "location", "mode", "organization_id", "start_from", "start_to"}
     assert all(parameter["in"] == "query" and not parameter.get("required", False) for parameter in parameters.values())
 
     def resolve(schema):
@@ -382,6 +457,11 @@ def test_openapi_describes_query_bounds_success_variants_and_global_errors(api):
         assert schema["type"] == "string"
         assert schema["minLength"] == 1
         assert schema["maxLength"] == maximum
+    for name in ("start_from", "start_to"):
+        schema = concrete(parameters[name]["schema"])
+        assert schema["type"] == "string"
+        assert schema["format"] == "date"
+        assert "UTC" in parameters[name]["schema"]["description"]
 
     response_schema = operation["responses"]["200"]["content"]["application/json"]["schema"]
     variants = [resolve(item) for item in response_schema.get("anyOf", [response_schema])]
