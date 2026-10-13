@@ -85,6 +85,7 @@ function Explore({ saved, toggle }) {
 function EventDetails({ saved, toggle }) {
   const { id } = useParams();
   const resource = useResource(useCallback(signal => api.event(id, signal), [id]));
+  const discovery = useResource(useCallback(signal => api.eventDiscovery(id, signal), [id]));
   const event = resource.data;
   const link = safeEventUrl(event?.url);
   return <section className="platform-detail"><Link to="/explore">← Back to events</Link><Feedback resource={resource} />{event && <>
@@ -93,6 +94,13 @@ function EventDetails({ saved, toggle }) {
     <button onClick={() => toggle(event.id)} aria-pressed={saved.includes(event.id)}>{saved.includes(event.id) ? 'Remove saved event' : 'Save to account'}</button>
     {link ? <a className="platform-action" href={link} target="_blank" rel="noopener noreferrer">Visit organizer website <ExternalLink size={16} /></a> : <p>No valid organizer link is available.</p>}
     <p className="platform-muted">Source observed: {date(event.scraped_at)}. This is a stored snapshot; check the organizer for changes.</p>
+    <section aria-label="Discovery history"><h2>Discovery and update history</h2><Feedback resource={discovery} />
+      {discovery.data && <>{discovery.data.evidence.length === 0 && <p>No automated discovery evidence is recorded for this event.</p>}
+        {discovery.data.evidence.slice(0, 3).map((item, index) => <p key={index}>Collected by {item.source} at {date(item.observed_at)} using {item.adapter_version}.</p>)}
+        {discovery.data.versions.map(item => <details key={item.version}><summary>Version {item.version} · {date(item.observed_at)}</summary>
+          <p>Recorded fields: {item.changed_fields.join(', ') || 'Initial adopted snapshot'}</p>
+          <p>{item.snapshot.title}</p><p>Starts: {date(item.snapshot.start_date, item.snapshot.description?.includes('Date precision: day'))}</p></details>)}</>}
+    </section>
     <p className="platform-muted">Registration takes place on the organizer’s website. This portal does not register you.</p>
   </>}</section>;
 }

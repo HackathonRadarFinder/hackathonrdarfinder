@@ -117,6 +117,10 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
       return result.data;
     },
     async organizations(signal) { return (await request('/organizations/', { signal, authenticated: false })).data; },
+    async eventDiscovery(id, signal) {
+      if (!/^\d+$/.test(String(id)) || Number(id) < 1 || Number(id) > 2_147_483_647) throw new Error('Invalid event ID.');
+      return (await request(`/events/${id}/discovery`, { signal, authenticated: false })).data;
+    },
     async saved(signal) { return (await request('/account/saved', { signal })).data; },
     async save(id, saved) { return request(`/account/saved/${id}`, { method: saved ? 'DELETE' : 'PUT' }); },
     preferences(signal) { return request('/account/preferences', { signal }); },

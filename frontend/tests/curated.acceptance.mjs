@@ -55,6 +55,12 @@ try {
   await page.getByText(/Source observed:/).waitFor();
   await page.getByText(/Applications are closed/).waitFor();
   passed('Detail preserves source attribution, observation time and closed-application caveat');
+  if (process.env.FRONTEND_DISCOVERY_EXPECTED === 'true') {
+    await page.getByRole('heading', { name: 'Discovery and update history', exact: true }).waitFor();
+    await page.getByText(/Collected by Reviewed MVP snapshot/).first().waitFor();
+    await page.getByText(/Version 1/).waitFor();
+    passed('Automated collection evidence and initial version render in event detail');
+  }
   const email = `curated-${randomUUID()}@example.com`;
   const password = `Demo-${randomUUID()}`;
   await page.goto(`${base}/register`);
