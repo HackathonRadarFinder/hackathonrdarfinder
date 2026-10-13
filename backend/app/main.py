@@ -149,7 +149,9 @@ async def validation_exception_handler(
         422,
         "VALIDATION_ERROR",
         "Request validation failed.",
-        exc.errors(),
+        # Pydantic error input/context may contain passwords or submitted secrets.
+        [{key: error[key] for key in ("type", "loc", "msg") if key in error}
+         for error in exc.errors()],
     )
 
 
