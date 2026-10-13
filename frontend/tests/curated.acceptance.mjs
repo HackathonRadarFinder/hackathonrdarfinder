@@ -133,6 +133,11 @@ try {
   await page.goto(`${base}/predictions`);
   await page.getByText(/No eligible public predictions/).waitFor();
   assert.equal(await page.locator('.platform-grid article').count(), 0);
+  if (process.env.FRONTEND_PREDICTION_READINESS_EXPECTED === 'true') {
+    await page.getByLabel('Prediction data readiness').waitFor();
+    assert.match(await page.getByLabel('Prediction data readiness').textContent(), /5 reviewed event editions; 1 recurring series/);
+    passed('Verified history readiness displays without publishing unsupported forecasts');
+  }
   passed('Unsupported public predictions remain suppressed');
   await page.setViewportSize({ width: 390, height: 900 });
   await page.goto(`${base}/explore`);

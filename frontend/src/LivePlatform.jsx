@@ -127,8 +127,11 @@ function Admin() {
 
 function Predictions() {
   const resource = useResource(api.predictions);
+  const readiness = useResource(api.predictionReadiness);
   return <section><h1>Predictions</h1><p>Prediction - not officially announced. Only forecasts from an approved, calibrated model meeting the public confidence policy appear here. Organizer dates may change.</p>
-    <Feedback resource={resource} /><div className="platform-grid">{resource.data?.map(row => <article className="platform-card" key={row.organization_id}>
+    <Feedback resource={resource} /><Feedback resource={readiness} />
+    {readiness.data && <p aria-label="Prediction data readiness">{readiness.data.reviewed_editions} reviewed event editions; {readiness.data.recurring_series} recurring series. {readiness.data.reason}</p>}
+    <div className="platform-grid">{resource.data?.map(row => <article className="platform-card" key={row.organization_id}>
       <h2>{row.organization}</h2><p>Prediction - not officially announced</p>
       <p>{row.window ? `${row.window.start} to ${row.window.end}` : 'No supported date window'}</p>
       <p>Confidence: {row.confidence_band || 'unavailable'}</p><p>{row.reasoning}</p>

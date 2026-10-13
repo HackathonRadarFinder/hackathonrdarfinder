@@ -6,29 +6,12 @@ No existing event is overwritten. --apply is required to commit.
 import argparse
 import json
 from pathlib import Path
-from urllib.parse import urlsplit
 
 from sqlalchemy import select
 from app.core.database import SessionLocal
 from app.models.hackathon import Hackathon
 from app.models.organization import Organization
-from app.schemas.event import EventCreate
-
-
-def validate_records(payload):
-    if not isinstance(payload, list) or not 1 <= len(payload) <= 100:
-        raise ValueError("Expected 1–100 reviewed records")
-    records = []
-    for item in payload:
-        event = EventCreate.model_validate(item)
-        parts = urlsplit(str(event.url or ""))
-        if (event.source != "Official organizer (manual)" or not event.organization
-                or event.organization_id is not None or parts.scheme != "https"
-                or parts.username or parts.password or not event.scraped_at
-                or not event.description or "Date precision:" not in event.description):
-            raise ValueError("Reviewed provenance, HTTPS source and date precision required")
-        records.append(event)
-    return records
+from app.services.curated_validation import validate_records
 
 
 def ingest(db, records):

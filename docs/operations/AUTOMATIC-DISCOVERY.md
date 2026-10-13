@@ -2,7 +2,9 @@
 
 Baseline MVP: `0f9f56a` (`feat(mvp): add isolated curated demo and date filters`).
 The seven authorized files were committed and the release worktree was clean
-before creating `feature/automatic-discovery`. Feature work remains uncommitted.
+before creating `feature/automatic-discovery`. The 22 discovery files below were
+subsequently committed with authorization as `9bc2b2a`; the tree was clean afterward.
+Phase 2 research work is documented in [AI-PREDICTION-PHASE2.md](AI-PREDICTION-PHASE2.md).
 This is a local demonstration and research pipeline, not a public release.
 
 ## Run the isolated discovery demo
@@ -142,7 +144,7 @@ invalid-batch rollback, stale updates, version history, role denial/audited regi
 mocked Unstop handoff, temporal leakage prevention and read-only export.
 
 No push, merge, deployment, global dependency change or live scraping was performed.
-Review feature diff and approve a separate feature commit before finalization.
+The discovery commit is complete. Phase 2 changes require separate commit approval.
 
 ## Feature file inventory
 

@@ -2,11 +2,11 @@
 from datetime import datetime
 from statistics import mean, median
 from sqlalchemy import select
-from app.models.discovery import DiscoveryEvidence
 
 
 def export_observations(db):
     """Read provenance and event snapshots only; never export accounts or preferences."""
+    from app.models.discovery import DiscoveryEvidence
     rows = db.scalars(select(DiscoveryEvidence).order_by(
         DiscoveryEvidence.observed_at, DiscoveryEvidence.id)).all()
     return [{'event_id': row.hackathon_id, 'source_id': str(row.source_id),

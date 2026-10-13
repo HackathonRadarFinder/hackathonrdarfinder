@@ -128,6 +128,7 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
     readNotification(id) { return request(`/notifications/${encodeURIComponent(id)}/read`, { method: 'PUT' }); },
     updatePreferences(body) { return request('/account/preferences', { method: 'PUT', body }); },
     async predictions(signal) { return (await request('/predictions/catalog', { signal, authenticated: false })).data; },
+    async predictionReadiness(signal) { return (await request('/predictions/readiness', { signal, authenticated: false })).data; },
     async admin(signal) {
       const [stats, users, organizations] = await Promise.all([
         request('/admin/stats', { signal }), request('/admin/users', { signal }), request('/admin/organizations', { signal }),

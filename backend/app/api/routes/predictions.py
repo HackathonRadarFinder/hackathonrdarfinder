@@ -12,6 +12,8 @@ from app.services.prediction_policy import baseline_evaluation
 from app.schemas.prediction import PredictionRequest
 from ai.prediction_model import predict_next_hackathon as baseline_predict
 from ai.neural_prediction_model import predict_next_hackathon as neural_predict
+from ai.discovery_history import export_observations
+from ai.temporal_prediction import evaluate, load_review, readiness
 
 router = APIRouter(
     prefix="/predictions",
@@ -63,6 +65,26 @@ def catalog_predictions(db: Session = Depends(get_db)):
 @router.get("/evaluation", dependencies=[Depends(require_data_scientist)])
 def evaluation_predictions(db: Session = Depends(get_db)):
     return {"message": "Internal baseline evaluation", "data": _catalog_evaluation(db)}
+
+
+def _temporal_report(db):
+    with database_operation(db):
+        observations = export_observations(db)
+        organizations = dict(db.execute(select(Organization.id, Organization.name)).all())
+        observations = [{**row, 'snapshot': {**row['snapshot'],
+            'organization': organizations.get(row['snapshot'].get('organization_id'))}} for row in observations]
+    review, _ = load_review()
+    return evaluate(observations, review, datetime.now(timezone.utc))
+
+
+@router.get('/readiness')
+def prediction_readiness(db: Session = Depends(get_db)):
+    return {'data': readiness(_temporal_report(db))}
+
+
+@router.get('/research', dependencies=[Depends(require_data_scientist)])
+def temporal_research(db: Session = Depends(get_db)):
+    return {'message': 'Observation-aware research; no publication approval', 'data': _temporal_report(db)}
 
 
 @router.get("/")
