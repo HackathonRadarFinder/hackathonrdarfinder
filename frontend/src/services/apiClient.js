@@ -97,12 +97,14 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
       return login(email, password);
     },
     async forgotPassword() { throw new Error('Password reset is not supported by this backend yet. No email was sent.'); },
-    async events({ page = 1, pageSize = 12, q, location, mode, organizationId } = {}, signal) {
+    async events({ page = 1, pageSize = 12, q, location, mode, organizationId, startFrom, startTo } = {}, signal) {
       const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) });
       if (q?.trim()) params.set('q', q.trim());
       if (location?.trim()) params.set('location', location.trim());
       if (mode?.trim()) params.set('mode', mode.trim());
       if (organizationId) params.set('organization_id', String(organizationId));
+      if (startFrom) params.set('start_from', startFrom);
+      if (startTo) params.set('start_to', startTo);
       const result = await request(`/events/?${params}`, { signal, authenticated: false });
       if (!Array.isArray(result.data) || !Number.isInteger(result.total) || !Number.isInteger(result.page)) {
         throw new Error('Invalid event page response.');

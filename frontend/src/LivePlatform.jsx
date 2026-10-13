@@ -55,7 +55,7 @@ function EventCard({ event, saved, toggle, organization }) {
 }
 
 function Explore({ saved, toggle }) {
-  const [filters, setFilters] = useState({ q: '', location: '', mode: '', organizationId: '', pageSize: 12 });
+  const [filters, setFilters] = useState({ q: '', location: '', mode: '', organizationId: '', startFrom: '', startTo: '', pageSize: 12 });
   const [draft, setDraft] = useState(filters);
   const [page, setPage] = useState(1);
   const organizations = useResource(api.organizations);
@@ -69,10 +69,12 @@ function Explore({ saved, toggle }) {
         <label>Location<input value={draft.location} maxLength={255} placeholder="City or region" onChange={event => setDraft({ ...draft, location: event.target.value })} /></label>
         <label>Mode<input value={draft.mode} maxLength={50} placeholder="Online, hybrid…" onChange={event => setDraft({ ...draft, mode: event.target.value })} /></label>
         <label>Organization<select value={draft.organizationId} onChange={event => setDraft({ ...draft, organizationId: event.target.value })}><option value="">All organizations</option>{(organizations.data || []).map(org => <option key={org.id} value={org.id}>{org.name}</option>)}</select></label>
+        <label>Starts on or after (UTC)<input type="date" value={draft.startFrom} max={draft.startTo || undefined} onChange={event => setDraft({ ...draft, startFrom: event.target.value })} /></label>
+        <label>Starts on or before (UTC)<input type="date" value={draft.startTo} min={draft.startFrom || undefined} onChange={event => setDraft({ ...draft, startTo: event.target.value })} /></label>
         {organizations.error && <p role="alert">Organization filters could not load. <button type="button" onClick={organizations.retry}>Retry</button></p>}
         <label>Events per page<select value={draft.pageSize} onChange={event => setDraft({ ...draft, pageSize: Number(event.target.value) })}><option>12</option><option>24</option><option>48</option></select></label>
-        <button className="platform-primary" type="submit">Apply filters</button><button type="button" onClick={() => { const cleared = { q: '', location: '', mode: '', organizationId: '', pageSize: 12 }; setDraft(cleared); setFilters(cleared); setPage(1); }}>Reset</button>
-      </form><p className="platform-muted">Results are sorted by event ID. Location and mode match literal text.</p>
+        <button className="platform-primary" type="submit">Apply filters</button><button type="button" onClick={() => { const cleared = { q: '', location: '', mode: '', organizationId: '', startFrom: '', startTo: '', pageSize: 12 }; setDraft(cleared); setFilters(cleared); setPage(1); }}>Reset</button>
+      </form><p className="platform-muted">The catalog includes historical events. Use start dates to narrow upcoming results. Dates filter by UTC calendar day; events without start dates are excluded when filtering. Results are sorted by event ID.</p>
     </aside><section aria-label="Event results" aria-busy={resource.loading}><Feedback resource={resource} />
       {result && <><p role="status">{result.total} events · page {result.page}</p>{!result.data.length && <div className="platform-empty"><h2>No events found</h2><p>Try another location or reset your filters.</p></div>}
         <div className="platform-grid">{result.data.map(event => <EventCard key={event.id} event={event} saved={saved.includes(event.id)} toggle={toggle} organization={names.get(event.organization_id)} />)}</div>
@@ -90,6 +92,7 @@ function EventDetails({ saved, toggle }) {
     <dl><div><dt>Starts</dt><dd>{date(event.start_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Ends</dt><dd>{date(event.end_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Registration deadline</dt><dd>{date(event.registration_deadline)}</dd></div><div><dt>Location / mode</dt><dd>{event.location || 'Not provided'} / {event.mode || 'Not provided'}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div><div><dt>Source</dt><dd>{event.source || 'Not provided'}</dd></div></dl>
     <button onClick={() => toggle(event.id)} aria-pressed={saved.includes(event.id)}>{saved.includes(event.id) ? 'Remove saved event' : 'Save to account'}</button>
     {link ? <a className="platform-action" href={link} target="_blank" rel="noopener noreferrer">Visit organizer website <ExternalLink size={16} /></a> : <p>No valid organizer link is available.</p>}
+    <p className="platform-muted">Source observed: {date(event.scraped_at)}. This is a stored snapshot; check the organizer for changes.</p>
     <p className="platform-muted">Registration takes place on the organizer’s website. This portal does not register you.</p>
   </>}</section>;
 }
