@@ -502,15 +502,20 @@ def test_health_notification_and_prediction_routes_remain_available(api, monkeyp
 
     monkeypatch.setattr(predictions, "baseline_predict", predict)
     monkeypatch.setattr(predictions, "neural_predict", predict)
-    payload = {"organization": "Regression Org", "historical_dates": ["2026-01-01", "2027-01-01"]}
+    payload = {"organization": "Regression Org", "historical_dates": ["2024-01-01", "2025-01-01"]}
     for path in ("/predictions/baseline", "/predictions/neural"):
-        response = api.client.post(path, json=payload)
+        response = api.client.post(path, json=payload, headers=api.admin)
         assert response.status_code == 200, response.text
-        assert response.json()["predicted_date"] == "2028-01-01"
+        if path.endswith('baseline'):
+            assert response.json()["predicted_date"] is None
+            assert response.json()["window"]["start"] <= response.json()["window"]["end"]
+            assert response.json()["probability"] is None
+        else:
+            assert response.json()["predicted_date"] == "2028-01-01"
     assert calls == [payload, payload]
 
     def unavailable(**_kwargs):
         raise FileNotFoundError("No test model artifact")
 
     monkeypatch.setattr(predictions, "neural_predict", unavailable)
-    assert_error(api.client.post("/predictions/neural", json=payload), 503)
+    assert_error(api.client.post("/predictions/neural", json=payload, headers=api.admin), 503)

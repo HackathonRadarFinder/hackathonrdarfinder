@@ -62,8 +62,7 @@ def run():
     assert call('/notifications/')['data'][0]['is_read']
     assert not call('/account/preferences')['email_reminders']
     forecasts = call('/predictions/catalog')['data']
-    assert any(row['predicted_date'] and row['historical_events'] >= 2 for row in forecasts)
-    assert all(row['confidence_kind'] == 'heuristic' for row in forecasts)
+    assert forecasts == []  # uncalibrated baseline is internal evaluation only
     call('/auth/logout', 'POST')
     print(json.dumps({'live_journey':'PASS','genuine_events':events['total'],
                      'organizations_with_predictions':len(forecasts),'email_sent':False}))

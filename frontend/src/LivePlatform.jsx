@@ -116,15 +116,16 @@ function Admin() {
 
 function Predictions() {
   const resource = useResource(api.predictions);
-  return <section><h1>Upcoming date estimates</h1><p>Baseline recurrence estimates from stored event history. Confidence is a model heuristic, not a calibrated probability. Organizer dates may change.</p>
+  return <section><h1>Predictions</h1><p>Prediction - not officially announced. Only forecasts from an approved, calibrated model meeting the public confidence policy appear here. Organizer dates may change.</p>
     <Feedback resource={resource} /><div className="platform-grid">{resource.data?.map(row => <article className="platform-card" key={row.organization_id}>
-      <h2>{row.organization}</h2><p>{row.predicted_date ? `Unconfirmed estimate: ${row.predicted_date}` : 'Insufficient history for an estimate'}</p>
-      {row.predicted_date && <p>Heuristic confidence: {Math.round(row.confidence * 100)}%</p>}<p>{row.reasoning}</p>
-      <small>{row.historical_events} distinct historical event dates. Missing editions can distort this estimate; no calibrated date window is available.</small>
+      <h2>{row.organization}</h2><p>Prediction - not officially announced</p>
+      <p>{row.window ? `${row.window.start} to ${row.window.end}` : 'No supported date window'}</p>
+      <p>Confidence: {row.confidence_band || 'unavailable'}</p><p>{row.reasoning}</p>
+      <small>Model: {row.model_version || 'unavailable'}; generated: {date(row.generated_at)}. {row.historical_events} distinct historical event dates.</small>
       {row.evidence?.length > 0 && <details><summary>Historical source evidence (latest 10 records)</summary><ul>{row.evidence.map((item, index) =>
         <li key={`${item.date}-${index}`}>{item.date}: {safeEventUrl(item.url) ? <a href={safeEventUrl(item.url)} target="_blank" rel="noopener noreferrer">{item.title}</a> : item.title}</li>)}</ul></details>}
     </article>)}</div>
-    {resource.data?.length === 0 && <p>No organizations in the catalog yet.</p>}</section>;
+    {resource.data?.length === 0 && <p>No eligible public predictions. The current baseline is uncalibrated; insufficient or sub-threshold forecasts remain internal for evaluation. Confirmed events are still available in Explore.</p>}</section>;
 }
 
 function Preferences() {
