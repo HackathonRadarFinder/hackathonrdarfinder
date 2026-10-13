@@ -118,6 +118,8 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
     async saved(signal) { return (await request('/account/saved', { signal })).data; },
     async save(id, saved) { return request(`/account/saved/${id}`, { method: saved ? 'DELETE' : 'PUT' }); },
     preferences(signal) { return request('/account/preferences', { signal }); },
+    async notifications(signal) { return (await request('/notifications/', { signal })).data; },
+    readNotification(id) { return request(`/notifications/${encodeURIComponent(id)}/read`, { method: 'PUT' }); },
     updatePreferences(body) { return request('/account/preferences', { method: 'PUT', body }); },
     async predictions(signal) { return (await request('/predictions/catalog', { signal, authenticated: false })).data; },
     async admin(signal) {

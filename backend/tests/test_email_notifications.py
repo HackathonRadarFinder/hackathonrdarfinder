@@ -23,6 +23,14 @@ from app.services.notification_service import claim, dispatch_due, enqueue_due
 NOW = datetime(2026, 10, 13, 12, tzinfo=timezone.utc)
 
 
+def test_day_only_public_dates_never_create_timed_email(database):
+    engine, (_, event_id) = database
+    with Session(engine) as db:
+        db.get(Hackathon, event_id).description = "Date precision: day; exact time not published."
+        db.commit()
+        assert enqueue_due(db, NOW) == 0
+
+
 def config(**changes):
     return Settings(_env_file=None, DATABASE_URL="sqlite://", SECRET_KEY="x" * 32,
                     **{"EMAIL_MODE": "enabled", "SMTP_HOST": "smtp.example.com", **changes})

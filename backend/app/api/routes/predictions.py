@@ -22,14 +22,16 @@ def catalog_predictions(db: Session = Depends(get_db)):
     """Baseline recurrence forecasts from distinct past dates in the catalog."""
     now = datetime.now(timezone.utc).replace(tzinfo=None)
     with database_operation(db):
-        rows = db.execute(select(Organization.id, Organization.name, Hackathon.start_date)
+        rows = db.execute(select(Organization.id, Organization.name, Hackathon.start_date,
+                                 Hackathon.title, Hackathon.url)
             .outerjoin(Hackathon, (Hackathon.organization_id == Organization.id)
                        & (Hackathon.start_date < now)).order_by(Organization.id, Hackathon.start_date)).all()
     groups = {}
-    for org_id, name, started in rows:
-        group = groups.setdefault(org_id, {"name": name, "dates": set()})
+    for org_id, name, started, title, url in rows:
+        group = groups.setdefault(org_id, {"name": name, "dates": set(), "evidence": []})
         if started is not None:
             group["dates"].add(started.date().isoformat())
+            group["evidence"].append({"date": started.date().isoformat(), "title": title, "url": url})
     result = []
     for org_id, group in groups.items():
         dates = sorted(group["dates"])
@@ -48,7 +50,8 @@ def catalog_predictions(db: Session = Depends(get_db)):
                     forecast["predicted_date"] = None
                     forecast["reasoning"] = "Estimated date exceeds the supported date range."
         result.append({**forecast, "organization_id": org_id, "historical_events": len(dates),
-                       "model": "baseline", "confidence_kind": "heuristic"})
+                       "model": "baseline", "confidence_kind": "heuristic", "confirmed": False,
+                       "evidence": group["evidence"][-10:]})
     return {"message": "Catalog predictions fetched", "data": result}
 
 

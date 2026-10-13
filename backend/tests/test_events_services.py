@@ -492,7 +492,7 @@ def test_health_notification_and_prediction_routes_remain_available(api, monkeyp
         assert response.status_code == 200
         assert response.json()["status"] == "healthy"
         assert response.headers["X-Request-ID"] == "be-001-regression"
-    assert api.client.get("/notifications/").json() == {"message": "Notifications API is ready", "data": []}
+    assert api.client.get("/notifications/").status_code == 401
     assert api.client.get("/predictions/").json()["models"] == ["baseline", "neural"]
     calls = []
 

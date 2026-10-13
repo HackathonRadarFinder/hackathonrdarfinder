@@ -34,10 +34,12 @@ function Feedback({ resource }) {
   return null;
 }
 
-function date(value) {
+function date(value, dayOnly = false) {
   if (!value) return 'Not provided';
   const parsed = new Date(/[zZ]|[+-]\d\d:\d\d$/.test(value) ? value : `${value}Z`);
-  return Number.isNaN(parsed.getTime()) ? 'Not provided' : parsed.toLocaleString(undefined, { timeZoneName: 'short' });
+  if (Number.isNaN(parsed.getTime())) return 'Not provided';
+  return dayOnly ? `${parsed.toLocaleDateString(undefined, { timeZone: 'UTC' })} (time not published)`
+    : parsed.toLocaleString(undefined, { timeZoneName: 'short' });
 }
 
 function EventCard({ event, saved, toggle, organization }) {
@@ -47,7 +49,7 @@ function EventCard({ event, saved, toggle, organization }) {
     <h2><Link to={`/event/${event.id}`}>{event.title}</Link></h2>
     <p>{event.description || 'No description provided.'}</p>
     <dl><div><dt>Mode</dt><dd>{event.mode || 'Not provided'}</dd></div><div><dt>Location</dt><dd>{event.location || 'Not provided'}</dd></div>
-      <div><dt>Starts</dt><dd>{date(event.start_date)}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div></dl>
+      <div><dt>Starts</dt><dd>{date(event.start_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div></dl>
     <Link className="platform-action" to={`/event/${event.id}`}>View details →</Link>
   </article>;
 }
@@ -85,7 +87,7 @@ function EventDetails({ saved, toggle }) {
   const link = safeEventUrl(event?.url);
   return <section className="platform-detail"><Link to="/explore">← Back to events</Link><Feedback resource={resource} />{event && <>
     <span className="platform-eyebrow">EVENT DETAILS</span><h1>{event.title}</h1><p className="platform-description">{event.description || 'No description provided.'}</p>
-    <dl><div><dt>Starts</dt><dd>{date(event.start_date)}</dd></div><div><dt>Ends</dt><dd>{date(event.end_date)}</dd></div><div><dt>Registration deadline</dt><dd>{date(event.registration_deadline)}</dd></div><div><dt>Location / mode</dt><dd>{event.location || 'Not provided'} / {event.mode || 'Not provided'}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div><div><dt>Source</dt><dd>{event.source || 'Not provided'}</dd></div></dl>
+    <dl><div><dt>Starts</dt><dd>{date(event.start_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Ends</dt><dd>{date(event.end_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Registration deadline</dt><dd>{date(event.registration_deadline)}</dd></div><div><dt>Location / mode</dt><dd>{event.location || 'Not provided'} / {event.mode || 'Not provided'}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div><div><dt>Source</dt><dd>{event.source || 'Not provided'}</dd></div></dl>
     <button onClick={() => toggle(event.id)} aria-pressed={saved.includes(event.id)}>{saved.includes(event.id) ? 'Remove saved event' : 'Save to account'}</button>
     {link ? <a className="platform-action" href={link} target="_blank" rel="noopener noreferrer">Visit organizer website <ExternalLink size={16} /></a> : <p>No valid organizer link is available.</p>}
     <p className="platform-muted">Registration takes place on the organizer’s website. This portal does not register you.</p>
@@ -116,9 +118,12 @@ function Predictions() {
   const resource = useResource(api.predictions);
   return <section><h1>Upcoming date estimates</h1><p>Baseline recurrence estimates from stored event history. Confidence is a model heuristic, not a calibrated probability. Organizer dates may change.</p>
     <Feedback resource={resource} /><div className="platform-grid">{resource.data?.map(row => <article className="platform-card" key={row.organization_id}>
-      <h2>{row.organization}</h2><p>{row.predicted_date || 'Insufficient history for an estimate'}</p>
+      <h2>{row.organization}</h2><p>{row.predicted_date ? `Unconfirmed estimate: ${row.predicted_date}` : 'Insufficient history for an estimate'}</p>
       {row.predicted_date && <p>Heuristic confidence: {Math.round(row.confidence * 100)}%</p>}<p>{row.reasoning}</p>
-      <small>{row.historical_events} distinct historical event dates</small></article>)}</div>
+      <small>{row.historical_events} distinct historical event dates. Missing editions can distort this estimate; no calibrated date window is available.</small>
+      {row.evidence?.length > 0 && <details><summary>Historical source evidence (latest 10 records)</summary><ul>{row.evidence.map((item, index) =>
+        <li key={`${item.date}-${index}`}>{item.date}: {safeEventUrl(item.url) ? <a href={safeEventUrl(item.url)} target="_blank" rel="noopener noreferrer">{item.title}</a> : item.title}</li>)}</ul></details>}
+    </article>)}</div>
     {resource.data?.length === 0 && <p>No organizations in the catalog yet.</p>}</section>;
 }
 
@@ -128,6 +133,11 @@ function Preferences() {
   const [draft, setDraft] = useState(null);
   const [message, setMessage] = useState(null);
   const [busy, setBusy] = useState(false);
+  const notifications = useResource(useCallback(signal => user ? api.notifications(signal) : Promise.resolve([]), [user]));
+  async function markRead(id) {
+    try { await api.readNotification(id); notifications.retry(); }
+    catch (error) { setMessage(error.message); }
+  }
   const values = draft?.userId === user?.id ? draft.values : resource.data;
   async function submit(event) {
     event.preventDefault(); setBusy(true); setMessage(null);
@@ -139,7 +149,12 @@ function Preferences() {
     {!user && <Link to="/login">Sign in to configure reminders</Link>}<Feedback resource={resource} />
     {user && values && <form onSubmit={submit}>{Object.entries({email_reminders: 'I consent to email reminders', email_registration_reminders: 'Registration deadlines', email_upcoming_reminders: 'Upcoming events'}).map(([key, label]) =>
       <label key={key}><input type="checkbox" checked={values[key]} onChange={event => setDraft({userId: user.id, values: {...values, [key]: event.target.checked}})} />{label}</label>)}
-      <button disabled={busy} type="submit">Save preferences</button></form>}{message && <p role="status">{message}</p>}</section>;
+      <button disabled={busy} type="submit">Save preferences</button></form>}{message && <p role="status">{message}</p>}
+    {user && <><h2>Account notifications</h2><p>Latest 100 stored notices. Email delivery records are separate.</p><Feedback resource={notifications} />
+      {notifications.data?.length === 0 && <p>No account notifications yet.</p>}
+      {notifications.data?.map(row => <article className="platform-card" key={row.id}><h3>{row.title}</h3><p>{row.message}</p>
+        {row.is_read ? <small>Read</small> : <button onClick={() => markRead(row.id)}>Mark as read</button>}</article>)}</>}
+  </section>;
 }
 
 export default function LivePlatform() {

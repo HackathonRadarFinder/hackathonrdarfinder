@@ -153,9 +153,11 @@ def test_rbac_uses_database_role_not_signed_claim(client, role):
 
 
 def test_existing_module_endpoints_preserved(client):
-    for path in ['/events/', '/organizations/', '/predictions/', '/notifications/',
+    for path in ['/events/', '/organizations/', '/predictions/',
                  '/admin/status', '/health', '/api/v1/health']:
         assert client.get(path).status_code == 200
+    # Account notices now contain private database records, rather than a public placeholder.
+    assert client.get('/notifications/').status_code == 401
 
 
 def test_concurrent_duplicate_logout_is_safe(client):

@@ -77,6 +77,9 @@ def test_literal_search_and_future_catalog_forecast(journey):
     forecast = client.get('/predictions/catalog').json()['data'][0]
     assert forecast['historical_events'] == 3  # future scheduled event excluded
     assert forecast['confidence_kind'] == 'heuristic'
+    assert forecast['confirmed'] is False
+    assert len(forecast['evidence']) == 3
+    assert all(item['title'] == 'Past' for item in forecast['evidence'])
     assert forecast['confidence'] == 0.65
     assert forecast['predicted_date'] > datetime.now(timezone.utc).date().isoformat()
 
