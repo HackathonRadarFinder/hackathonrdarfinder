@@ -224,6 +224,7 @@ export default function RegisterForm() {
         label="Password"
         value={formData.password}
         onChange={handleChange}
+        onBlur={handleBlur}
         placeholder="At least 8 characters"
         error={fieldErrors.password}
         disabled={isLoading}
@@ -238,6 +239,7 @@ export default function RegisterForm() {
         label="Confirm Password"
         value={formData.confirmPassword}
         onChange={handleChange}
+        onBlur={handleBlur}
         placeholder="Re-enter your password"
         error={fieldErrors.confirmPassword}
         disabled={isLoading}

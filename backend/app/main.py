@@ -1,4 +1,5 @@
 from app.api.router import api_router
+from app.api.routes.discovery import router as discovery_router
 import time
 from datetime import datetime, timezone
 
@@ -42,6 +43,7 @@ app.include_router(auth.router)
 app.include_router(notifications.router)
 app.include_router(admin.router)
 app.include_router(account.router)
+app.include_router(discovery_router)
 # Versioned API routes
 app.include_router(
     api_router,
@@ -149,7 +151,9 @@ async def validation_exception_handler(
         422,
         "VALIDATION_ERROR",
         "Request validation failed.",
-        exc.errors(),
+        # Pydantic error input/context may contain passwords or submitted secrets.
+        [{key: error[key] for key in ("type", "loc", "msg") if key in error}
+         for error in exc.errors()],
     )
 
 

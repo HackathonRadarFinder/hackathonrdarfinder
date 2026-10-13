@@ -1,5 +1,6 @@
 """Validated event writes with the legacy organization-name input retained."""
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
+import re
 from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, StringConstraints, field_validator, model_validator
@@ -73,6 +74,25 @@ class EventListParams(BaseModel):
         str, StringConstraints(strip_whitespace=True, min_length=1, max_length=50)
     ] | None = None
     organization_id: int | None = Field(default=None, ge=1, le=2_147_483_647)
+    start_from: date | None = Field(default=None, description="Inclusive event start date in UTC (YYYY-MM-DD).")
+    start_to: date | None = Field(default=None, description="Inclusive event start date in UTC (YYYY-MM-DD).")
+
+    @field_validator("start_from", "start_to", mode="before")
+    @classmethod
+    def require_calendar_date(cls, value):
+        if value is None or type(value) is date:
+            return value
+        # Pydantic otherwise also accepts numeric epoch values or midnight
+        # timestamps. A date filter must not silently reinterpret either.
+        if not isinstance(value, str) or re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", value) is None:
+            raise ValueError("Use an ISO calendar date in YYYY-MM-DD format")
+        return value
+
+    @model_validator(mode="after")
+    def validate_date_window(self):
+        if self.start_from is not None and self.start_to is not None and self.start_from > self.start_to:
+            raise ValueError("start_to must not precede start_from")
+        return self
 
 
 class EventListResponse(DataResponse[list[EventResponse]]):

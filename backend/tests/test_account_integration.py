@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.core.database import Base, get_db
 from app.core.security import create_access_token
 from app.main import app
-from app.models.core import User, SavedItem, Preference
+from app.models.core import User, SavedItem, Preference, Role
 from app.models.hackathon import Hackathon
 from app.models.organization import Organization
 from app.services.notification_service import enqueue_due
@@ -68,17 +68,32 @@ def test_account_ownership_consent_and_worker_queue(journey):
     assert client.get('/account/saved', headers=one).json()['data'] == []
 
 
+def evaluation_header(journey):
+    _, (one, _), _, engine = journey
+    with Session(engine) as db:
+        user = db.scalar(select(User).where(User.name == 'one'))
+        user.roles.append(Role(name='data_scientist'))
+        db.commit()
+    return one
+
+
 def test_literal_search_and_future_catalog_forecast(journey):
     client, _, _, _ = journey
     page = client.get('/events/', params={'q': '%_', 'page': 1}).json()
     assert page['total'] == 1
     assert page['data'][0]['title'] == 'Literal %_ Search'
     assert client.get('/events/', params={'q': "' OR 1=1"}).json()['total'] == 0
-    forecast = client.get('/predictions/catalog').json()['data'][0]
+    assert client.get('/predictions/catalog').json()['data'] == []
+    forecast = client.get('/predictions/evaluation', headers=evaluation_header(journey)).json()['data'][0]
     assert forecast['historical_events'] == 3  # future scheduled event excluded
     assert forecast['confidence_kind'] == 'heuristic'
+    assert forecast['confirmed'] is False
+    assert len(forecast['evidence']) == 3
+    assert all(item['title'] == 'Past' for item in forecast['evidence'])
     assert forecast['confidence'] == 0.65
-    assert forecast['predicted_date'] > datetime.now(timezone.utc).date().isoformat()
+    assert forecast['predicted_date'] is None
+    assert forecast['window']['start'] < forecast['window']['end']
+    assert forecast['suppression_reason'] == 'uncalibrated_model'
 
 
 def test_collector_storage_ingestion_api_and_prediction(journey, tmp_path, monkeypatch, capsys):
@@ -106,8 +121,9 @@ def test_collector_storage_ingestion_api_and_prediction(journey, tmp_path, monke
     page = client.get('/events/', params={'q': 'Collected Radar'}).json()
     assert page['total'] == 3
     assert client.get(f"/events/{page['data'][0]['id']}").json()['data']['source'] == 'Unstop'
-    forecasts = client.get('/predictions/catalog').json()['data']
+    assert client.get('/predictions/catalog').json()['data'] == []
+    forecasts = client.get('/predictions/evaluation', headers=evaluation_header(journey)).json()['data']
     forecast = next(row for row in forecasts if row['organization'] == 'Collected organizer')
-    assert forecast['historical_events'] == 3 and forecast['predicted_date'] is not None
+    assert forecast['historical_events'] == 3 and forecast['window'] is not None
     assert main(['--storage-root', str(tmp_path / 'raw'), '--location', '../outside']) == 1
     assert client.get('/events/', params={'q': 'Collected Radar'}).json()['total'] == 3

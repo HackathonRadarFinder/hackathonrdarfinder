@@ -7,6 +7,7 @@ from sqlalchemy import (
     Float,
     ForeignKey,
     Integer,
+    JSON,
     String,
     Text,
     UniqueConstraint,
@@ -129,6 +130,8 @@ class EventVersion(Base):
     )
 
     version_number = Column(Integer, nullable=False)
+    snapshot = Column(JSON, nullable=True)
+    changes = Column(JSON, nullable=True)
 
     title = Column(String(255), nullable=True)
     description = Column(String(1000), nullable=True)

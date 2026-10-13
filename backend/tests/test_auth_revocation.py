@@ -105,7 +105,7 @@ def test_migration_roundtrip_isolated_database(tmp_path, monkeypatch):
         assert 'revoked_tokens' in inspect(engine).get_table_names()
         assert 'email_deliveries' in inspect(engine).get_table_names()
         with engine.connect() as connection:
-            assert connection.scalar(text('SELECT version_num FROM alembic_version')) == 'c8d9e0f1a2b3'
+            assert connection.scalar(text('SELECT version_num FROM alembic_version')) == 'd9e0f1a2b3c4'
         columns = inspect(engine).get_columns('revoked_tokens')
         assert {column['name'] for column in columns} == {'jti', 'expires_at', 'revoked_at'}
         assert all(not column['nullable'] for column in columns)
@@ -153,9 +153,11 @@ def test_rbac_uses_database_role_not_signed_claim(client, role):
 
 
 def test_existing_module_endpoints_preserved(client):
-    for path in ['/events/', '/organizations/', '/predictions/', '/notifications/',
+    for path in ['/events/', '/organizations/', '/predictions/',
                  '/admin/status', '/health', '/api/v1/health']:
         assert client.get(path).status_code == 200
+    # Account notices now contain private database records, rather than a public placeholder.
+    assert client.get('/notifications/').status_code == 401
 
 
 def test_concurrent_duplicate_logout_is_safe(client):

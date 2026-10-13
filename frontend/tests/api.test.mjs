@@ -23,10 +23,10 @@ test('event pages always opt into bounded pagination and encode literal filters'
     requested = { url, options };
     return ok({ message: 'Events fetched successfully', data: [], total: 0, page: 2, page_size: 12 });
   });
-  const result = await client.events({ page: 2, location: ' Delhi %_ ', mode: 'Online', organizationId: 3 });
+  const result = await client.events({ page: 2, location: ' Delhi %_ ', mode: 'Online', organizationId: 3, startFrom: '2026-10-14', startTo: '2026-11-30' });
   const url = new URL(requested.url, 'http://localhost');
   assert.equal(url.pathname, '/api/events/');
-  assert.deepEqual(Object.fromEntries(url.searchParams), { page: '2', page_size: '12', location: 'Delhi %_', mode: 'Online', organization_id: '3' });
+  assert.deepEqual(Object.fromEntries(url.searchParams), { page: '2', page_size: '12', location: 'Delhi %_', mode: 'Online', organization_id: '3', start_from: '2026-10-14', start_to: '2026-11-30' });
   assert.equal(requested.options.headers.Authorization, undefined);
   assert.deepEqual(result.data, []);
 });

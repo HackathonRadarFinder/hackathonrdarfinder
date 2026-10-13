@@ -32,6 +32,21 @@
 .platform-footer { padding:30px 4%; border-top:1px solid var(--border); font-size:14px; color:var(--text-muted); }
 .platform-skip { position:fixed; top:-100px; left:10px; z-index:99; padding:12px; background:var(--surface); } .platform-skip:focus { top:10px; }
 .platform .auth-page-container { min-height:unset; } .platform .auth-card { box-shadow:0 12px 32px #0f172a12; }
+/* Auth components share the live theme; focused fields and feedback retain AA contrast. */
+.platform { --color-error:#b91c1c; --color-error-bg:#fef2f2; --color-error-border:#fca5a5; --color-success:#166534; --color-success-bg:#f0fdf4; --color-success-border:#86efac; }
+.platform-dark { --color-error:#fca5a5; --color-error-bg:#451a1a; --color-error-border:#b91c1c; --color-success:#86efac; --color-success-bg:#123021; --color-success-border:#166534; }
+.platform .auth-brand-text { color:var(--accent); }
+.platform .auth-input:focus { background:var(--bg-input); }
+.platform .auth-alert-error { color:var(--color-error); }
+.platform .auth-alert-success { color:var(--color-success); }
+.platform button.auth-submit-btn { background:#4f46e5; color:#fff; border-color:#4f46e5; }
+.platform button.auth-submit-btn:hover:not(:disabled) { background:#4338ca; }
+.platform .auth-input-wrapper input[type="password"],.platform .auth-input-wrapper input:has(+ .auth-password-toggle-btn) { padding-right:64px; }
+.platform button.auth-password-toggle-btn { border:0; background:transparent; min-height:44px; min-width:44px; padding:8px; right:4px; }
+.platform h1,.platform h2,.platform p,.platform-org { overflow-wrap:anywhere; }
+.platform-session { min-width:0; max-width:100%; }
+.platform-session span { max-width:240px; overflow-wrap:anywhere; }
+.platform-org { min-width:0; }
 @media (max-width:1050px) { .platform-header { flex-wrap:wrap; } .platform-header nav { order:3; width:100%; justify-content:center; } }
 @media (max-width:700px) { .platform-header { padding:12px 4%; gap:12px; } .platform-brand { font-size:17px; } .platform-session { font-size:13px; } .platform-session span { display:none; } .platform-menu { display:block; } .platform-header nav { display:none; } .platform-header nav.open { display:flex; flex-wrap:wrap; gap:18px; } .platform-explore { grid-template-columns:1fr; gap:24px; } .platform-filter { position:static; } .platform-grid { grid-template-columns:1fr; } .platform-hero { padding:12px 0 36px; } .platform-container { padding-top:20px; } }
 @media (prefers-reduced-motion:reduce) { .platform * { transition:none!important; animation:none!important; scroll-behavior:auto!important; } }

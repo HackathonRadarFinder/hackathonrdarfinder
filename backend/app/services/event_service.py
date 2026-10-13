@@ -1,3 +1,5 @@
+from datetime import datetime, time
+
 from fastapi import HTTPException
 from sqlalchemy import func, select, or_
 from sqlalchemy.orm import Session
@@ -5,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.models.core import EventVersion, Prediction, SavedItem
 from app.models.hackathon import Hackathon
 from app.models.email_delivery import EmailDelivery
+from app.models.discovery import DiscoveryEvent, DiscoveryEvidence
 from app.models.organization import Organization
 from app.schemas.event import EventCreate, EventListParams
 from app.services.database import database_operation
@@ -49,6 +52,13 @@ def get_event_page(db: Session, query: EventListParams):
         filters.append(Hackathon.mode.icontains(query.mode, autoescape=True))
     if query.organization_id is not None:
         filters.append(Hackathon.organization_id == query.organization_id)
+    # Event datetime columns use UTC-naive storage. Compare complete calendar
+    # day boundaries without truncating the column, so its index remains usable.
+    # time.max also handles date.max without overflowing to the following day.
+    if query.start_from is not None:
+        filters.append(Hackathon.start_date >= datetime.combine(query.start_from, time.min))
+    if query.start_to is not None:
+        filters.append(Hackathon.start_date <= datetime.combine(query.start_to, time.max))
 
     # Reuse exactly the same predicates for the count and page. Autoescape treats
     # %, _ and the escape character as literal text, not client-supplied wildcards.
@@ -91,7 +101,7 @@ def update_event(db: Session, event_id: int, event: EventCreate):
 def delete_event(db: Session, event_id: int):
     with database_operation(db, "Event has related records and cannot be deleted"):
         record = _find_event(db, event_id)
-        for model in (EventVersion, Prediction, SavedItem, EmailDelivery):
+        for model in (EventVersion, Prediction, SavedItem, EmailDelivery, DiscoveryEvent, DiscoveryEvidence):
             if db.scalar(select(model.id).where(model.hackathon_id == event_id).limit(1)) is not None:
                 raise HTTPException(status_code=409, detail="Event has related records and cannot be deleted")
         db.delete(record)

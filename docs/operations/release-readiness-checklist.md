@@ -1,6 +1,6 @@
 ﻿# Hackathon Radar Finder — MVP Release Checklist
 
-Target date: October 18, 2026
+Target date: October 14, 2026 (updated MVP deadline)
 Integration branch: develop
 Production release branch: main
 

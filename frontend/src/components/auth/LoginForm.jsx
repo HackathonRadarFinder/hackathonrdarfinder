@@ -161,6 +161,7 @@ export default function LoginForm() {
         label="Password"
         value={formData.password}
         onChange={handleChange}
+        onBlur={handleBlur}
         placeholder="Enter your password"
         error={fieldErrors.password}
         disabled={isLoading}

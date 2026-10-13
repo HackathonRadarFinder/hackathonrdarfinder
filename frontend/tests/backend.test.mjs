@@ -9,6 +9,8 @@ test('frontend client against disposable backend: pages, filters, auth, safe adm
   assert.equal(url.hostname, '127.0.0.1', 'Only the documented loopback disposable fixture is allowed');
   assert.equal(url.port, '5174');
   assert.equal(url.pathname, '/api');
+  const marker = await fetch(`${base}/__disposable_fixture`).then(response => response.json());
+  assert.equal(marker.database, 'temporary-sqlite-frontend-tests', 'Never write to a non-fixture backend');
   let adminToken;
   const client = createApiClient(base, async (url, options) => {
     const response = await fetch(url, options);
@@ -45,8 +47,7 @@ test('frontend client against disposable backend: pages, filters, auth, safe adm
   await client.save(eventId, true);
   assert.deepEqual(await client.saved(), []);
   const predictions = await client.predictions();
-  assert.equal(predictions.length, 1);
-  assert.equal(predictions[0].predicted_date, null);
+  assert.equal(predictions.length, 0); // no calibrated/promoted model in disposable fixture
   await assert.rejects(client.admin(), error => error.status === 403);
   await client.logout();
   const result = await client.login('admin@example.com', 'DisposablePassword123!');

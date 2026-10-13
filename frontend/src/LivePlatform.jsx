@@ -34,10 +34,12 @@ function Feedback({ resource }) {
   return null;
 }
 
-function date(value) {
+function date(value, dayOnly = false) {
   if (!value) return 'Not provided';
   const parsed = new Date(/[zZ]|[+-]\d\d:\d\d$/.test(value) ? value : `${value}Z`);
-  return Number.isNaN(parsed.getTime()) ? 'Not provided' : parsed.toLocaleString(undefined, { timeZoneName: 'short' });
+  if (Number.isNaN(parsed.getTime())) return 'Not provided';
+  return dayOnly ? `${parsed.toLocaleDateString(undefined, { timeZone: 'UTC' })} (time not published)`
+    : parsed.toLocaleString(undefined, { timeZoneName: 'short' });
 }
 
 function EventCard({ event, saved, toggle, organization }) {
@@ -47,13 +49,13 @@ function EventCard({ event, saved, toggle, organization }) {
     <h2><Link to={`/event/${event.id}`}>{event.title}</Link></h2>
     <p>{event.description || 'No description provided.'}</p>
     <dl><div><dt>Mode</dt><dd>{event.mode || 'Not provided'}</dd></div><div><dt>Location</dt><dd>{event.location || 'Not provided'}</dd></div>
-      <div><dt>Starts</dt><dd>{date(event.start_date)}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div></dl>
+      <div><dt>Starts</dt><dd>{date(event.start_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div></dl>
     <Link className="platform-action" to={`/event/${event.id}`}>View details →</Link>
   </article>;
 }
 
 function Explore({ saved, toggle }) {
-  const [filters, setFilters] = useState({ q: '', location: '', mode: '', organizationId: '', pageSize: 12 });
+  const [filters, setFilters] = useState({ q: '', location: '', mode: '', organizationId: '', startFrom: '', startTo: '', pageSize: 12 });
   const [draft, setDraft] = useState(filters);
   const [page, setPage] = useState(1);
   const organizations = useResource(api.organizations);
@@ -67,10 +69,12 @@ function Explore({ saved, toggle }) {
         <label>Location<input value={draft.location} maxLength={255} placeholder="City or region" onChange={event => setDraft({ ...draft, location: event.target.value })} /></label>
         <label>Mode<input value={draft.mode} maxLength={50} placeholder="Online, hybrid…" onChange={event => setDraft({ ...draft, mode: event.target.value })} /></label>
         <label>Organization<select value={draft.organizationId} onChange={event => setDraft({ ...draft, organizationId: event.target.value })}><option value="">All organizations</option>{(organizations.data || []).map(org => <option key={org.id} value={org.id}>{org.name}</option>)}</select></label>
+        <label>Starts on or after (UTC)<input type="date" value={draft.startFrom} max={draft.startTo || undefined} onChange={event => setDraft({ ...draft, startFrom: event.target.value })} /></label>
+        <label>Starts on or before (UTC)<input type="date" value={draft.startTo} min={draft.startFrom || undefined} onChange={event => setDraft({ ...draft, startTo: event.target.value })} /></label>
         {organizations.error && <p role="alert">Organization filters could not load. <button type="button" onClick={organizations.retry}>Retry</button></p>}
         <label>Events per page<select value={draft.pageSize} onChange={event => setDraft({ ...draft, pageSize: Number(event.target.value) })}><option>12</option><option>24</option><option>48</option></select></label>
-        <button className="platform-primary" type="submit">Apply filters</button><button type="button" onClick={() => { const cleared = { q: '', location: '', mode: '', organizationId: '', pageSize: 12 }; setDraft(cleared); setFilters(cleared); setPage(1); }}>Reset</button>
-      </form><p className="platform-muted">Results are sorted by event ID. Location and mode match literal text.</p>
+        <button className="platform-primary" type="submit">Apply filters</button><button type="button" onClick={() => { const cleared = { q: '', location: '', mode: '', organizationId: '', startFrom: '', startTo: '', pageSize: 12 }; setDraft(cleared); setFilters(cleared); setPage(1); }}>Reset</button>
+      </form><p className="platform-muted">The catalog includes historical events. Use start dates to narrow upcoming results. Dates filter by UTC calendar day; events without start dates are excluded when filtering. Results are sorted by event ID.</p>
     </aside><section aria-label="Event results" aria-busy={resource.loading}><Feedback resource={resource} />
       {result && <><p role="status">{result.total} events · page {result.page}</p>{!result.data.length && <div className="platform-empty"><h2>No events found</h2><p>Try another location or reset your filters.</p></div>}
         <div className="platform-grid">{result.data.map(event => <EventCard key={event.id} event={event} saved={saved.includes(event.id)} toggle={toggle} organization={names.get(event.organization_id)} />)}</div>
@@ -81,13 +85,22 @@ function Explore({ saved, toggle }) {
 function EventDetails({ saved, toggle }) {
   const { id } = useParams();
   const resource = useResource(useCallback(signal => api.event(id, signal), [id]));
+  const discovery = useResource(useCallback(signal => api.eventDiscovery(id, signal), [id]));
   const event = resource.data;
   const link = safeEventUrl(event?.url);
   return <section className="platform-detail"><Link to="/explore">← Back to events</Link><Feedback resource={resource} />{event && <>
     <span className="platform-eyebrow">EVENT DETAILS</span><h1>{event.title}</h1><p className="platform-description">{event.description || 'No description provided.'}</p>
-    <dl><div><dt>Starts</dt><dd>{date(event.start_date)}</dd></div><div><dt>Ends</dt><dd>{date(event.end_date)}</dd></div><div><dt>Registration deadline</dt><dd>{date(event.registration_deadline)}</dd></div><div><dt>Location / mode</dt><dd>{event.location || 'Not provided'} / {event.mode || 'Not provided'}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div><div><dt>Source</dt><dd>{event.source || 'Not provided'}</dd></div></dl>
+    <dl><div><dt>Starts</dt><dd>{date(event.start_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Ends</dt><dd>{date(event.end_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Registration deadline</dt><dd>{date(event.registration_deadline)}</dd></div><div><dt>Location / mode</dt><dd>{event.location || 'Not provided'} / {event.mode || 'Not provided'}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div><div><dt>Source</dt><dd>{event.source || 'Not provided'}</dd></div></dl>
     <button onClick={() => toggle(event.id)} aria-pressed={saved.includes(event.id)}>{saved.includes(event.id) ? 'Remove saved event' : 'Save to account'}</button>
     {link ? <a className="platform-action" href={link} target="_blank" rel="noopener noreferrer">Visit organizer website <ExternalLink size={16} /></a> : <p>No valid organizer link is available.</p>}
+    <p className="platform-muted">Source observed: {date(event.scraped_at)}. This is a stored snapshot; check the organizer for changes.</p>
+    <section aria-label="Discovery history"><h2>Discovery and update history</h2><Feedback resource={discovery} />
+      {discovery.data && <>{discovery.data.evidence.length === 0 && <p>No automated discovery evidence is recorded for this event.</p>}
+        {discovery.data.evidence.slice(0, 3).map((item, index) => <p key={index}>Collected by {item.source} at {date(item.observed_at)} using {item.adapter_version}.</p>)}
+        {discovery.data.versions.map(item => <details key={item.version}><summary>Version {item.version} · {date(item.observed_at)}</summary>
+          <p>Recorded fields: {item.changed_fields.join(', ') || 'Initial adopted snapshot'}</p>
+          <p>{item.snapshot.title}</p><p>Starts: {date(item.snapshot.start_date, item.snapshot.description?.includes('Date precision: day'))}</p></details>)}</>}
+    </section>
     <p className="platform-muted">Registration takes place on the organizer’s website. This portal does not register you.</p>
   </>}</section>;
 }
@@ -114,12 +127,19 @@ function Admin() {
 
 function Predictions() {
   const resource = useResource(api.predictions);
-  return <section><h1>Upcoming date estimates</h1><p>Baseline recurrence estimates from stored event history. Confidence is a model heuristic, not a calibrated probability. Organizer dates may change.</p>
-    <Feedback resource={resource} /><div className="platform-grid">{resource.data?.map(row => <article className="platform-card" key={row.organization_id}>
-      <h2>{row.organization}</h2><p>{row.predicted_date || 'Insufficient history for an estimate'}</p>
-      {row.predicted_date && <p>Heuristic confidence: {Math.round(row.confidence * 100)}%</p>}<p>{row.reasoning}</p>
-      <small>{row.historical_events} distinct historical event dates</small></article>)}</div>
-    {resource.data?.length === 0 && <p>No organizations in the catalog yet.</p>}</section>;
+  const readiness = useResource(api.predictionReadiness);
+  return <section><h1>Predictions</h1><p>Prediction - not officially announced. Only forecasts from an approved, calibrated model meeting the public confidence policy appear here. Organizer dates may change.</p>
+    <Feedback resource={resource} /><Feedback resource={readiness} />
+    {readiness.data && <p aria-label="Prediction data readiness">{readiness.data.reviewed_editions} reviewed event editions; {readiness.data.recurring_series} recurring series. {readiness.data.reason}</p>}
+    <div className="platform-grid">{resource.data?.map(row => <article className="platform-card" key={row.organization_id}>
+      <h2>{row.organization}</h2><p>Prediction - not officially announced</p>
+      <p>{row.window ? `${row.window.start} to ${row.window.end}` : 'No supported date window'}</p>
+      <p>Confidence: {row.confidence_band || 'unavailable'}</p><p>{row.reasoning}</p>
+      <small>Model: {row.model_version || 'unavailable'}; generated: {date(row.generated_at)}. {row.historical_events} distinct historical event dates.</small>
+      {row.evidence?.length > 0 && <details><summary>Historical source evidence (latest 10 records)</summary><ul>{row.evidence.map((item, index) =>
+        <li key={`${item.date}-${index}`}>{item.date}: {safeEventUrl(item.url) ? <a href={safeEventUrl(item.url)} target="_blank" rel="noopener noreferrer">{item.title}</a> : item.title}</li>)}</ul></details>}
+    </article>)}</div>
+    {resource.data?.length === 0 && <p>No eligible public predictions. The current baseline is uncalibrated; insufficient or sub-threshold forecasts remain internal for evaluation. Confirmed events are still available in Explore.</p>}</section>;
 }
 
 function Preferences() {
@@ -128,6 +148,11 @@ function Preferences() {
   const [draft, setDraft] = useState(null);
   const [message, setMessage] = useState(null);
   const [busy, setBusy] = useState(false);
+  const notifications = useResource(useCallback(signal => user ? api.notifications(signal) : Promise.resolve([]), [user]));
+  async function markRead(id) {
+    try { await api.readNotification(id); notifications.retry(); }
+    catch (error) { setMessage(error.message); }
+  }
   const values = draft?.userId === user?.id ? draft.values : resource.data;
   async function submit(event) {
     event.preventDefault(); setBusy(true); setMessage(null);
@@ -139,7 +164,12 @@ function Preferences() {
     {!user && <Link to="/login">Sign in to configure reminders</Link>}<Feedback resource={resource} />
     {user && values && <form onSubmit={submit}>{Object.entries({email_reminders: 'I consent to email reminders', email_registration_reminders: 'Registration deadlines', email_upcoming_reminders: 'Upcoming events'}).map(([key, label]) =>
       <label key={key}><input type="checkbox" checked={values[key]} onChange={event => setDraft({userId: user.id, values: {...values, [key]: event.target.checked}})} />{label}</label>)}
-      <button disabled={busy} type="submit">Save preferences</button></form>}{message && <p role="status">{message}</p>}</section>;
+      <button disabled={busy} type="submit">Save preferences</button></form>}{message && <p role="status">{message}</p>}
+    {user && <><h2>Account notifications</h2><p>Latest 100 stored notices. Email delivery records are separate.</p><Feedback resource={notifications} />
+      {notifications.data?.length === 0 && <p>No account notifications yet.</p>}
+      {notifications.data?.map(row => <article className="platform-card" key={row.id}><h3>{row.title}</h3><p>{row.message}</p>
+        {row.is_read ? <small>Read</small> : <button onClick={() => markRead(row.id)}>Mark as read</button>}</article>)}</>}
+  </section>;
 }
 
 export default function LivePlatform() {

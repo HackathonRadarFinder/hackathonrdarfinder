@@ -1,7 +1,7 @@
 """Persistent saved-event reminders. Invoke only from a dedicated worker."""
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import exists, select, update
+from sqlalchemy import exists, select, update, func
 from sqlalchemy.exc import IntegrityError
 
 from app.models.core import Preference, SavedItem, User
@@ -74,6 +74,7 @@ def enqueue_due(db, now: datetime, batch_size: int = 100) -> int:
         rows = db.execute(select(User.id, Hackathon.id, column).select_from(SavedItem)
             .join(User, User.id == SavedItem.user_id).join(Hackathon, Hackathon.id == SavedItem.hackathon_id)
             .where(User.status == "active", consent, ~opted_out, ~already,
+                   ~func.coalesce(Hackathon.description, "").contains("Date precision: day"),
                    column > current, column <= current + timedelta(hours=24))
             .order_by(column, Hackathon.id, User.id).limit(remaining)).all()
         for user_id, event_id, event_at in rows:

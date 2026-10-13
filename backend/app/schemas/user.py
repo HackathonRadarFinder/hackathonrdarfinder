@@ -27,6 +27,13 @@ class UserCreate(UserBase):
 
     model_config = ConfigDict(extra="forbid")
 
+    @field_validator("name", mode="before")
+    @classmethod
+    def normalize_registration_name(cls, value):
+        # Apply the existing name bounds after trimming. Read schemas remain
+        # tolerant of historical names; only new account input is normalized.
+        return value.strip() if isinstance(value, str) else value
+
     @field_validator("password")
     @classmethod
     def validate_password_length(cls, value: str) -> str:

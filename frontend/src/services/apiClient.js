@@ -97,12 +97,14 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
       return login(email, password);
     },
     async forgotPassword() { throw new Error('Password reset is not supported by this backend yet. No email was sent.'); },
-    async events({ page = 1, pageSize = 12, q, location, mode, organizationId } = {}, signal) {
+    async events({ page = 1, pageSize = 12, q, location, mode, organizationId, startFrom, startTo } = {}, signal) {
       const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) });
       if (q?.trim()) params.set('q', q.trim());
       if (location?.trim()) params.set('location', location.trim());
       if (mode?.trim()) params.set('mode', mode.trim());
       if (organizationId) params.set('organization_id', String(organizationId));
+      if (startFrom) params.set('start_from', startFrom);
+      if (startTo) params.set('start_to', startTo);
       const result = await request(`/events/?${params}`, { signal, authenticated: false });
       if (!Array.isArray(result.data) || !Number.isInteger(result.total) || !Number.isInteger(result.page)) {
         throw new Error('Invalid event page response.');
@@ -115,11 +117,18 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
       return result.data;
     },
     async organizations(signal) { return (await request('/organizations/', { signal, authenticated: false })).data; },
+    async eventDiscovery(id, signal) {
+      if (!/^\d+$/.test(String(id)) || Number(id) < 1 || Number(id) > 2_147_483_647) throw new Error('Invalid event ID.');
+      return (await request(`/events/${id}/discovery`, { signal, authenticated: false })).data;
+    },
     async saved(signal) { return (await request('/account/saved', { signal })).data; },
     async save(id, saved) { return request(`/account/saved/${id}`, { method: saved ? 'DELETE' : 'PUT' }); },
     preferences(signal) { return request('/account/preferences', { signal }); },
+    async notifications(signal) { return (await request('/notifications/', { signal })).data; },
+    readNotification(id) { return request(`/notifications/${encodeURIComponent(id)}/read`, { method: 'PUT' }); },
     updatePreferences(body) { return request('/account/preferences', { method: 'PUT', body }); },
     async predictions(signal) { return (await request('/predictions/catalog', { signal, authenticated: false })).data; },
+    async predictionReadiness(signal) { return (await request('/predictions/readiness', { signal, authenticated: false })).data; },
     async admin(signal) {
       const [stats, users, organizations] = await Promise.all([
         request('/admin/stats', { signal }), request('/admin/users', { signal }), request('/admin/organizations', { signal }),

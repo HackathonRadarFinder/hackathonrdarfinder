@@ -91,6 +91,32 @@ def test_duplicate_registration(client):
     assert register_user(client).status_code == 409
 
 
+@pytest.mark.parametrize("name", ["", " ", "\t\n\r", "\u00a0"])
+def test_registration_rejects_blank_name_without_creating_account(client, name):
+    response = client.post(
+        "/auth/register",
+        json={"name": name, "email": "student@example.com", "password": "SecurePassword123!"},
+    )
+    assert response.status_code == 422
+    assert response.json()["code"] == "VALIDATION_ERROR"
+    # The rejected request cannot reserve an email or create a user.
+    assert register_user(client).status_code == 201
+
+
+def test_registration_trims_name_before_validation_and_persists_it(client):
+    response = client.post(
+        "/auth/register",
+        json={"name": " \tAda Lovelace \n", "email": "ada@example.com", "password": "SecurePassword123!"},
+    )
+    assert response.status_code == 201
+    assert response.json()["name"] == "Ada Lovelace"
+    login = client.post("/auth/login", json={"email": "ada@example.com", "password": "SecurePassword123!"})
+    assert login.status_code == 200
+    me = client.get("/auth/me", headers={"Authorization": f"Bearer {login.json()['access_token']}"})
+    assert me.status_code == 200
+    assert me.json()["name"] == "Ada Lovelace"
+
+
 def test_prevent_admin_self_registration(client):
     response = client.post(
         "/auth/register",

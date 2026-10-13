@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_db_user
 from app.core.database import get_db
-from app.models.core import Preference, SavedItem
+from app.models.core import Preference, SavedItem, Notification
 from app.models.hackathon import Hackathon
 from app.schemas.event import EventResponse
 from app.schemas.responses import DatabaseId, DataResponse, MessageResponse
@@ -33,11 +33,13 @@ def saved_events(user=Depends(get_current_db_user), db: Session = Depends(get_db
 
 @router.put("/saved/{event_id}", response_model=MessageResponse)
 def save_event(event_id: DatabaseId, user=Depends(get_current_db_user), db: Session = Depends(get_db)):
-    get_event(db, event_id)
+    event = get_event(db, event_id)
     with database_operation(db, "Event is already saved; refresh saved events"):
         if db.scalar(select(SavedItem.id).where(
                 SavedItem.user_id == user.id, SavedItem.hackathon_id == event_id)) is None:
             db.add(SavedItem(user_id=user.id, hackathon_id=event_id))
+            db.add(Notification(user_id=user.id, title="Event saved",
+                                message=f"Saved {event.title}. Email reminders require your consent and an enabled worker."))
             db.commit()
         return {"message": "Event saved"}
 

@@ -11,6 +11,7 @@ export default function PasswordInput({
   label = 'Password',
   value,
   onChange,
+  onBlur,
   placeholder = '••••••••',
   error,
   disabled = false,
@@ -38,6 +39,7 @@ export default function PasswordInput({
           type={showPassword ? 'text' : 'password'}
           value={value}
           onChange={onChange}
+          onBlur={onBlur}
           placeholder={placeholder}
           disabled={disabled}
           autoComplete={autoComplete}
@@ -52,6 +54,8 @@ export default function PasswordInput({
           disabled={disabled}
           className="auth-password-toggle-btn"
           aria-label={showPassword ? 'Hide password' : 'Show password'}
+          aria-pressed={showPassword}
+          aria-controls={id}
           title={showPassword ? 'Hide password' : 'Show password'}
         >
           {showPassword ? (
