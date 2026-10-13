@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from sqlalchemy import func, select
+from sqlalchemy import func, select, or_
 from sqlalchemy.orm import Session
 
 from app.models.core import EventVersion, Prediction, SavedItem
@@ -40,6 +40,9 @@ def get_event_page(db: Session, query: EventListParams):
     page = query.page if query.page is not None else 1
     page_size = query.page_size if query.page_size is not None else 10
     filters = []
+    if query.q is not None:
+        filters.append(or_(Hackathon.title.icontains(query.q, autoescape=True),
+                           Hackathon.description.icontains(query.q, autoescape=True)))
     if query.location is not None:
         filters.append(Hackathon.location.icontains(query.location, autoescape=True))
     if query.mode is not None:

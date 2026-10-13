@@ -42,7 +42,7 @@ export default function RegisterForm() {
       if (name === 'name') err = validateName(value);
       if (name === 'email') err = validateEmail(value);
       if (name === 'password') {
-        err = validatePassword(value, 6);
+        err = validatePassword(value, 8);
         // Also check confirm password match if touched
         if (touched.confirmPassword && formData.confirmPassword) {
           setFieldErrors((prev) => ({
@@ -71,7 +71,7 @@ export default function RegisterForm() {
     let err = null;
     if (name === 'name') err = validateName(value);
     if (name === 'email') err = validateEmail(value);
-    if (name === 'password') err = validatePassword(value, 6);
+    if (name === 'password') err = validatePassword(value, 8);
     if (name === 'confirmPassword') {
       if (!value) err = 'Confirming your password is required.';
       else if (value !== formData.password) err = 'Passwords do not match.';
@@ -224,7 +224,7 @@ export default function RegisterForm() {
         label="Password"
         value={formData.password}
         onChange={handleChange}
-        placeholder="At least 6 characters"
+        placeholder="At least 8 characters"
         error={fieldErrors.password}
         disabled={isLoading}
         autoComplete="new-password"

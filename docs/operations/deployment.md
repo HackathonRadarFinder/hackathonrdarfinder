@@ -43,7 +43,7 @@ placeholders, which the release preparation script refuses to deploy.
    rollouts. A failed Job or rollout fails the workflow and needs investigation.
 6. Verify HTTPS frontend, /health, /api/health and /api/api/v1/health, plus a
    database-backed application operation. /health is process liveness, not a DB
-   readiness check. Current frontend auth is mocked and requires separate wiring.
+   readiness check. The live frontend uses the same-origin /api proxy; verify registration, login, search, saved events, consent and logout against the deployed database.
 
 Namespace resources are present in rendered overlays for administrator
 provisioning, but the deploy workflow does not apply Namespace objects.
