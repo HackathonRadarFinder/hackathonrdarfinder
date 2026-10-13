@@ -226,3 +226,60 @@ def test_temporal_api_protected_and_public_readiness_no_forecasts(db):
             assert client.get('/predictions/catalog').json()['data'] == []
     finally:
         app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def persisted_curated_observations(db, tmp_path, monkeypatch):
+    """Exercise real collector/ingestion/export against a Windows-format manifest."""
+    from ai import temporal_prediction
+    from app.services import discovery_service
+    from ai.discovery_history import export_observations
+    import hashlib
+    manifest = temporal_prediction.BACKEND/'data/curated-mvp-20261013.json'
+    raw = manifest.read_text(encoding='utf-8').replace('\n', '\r\n').encode('utf-8')
+    backend = tmp_path/'reviewed-backend'
+    (backend/'data').mkdir(parents=True)
+    (backend/'data'/manifest.name).write_bytes(raw)
+    review, _ = load_review()
+    monkeypatch.setattr(temporal_prediction, 'BACKEND', backend)
+    monkeypatch.setattr(discovery_service, 'BACKEND', backend)
+    result = discovery_service.run_source(db, 'curated-mvp', NOW)
+    assert result['status'] == 'success' and result['inserted'] == 5
+    rows = export_observations(db)
+    assert len(rows) == 5 and all(isinstance(row['event_id'], int) for row in rows)
+    stored = hashlib.sha256(raw.decode('utf-8').replace('\r\n', '\n').encode('utf-8')).hexdigest()
+    assert stored != hashlib.sha256(raw).hexdigest()
+    assert all(row['checksum'] == stored for row in rows)
+    return rows, review, datetime.now(timezone.utc).replace(tzinfo=None)
+
+
+def test_persisted_curated_text_checksums_and_database_ids_are_accepted(persisted_curated_observations):
+    rows, review, now = persisted_curated_observations
+    accepted, rejected = prepare_dataset(rows, review, now)
+    assert len(accepted) == 5 and rejected == {}
+    assert {row['event_id'] for row in accepted} == {str(row['event_id']) for row in rows}
+    assert {row['snapshot']['url'] for row in accepted} == set(review)
+    report = evaluate(rows, review, now)
+    assert report['dataset']['editions'] == 5 and report['folds'] == []
+    assert report['public_predictions_enabled'] is False
+
+
+@pytest.mark.parametrize('mutation', ['checksum', 'date', 'collected_at', 'backdated', 'title', 'untrusted_url'])
+def test_persisted_curated_text_checksums_do_not_allow_tampering(persisted_curated_observations, mutation):
+    import copy
+    rows, review, now = persisted_curated_observations
+    row = copy.deepcopy(rows[0])
+    if mutation == 'checksum':
+        row['checksum'] = '0'*64
+    elif mutation == 'date':
+        row['snapshot']['start_date'] = '2026-10-17T20:00:00'
+    elif mutation == 'collected_at':
+        row['snapshot']['scraped_at'] = '2020-01-01'
+    elif mutation == 'backdated':
+        row['observed_at'] = '2020-01-01'
+    elif mutation == 'title':
+        row['snapshot']['title'] = 'Unreviewed edition'
+    else:
+        row['snapshot']['url'] = 'https://example.com/untrusted-edition'
+    accepted, rejected = prepare_dataset([row], review, now)
+    assert accepted == [] and sum(rejected.values()) == 1
