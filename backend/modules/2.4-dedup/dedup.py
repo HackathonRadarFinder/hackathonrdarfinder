@@ -1,5 +1,5 @@
-
 import re
+from datetime import date, datetime
 from difflib import SequenceMatcher
 from urllib.parse import urlparse, urlunparse
 
@@ -12,7 +12,7 @@ def normalize_text(value):
 
 
 def normalize_link(url):
-    """Normalize a registration URL for exact matching."""
+    """Normalize registration links for exact matching."""
     if not url:
         return ""
 
@@ -33,7 +33,7 @@ def normalize_link(url):
 
 
 def similarity(text1, text2):
-    """Return title similarity from 0 to 100."""
+    """Return title similarity as a percentage."""
     a = normalize_text(text1)
     b = normalize_text(text2)
 
@@ -44,23 +44,26 @@ def similarity(text1, text2):
 
 
 def dates_match(date1, date2, tolerance_days=2):
-    """Compare dates allowing a difference of up to 2 days."""
-    from datetime import date, datetime
+    """Return True when dates differ by at most two days."""
 
     def parse_date(value):
         if not value:
             return None
+
         if isinstance(value, datetime):
             return value.date()
+
         if isinstance(value, date):
             return value
 
         value = str(value).strip()
+
         for fmt in ("%Y-%m-%d", "%d-%m-%Y", "%Y/%m/%d"):
             try:
                 return datetime.strptime(value[:10], fmt).date()
             except ValueError:
                 continue
+
         return None
 
     d1 = parse_date(date1)
@@ -74,42 +77,47 @@ def dates_match(date1, date2, tolerance_days=2):
 
 def are_duplicates(event1, event2, title_threshold=80):
     """
-    Compare two event dictionaries.
-    Expected keys: registration_link, title, organizer,
-    start_date, location.
+    Identify duplicate events.
+
+    Expected keys:
+    registration_link, title, organizer, start_date, location.
     """
+
     link1 = normalize_link(event1.get("registration_link"))
     link2 = normalize_link(event2.get("registration_link"))
 
-    # Exact registration link match
+    # Rule 1: Exact normalized registration link match.
     if link1 and link2 and link1 == link2:
         return True
 
-    title_score = similarity(
-        event1.get("title"),
-        event2.get("title")
-    )
+    title1 = normalize_text(event1.get("title"))
+    title2 = normalize_text(event2.get("title"))
 
     organizer1 = normalize_text(event1.get("organizer"))
     organizer2 = normalize_text(event2.get("organizer"))
 
-    same_organizer = bool(
-        organizer1 and organizer2 and organizer1 == organizer2
-    )
+    location1 = normalize_text(event1.get("location"))
+    location2 = normalize_text(event2.get("location"))
 
+    # Do not fuzzy-match records when essential fields are missing.
+    if not all((
+        title1, title2,
+        organizer1, organizer2,
+        location1, location2
+    )):
+        return False
+
+    title_score = similarity(title1, title2)
+
+    same_organizer = organizer1 == organizer2
     same_date = dates_match(
         event1.get("start_date"),
         event2.get("start_date"),
         tolerance_days=2
     )
+    same_location = location1 == location2
 
-    location1 = normalize_text(event1.get("location"))
-    location2 = normalize_text(event2.get("location"))
-    same_location = bool(
-        location1 and location2 and location1 == location2
-    )
-
-    # Fuzzy title + supporting event details
+    # Rule 2: Fuzzy title + organizer + date + location.
     return (
         title_score > title_threshold
         and same_organizer
@@ -119,7 +127,7 @@ def are_duplicates(event1, event2, title_threshold=80):
 
 
 def find_duplicates(events):
-    """Return pairs of event indices that appear duplicated."""
+    """Return pairs of indices for detected duplicate events."""
     duplicate_pairs = []
 
     for i in range(len(events)):
