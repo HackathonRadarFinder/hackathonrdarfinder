@@ -1,0 +1,30 @@
+MODULE 2.4 LOCAL VERIFICATION — refreshed 15 October 2026
+
+Commands run from this folder:
+  python -m py_compile dedup.py evaluate.py master_db.py integrate_pipeline.py validate_dataset.py test_module24.py
+  python -m unittest -v
+  python evaluate.py labeled_pairs_20.csv
+  python evaluate.py sample_labeled_pairs.csv
+  python dedup.py
+  synthetic scale smoke test via `python scale_smoke_test.py`: 6,796 records (6,766 unique + 30 exact-link copies)
+
+Results:
+  Syntax compilation: PASS
+  Unit tests: 17/17 PASS
+  Included 20-pair repository-preview practice set: 20/20 correct (100%) on example.com practice pairs only.
+  Four-row synthetic smoke sample: 4/4 correct on synthetic data only.
+  Built-in sample: 7 input records -> 5 canonical records; 2 duplicate merges.
+  Module 2.3-style integration smoke: 3 input records -> 2 canonical events; 1 duplicate merged.
+  SQLite idempotency/provenance: second run creates no duplicate canonical rows; source links retained.
+  SQLite additive migration: PASS; older schema gains missing metadata columns without dropping prior rows.
+  Module 2.3 schema mapping: tags, source_id, source_name, dates, mode, registration link, prize, status and provenance handled; see SCHEMA_COMPATIBILITY.md.
+  SQLite tag/source_name persistence: PASS.
+  Matching regression test: shared generic title words alone no longer merge clearly different organizers/events.
+  Synthetic scale smoke: 6,796 inputs -> 6,766 canonical records (30 known exact-link duplicates merged), 0 uncertain pairs, about 3.1 seconds in this environment. Synthetic timing/results do not establish real Unstop accuracy.
+
+Important limitations:
+  The included labeled_pairs_20.csv was transcribed from a repository preview. Links use example.com; it is a practice set, not independent real-world evidence.
+  The actual 6,766-row Unstop CSV/JSON was not available. No real-data duplicate count, data-quality audit, or accuracy claim is made.
+  The Foundation Team has not confirmed the final shared schema.
+  No authenticated GitHub write capability was available; remote develop branch and PR were not changed or verified.
+  URL checks are structural only; no live URL, robots.txt, or terms-of-service compliance verification was performed by the row-level audit.
