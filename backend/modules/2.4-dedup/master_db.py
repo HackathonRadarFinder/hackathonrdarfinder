@@ -1,6 +1,6 @@
-
 import json
 from pathlib import Path
+from dedup import are_duplicates
 
 
 def load_events(file_path):
@@ -11,7 +11,12 @@ def load_events(file_path):
         return []
 
     with path.open("r", encoding="utf-8") as file:
-        return json.load(file)
+        events = json.load(file)
+
+    if not isinstance(events, list):
+        raise ValueError("Master database must contain a JSON list.")
+
+    return events
 
 
 def save_events(events, file_path):
@@ -24,37 +29,42 @@ def save_events(events, file_path):
 
 
 def merge_events(existing, new_event):
-    """Merge source information into an existing canonical event."""
+    """Merge event details and preserve source provenance."""
     merged = existing.copy()
 
-    source_ids = set(existing.get("source_ids", []))
-    source_ids.update(new_event.get("source_ids", []))
-
-    if new_event.get("source_id"):
-        source_ids.add(new_event["source_id"])
-
-    merged["source_ids"] = sorted(source_ids)
-
-    sources = set(existing.get("sources", []))
-    sources.update(new_event.get("sources", []))
-
-    if new_event.get("source"):
-        sources.add(new_event["source"])
-
-    merged["sources"] = sorted(sources)
-
-    # Fill missing fields without overwriting existing values.
     for key, value in new_event.items():
-        if key not in merged or merged[key] in ("", None, []):
+        if key in ("source_ids", "sources"):
+            old_values = merged.get(key, [])
+            old_values = old_values if isinstance(old_values, list) else [old_values]
+            new_values = value if isinstance(value, list) else [value]
+
+            combined = []
+            for item in old_values + new_values:
+                if item not in combined:
+                    combined.append(item)
+
+            merged[key] = combined
+
+        elif key in ("source_id", "source") and value:
+            target = "source_ids" if key == "source_id" else "sources"
+            old_values = merged.get(target, [])
+            old_values = old_values if isinstance(old_values, list) else [old_values]
+
+            if value not in old_values:
+                old_values.append(value)
+
+            merged[target] = old_values
+
+        elif key not in merged or merged[key] in ("", None, []):
             merged[key] = value
 
     return merged
 
 
-def update_master_db(master_events, new_event, is_duplicate):
-    """Merge duplicates or append a new event."""
-    if is_duplicate:
-        for index, event in enumerate(master_events):
+def update_master_db(master_events, new_event):
+    """Merge a duplicate event or append a new event."""
+    for index, event in enumerate(master_events):
+        if are_duplicates(event, new_event):
             master_events[index] = merge_events(event, new_event)
             return master_events
 
