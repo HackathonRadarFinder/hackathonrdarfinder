@@ -1,0 +1,12 @@
+{
+  "test_type": "synthetic scale smoke test; not real-world accuracy evidence",
+  "input_records": 6796,
+  "expected_unique_records": 6766,
+  "canonical_records": 6766,
+  "merged_duplicates": 30,
+  "expected_exact_link_duplicates": 30,
+  "uncertain_pairs": 0,
+  "elapsed_seconds": 2.779,
+  "tags_preserved": true,
+  "source_name_preserved": true
+}
