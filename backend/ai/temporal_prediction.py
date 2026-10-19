@@ -73,6 +73,10 @@ def prepare_dataset(observations, review, now):
     canonical = json.dumps(json.loads((BACKEND/'data/curated-mvp-20261013.json').read_text(encoding='utf-8')),
         sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode() if curated else b''
     canonical_checksum = hashlib.sha256(canonical).hexdigest()
+    # Discovery hashes read_text() output, which normalizes CRLF to LF on checkout.
+    # Recognize that exact trusted representation without rewriting stored evidence.
+    text_checksum = hashlib.sha256((BACKEND/'data/curated-mvp-20261013.json').read_text(
+        encoding='utf-8').encode('utf-8')).hexdigest() if curated else None
     for row in observations:
         try:
             snapshot = row['snapshot']
@@ -95,7 +99,7 @@ def prepare_dataset(observations, review, now):
                 raise ValueError('observation_precedes_collection')
             if row['adapter_version'] == 'curated-v1':
                 original = curated.get(snapshot['url'])
-                if (not original or checksum not in {original['checksum'], canonical_checksum}
+                if (not original or checksum not in {original['checksum'], canonical_checksum, text_checksum}
                         or timestamp(snapshot['start_date']) != timestamp(original['snapshot']['start_date'])
                         or scraped != timestamp(original['snapshot']['scraped_at'])):
                     raise ValueError('curated_source_facts_changed')
