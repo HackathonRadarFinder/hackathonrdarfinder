@@ -436,7 +436,7 @@ def test_openapi_describes_query_bounds_success_variants_and_global_errors(api):
     document = api.client.get("/openapi.json").json()
     operation = document["paths"]["/events/"]["get"]
     parameters = {parameter["name"]: parameter for parameter in operation["parameters"]}
-    assert set(parameters) == {"page", "page_size", "q", "location", "mode", "organization_id", "start_from", "start_to"}
+    assert set(parameters) == {"page", "page_size", "q", "location", "mode", "organization_id", "start_from", "start_to", "state", "institution_id"}
     assert all(parameter["in"] == "query" and not parameter.get("required", False) for parameter in parameters.values())
 
     def resolve(schema):
@@ -447,12 +447,12 @@ def test_openapi_describes_query_bounds_success_variants_and_global_errors(api):
     def concrete(schema):
         return next((item for item in schema.get("anyOf", []) if item.get("type") != "null"), schema)
 
-    for name, maximum in (("page", 2_147_483_647), ("page_size", 100), ("organization_id", 2_147_483_647)):
+    for name, maximum in (("page", 2_147_483_647), ("page_size", 100), ("organization_id", 2_147_483_647), ("institution_id", 2_147_483_647)):
         schema = concrete(parameters[name]["schema"])
         assert schema["type"] == "integer"
         assert schema.get("minimum") == 1 or schema.get("exclusiveMinimum") == 0
         assert schema["maximum"] == maximum
-    for name, maximum in (("location", 255), ("mode", 50)):
+    for name, maximum in (("location", 255), ("mode", 50), ("state", 100)):
         schema = concrete(parameters[name]["schema"])
         assert schema["type"] == "string"
         assert schema["minLength"] == 1

@@ -12,6 +12,10 @@ RequiredName = Annotated[str, StringConstraints(strip_whitespace=True, min_lengt
 
 
 class EventCreate(HackathonCreate):
+    state: str | None = Field(default=None, max_length=100)
+    institution_id: int | None = Field(default=None, strict=True, gt=0)
+    registration_url: HttpUrl | None = Field(default=None, max_length=500)
+    eligibility: str | None = Field(default=None, max_length=5000)
     title: RequiredName
     organization: RequiredName | None = None
     organization_id: int | None = Field(default=None, strict=True, gt=0, le=2_147_483_647)
@@ -47,6 +51,10 @@ class EventResponse(BaseModel):
     # must not turn otherwise readable legacy rows into response errors.
     model_config = ConfigDict(from_attributes=True)
     id: int
+    state: str | None = None
+    institution_id: int | None = None
+    registration_url: str | None = None
+    eligibility: str | None = None
     title: str
     organization_id: int | None = None
     start_date: datetime | None = None
@@ -64,6 +72,8 @@ class EventResponse(BaseModel):
 class EventListParams(BaseModel):
     """Any supported query parameter opts into pagination; omitted values default later."""
 
+    state: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)] | None = None
+    institution_id: int | None = Field(default=None, ge=1, le=2_147_483_647)
     page: int | None = Field(default=None, ge=1, le=2_147_483_647)
     q: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)] | None = None
     page_size: int | None = Field(default=None, ge=1, le=100)

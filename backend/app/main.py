@@ -44,6 +44,8 @@ app.include_router(notifications.router)
 app.include_router(admin.router)
 app.include_router(account.router)
 app.include_router(discovery_router)
+from app.api.routes.institutions import router as institutions_router
+app.include_router(institutions_router)
 # Versioned API routes
 app.include_router(
     api_router,

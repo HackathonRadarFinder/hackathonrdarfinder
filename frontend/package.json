@@ -10,7 +10,8 @@
     "test:browser": "node tests/browser.acceptance.mjs",
     "test:curated": "node tests/curated.acceptance.mjs",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:india": "node tests/india.acceptance.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.52.0",
