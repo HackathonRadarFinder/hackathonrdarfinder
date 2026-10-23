@@ -1,4 +1,4 @@
-
+```python
 """Integration adapter for Module 2.3 JSON outputs -> Module 2.4.
 
 Expected input directory (default: module_2_3/output):
@@ -28,15 +28,19 @@ def read_events(path):
 
     if isinstance(data, dict):
         for key in ("events", "valid", "expired"):
-            if isinstance(data.get(key), list):=
+            if isinstance(data.get(key), list):
                 data = data[key]
                 break
 
     if not isinstance(data, list):
-        raise ValueError(f"{path} must contain a JSON list of event objects")
+        raise ValueError(
+            f"{path} must contain a JSON list of event objects"
+        )
 
     if any(not isinstance(item, dict) for item in data):
-        raise ValueError(f"{path} must contain only JSON event objects")
+        raise ValueError(
+            f"{path} must contain only JSON event objects"
+        )
 
     return data
 
@@ -49,7 +53,9 @@ def run_pipeline(input_dir, output_dir, db_path, include_expired=False):
     raw_events = read_events(input_dir / "valid_events.json")
 
     if include_expired:
-        raw_events.extend(read_events(input_dir / "expired_events.json"))
+        raw_events.extend(
+            read_events(input_dir / "expired_events.json")
+        )
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -108,21 +114,25 @@ def main():
     parser = argparse.ArgumentParser(
         description="Integrate Module 2.3 event outputs with Module 2.4."
     )
+
     parser.add_argument(
         "--input-dir",
         default="module_2_3/output",
         help="Folder containing valid_events.json",
     )
+
     parser.add_argument(
         "--include-expired",
         action="store_true",
         help="Also process expired_events.json",
     )
+
     parser.add_argument(
         "--db",
         default="master_events.db",
         help="SQLite database path",
     )
+
     parser.add_argument(
         "--output-dir",
         default="module_2_4_output",
@@ -149,6 +159,7 @@ def main():
     print(f"Master JSON: {result['master_json']}")
     print(f"Review JSON: {result['review_json']}")
     print(f"SQLite DB: {result['database']}")
+
     print(
         f"Database records: new={result['stats']['new']}, "
         f"updated={result['stats']['updated']}, "
@@ -158,3 +169,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+```
