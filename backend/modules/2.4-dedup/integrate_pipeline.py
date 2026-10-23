@@ -1,5 +1,12 @@
 
-"""Integration adapter for Module 2.3 outputs to Module 2.4 deduplication."""
+"""Integration adapter for Module 2.3 JSON outputs -> Module 2.4.
+
+Expected input directory (default: module_2_3/output):
+  valid_events.json (required; invalid events must never be passed here)
+  expired_events.json (optional; used only with --include-expired)
+
+Outputs master_events.json, uncertain_pairs.json, and a SQLite master database.
+"""
 
 import argparse
 import json
@@ -10,25 +17,25 @@ from master_db import save_master
 
 
 def read_events(path):
-    """Read a JSON list of event records."""
+    """Read a JSON list, or a wrapper object containing an events/valid/expired list."""
     path = Path(path)
 
     if not path.exists():
-        return []
+        raise FileNotFoundError(f"Required input file not found: {path}")
 
-    with path.open("r", encoding="utf-8") as file:
-        data = json.load(file)
+    with path.open("r", encoding="utf-8") as handle:
+        data = json.load(handle)
 
     if isinstance(data, dict):
         for key in ("events", "valid", "expired"):
-            if isinstance(data.get(key), list):
+            if isinstance(data.get(key), list):=
                 data = data[key]
                 break
 
     if not isinstance(data, list):
-        raise ValueError(f"{path} must contain a JSON list of events")
+        raise ValueError(f"{path} must contain a JSON list of event objects")
 
-    if any(not isinstance(event, dict) for event in data):
+    if any(not isinstance(item, dict) for item in data):
         raise ValueError(f"{path} must contain only JSON event objects")
 
     return data
@@ -52,7 +59,10 @@ def run_pipeline(input_dir, output_dir, db_path, include_expired=False):
             "canonical": 0,
             "duplicates_merged": 0,
             "uncertain": 0,
-            "message": f"No events found in {input_dir / 'valid_events.json'}",
+            "message": (
+                f"No events found in {input_dir / 'valid_events.json'}; "
+                "ingestion skipped (no database write performed)."
+            ),
         }
 
     events = [
