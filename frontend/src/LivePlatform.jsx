@@ -101,12 +101,8 @@ function EventDetails({ saved, toggle }) {
   const registrationLink = safeEventUrl(event?.registration_url);
   return <section className="platform-detail"><Link to="/explore">← Back to events</Link><Feedback resource={resource} />{event && <>
     <span className="platform-eyebrow">EVENT DETAILS</span><h1>{event.title}</h1><p className="platform-description">{event.description || 'No description provided.'}</p>
-<<<<<<< HEAD
-    <dl><div><dt>Starts</dt><dd>{date(event.start_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Ends</dt><dd>{date(event.end_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Registration deadline</dt><dd>{date(event.registration_deadline)}</dd></div><div><dt>Location / mode</dt><dd>{event.location || 'Not provided'} / {event.mode || 'Not provided'}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div><div><dt>Source</dt><dd>{event.source || 'Not provided'}</dd></div></dl>
-    <ProviderCredit acquisition={event.acquisition} />
-=======
     <dl><div><dt>Starts</dt><dd>{date(event.start_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Ends</dt><dd>{date(event.end_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Registration deadline</dt><dd>{date(event.registration_deadline)}</dd></div><div><dt>Location / mode</dt><dd>{event.location || 'Not provided'} / {event.mode || 'Not provided'}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div><div><dt>Source</dt><dd>{event.source || 'Not provided'}</dd></div><div><dt>State</dt><dd>{event.state || 'Not provided'}</dd></div><div><dt>Eligibility</dt><dd>{event.eligibility || 'Not provided'}</dd></div></dl>
->>>>>>> feature/india-wide-discovery
+    <ProviderCredit acquisition={event.acquisition} />
     <button onClick={() => toggle(event.id)} aria-pressed={saved.includes(event.id)}>{saved.includes(event.id) ? 'Remove saved event' : 'Save to account'}</button>
     {link ? <a className="platform-action" href={link} target="_blank" rel="noopener noreferrer">Visit organizer website <ExternalLink size={16} /></a> : <p>No valid organizer link is available.</p>}
     {registrationLink && <a className="platform-action" href={registrationLink} target="_blank" rel="noopener noreferrer">Registration information <ExternalLink size={16} /></a>}
