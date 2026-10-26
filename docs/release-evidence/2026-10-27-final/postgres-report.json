@@ -1,0 +1,31 @@
+{
+  "run_id": "3b5a57d03ccd",
+  "environment": "development",
+  "database": "radar_acceptance_3b5a57d03ccd",
+  "production_or_existing_development_writes": false,
+  "human_approval_claimed": false,
+  "postgres_tests": {
+    "tests": 13,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "identity_verified_before_migrations": true,
+  "built_image_health_and_events": "passed",
+  "container_browser": "passed",
+  "image_ids": {
+    "backend": "sha256:7aa32cc83f99be3a17218a9e2fe6d0773e4f2cff309e6892a86dcdcae85c52f9",
+    "frontend": "sha256:65b34f7619ed0e5ea8c215f3ef8a4751d47c066ad6cce08ee687626ba27c1af4"
+  },
+  "runtime_users": {
+    "backend": "10001:10001",
+    "frontend": "101:101"
+  },
+  "status": "passed",
+  "owned_containers_removed": [
+    "radar-frontend-acceptance-3b5a57d03ccd",
+    "radar-backend-acceptance-3b5a57d03ccd",
+    "radar-pg-acceptance-3b5a57d03ccd"
+  ],
+  "persistent_volumes_deleted": false
+}

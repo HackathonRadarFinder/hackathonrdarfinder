@@ -1,0 +1,11 @@
+{
+  "checks": [
+    "State and searched college filters render the matching stored event",
+    "Reset clears state, college search and institution selection",
+    "Authorized administration shows actual directory counts and empty collection history",
+    "Mobile coverage dashboard has no axe violations, overflow or browser exceptions"
+  ],
+  "errors": [],
+  "realInstitutions": 0,
+  "fixtureInstitutions": 2
+}

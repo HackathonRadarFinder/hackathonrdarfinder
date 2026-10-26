@@ -1,40 +1,34 @@
-# Release checkpoint ? resumed 27 October 2026
+# Release checkpoint
 
-Work exclusively in `.release-local`, branch `release/2026-10-28-integration`.
+27 October 2026; `.release-local`; `release/2026-10-28-integration`.
 
-## Current verified result
+## Verified state
 
-- Full backend: **484 passed, 12 skipped**. All 12 gated PostgreSQL tests separately executed and passed; built-image browser acceptance passed.
-- Targeted backend:114 passed (overlaps full run). Module2.4:33 passed. Operations:67 passed. Workflow/overlay validation and actionlint passed; optional ShellCheck unavailable.
-- Complete isolated PostgreSQL journey verifies source registration ? upload ? repeat idempotency ? review ? publication ? explicit duplicate merge ? preserved saved items ? reimport, plus role denials, private preferences, recommendations, scheduled in-app notices, read ownership, email consent/dry-run, ML suppression and logout revocation.
-- Existing Docker images reused. No rebuild, persistent application database write, university import, email transmission or public deployment during this resumed run.
-- Prior local persistence counts/evidence retained:5 events,3 users,3 saved items,1362 institutions across33 states/UTs. They were not reimported or reaudited.
-- PR95 is merged into develop; its two file changes were already present with newer release repairs. PR92 remains a draft. No missing Module2.4 source change required copying.
-- Commit `0472b4d` adds PostgreSQL/browser CI gating and portable browser discovery. Release branch remains local/unpushed; remote CI has not executed.
-- All15 pre-existing untracked files preserved with unchanged hashes. Accidental root output/lockfile and caches excluded. Separate scraper directory remains unstaged.
+- Merge-conflict reconciliation: `8d9ac82d3751857fdc46e66a884ee4229d2a16e2`, pushed. PR #96 is already merged externally, merge SHA `4592c030782c75ba73bcde0c040f27c63d697533`. Do not reopen/remerge it or repeat its audit.
+- Completion commits: `146bda7`, `2fd2dc9`, subsequent URL repair and evidence handoff. Check `git log -5` and the follow-up draft PR for final HEAD/CI status.
+- PostgreSQL migration `e0f1a2b3c4d5`; unchanged IDs/selected values for 5 events, 3 users, 3 saved items and 1362 universities (1362 identifiers, 33 states/UTs). No reimport/reset is needed.
+- Profile editing, directory pagination/search/state filtering, batched imports and normalized review URLs are implemented. Complete publication/duplicate workflow passed against owned synthetic fixtures.
+- Final evidence is in `docs/release-evidence/2026-10-27-final/`; local raw outputs are ignored under `.test-support/final-handoff/`.
+- Unrelated `hackathon_radar_scraper/` remains untracked and preserved. Do not stage it or generated caches/dumps.
 
-## Exact next acceptance action
+## Next real-data action
 
-A real human reviewer must check the supplied Brabble pilot against its source facts and add an explicit, dated approval bound to those exact facts. The single approved schema row is AI-reviewed and currently has **zero human approvals**. Do not reinterpret an operator name or this execution as human review.
+A human must inspect the exact Brabble pilot facts and add an explicit dated, fact-bound approval preserving acquisition evidence and provider credit. The supplied row is AI-reviewed, not human-approved. Validate first without `--apply`; use `--check-target` before authorized application to the exact database. Do not project away provider evidence through generic CSV to bypass this gate. API-row reuse permission does not authorize direct upstream scraping.
 
-A pending, deliberately invalid template is at `docs/release-evidence/2026-10-27-resume/pending-human-approval-template.json`. Its decision remains pending and reviewer fields blank. The Brabble API reference currently permits row reuse with visible credit and organizer links: https://brabble.ai/docs. This does not authorize direct Devfolio/Unstop scraping.
+Other external inputs are verified historical outcomes for temporal validation/calibration, authorized SMTP/test recipients, and an owner deployment decision/infrastructure. Keep integrations disabled until their requirements are met. See `REMAINING_BLOCKERS.md`.
 
-After an actual human completes review, preserve the original acquisition evidence and provider credit in `acquisition_evidence.human_approval`. Use the existing reviewed API import workflow; do not strip provider evidence to force this CSV through the generic upload parser. Validate first without `--apply`; use `--check-target` before an authorized application to the exact development database. Never invent a reviewer or bypass the gate.
+## Reproduce only affected checks
 
-For other approved generic datasets, React Admin ? Sources ? upload CSV/XLSX with the exact current approval reference ? review/publish ? duplicate review. The complete workflow has passed on isolated, clearly synthetic fixtures.
-
-Other remaining external inputs:verified historical outcomes for temporal folds/calibration; authorized SMTP test credentials/recipients if email is required; production infrastructure and deployment authorization. These integrations remain disabled or report insufficient readiness.
-
-## Reproduce only affected acceptance
+From `.release-local`:
 
 ```powershell
-Set-Location C:/Users/nakul/OneDrive/Documents/Desktop/hackathonradarfinder/.release-local
+backend/.venv/Scripts/python.exe scripts/read_only_release_smoke.py
+# Only when another restart/persistence check is necessary:
+backend/.venv/Scripts/python.exe scripts/verify_local_release.py
+# Owned disposable PostgreSQL and built-image acceptance:
 backend/.venv/Scripts/python.exe scripts/postgres_acceptance.py --backend-image hackathonradarfinder-backend:local --frontend-image hackathonradarfinder-frontend --out .test-support/new-acceptance
-Set-Location backend
-.venv/Scripts/python.exe -m workers.evaluate_predictions --neural --output ../.test-support/new-ml-evaluation.json
-.venv/Scripts/python.exe -m workers.import_reviewed_public radar_collector/output/brabble-pilot/reviewed.csv
 ```
 
-Use new output paths. Evaluation uses the actual execution clock; it rejects future evidence cutoffs. The explicit 27 October cutoff was rejected when ahead of the host clock; the successful recorded evaluation used its actual clock and remained insufficient_history.
+For full backend checks, run `.venv/Scripts/python.exe -m pytest tests -q` from `backend`. The normal suite intentionally skips gated PostgreSQL cases; the owned runner executes all 13. See `DEMO_CHECKLIST.md` for fixture-only admin credentials, synthetic CSV, startup, safe shutdown and limitations.
 
-Latest evidence:`docs/release-evidence/2026-10-27-resume/`. Raw results:`.test-support/release-resume-20261027/`. See `FINAL_RELEASE_REPORT.md` for full scope and previous browser/persistence results. Keep backend/.env and .local-backups private; do not reset volumes. No remote push or PR submission is claimed.
+Do not repeat the completed audit/build/import. Never reset persistent volumes, invent approvals/metrics/delivery, merge a protected branch or deploy publicly without the owner's explicit instruction. The final remote workflow result belongs to the exact pushed HEAD and must be checked separately from local tests.
