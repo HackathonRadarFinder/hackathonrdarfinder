@@ -20,6 +20,25 @@ def _find_event(db: Session, event_id: int) -> Hackathon:
     return event
 
 
+def with_attribution(db, records):
+    """Read API provenance from existing version history in one batch query."""
+    if not records:
+        return records
+    by_id = {record.id: record for record in records}
+    for record in records:
+        record.acquisition = None
+    versions = db.scalars(select(EventVersion).where(
+        EventVersion.hackathon_id.in_(by_id)).order_by(EventVersion.version_number.desc())).all()
+    for version in versions:
+        record = by_id[version.hackathon_id]
+        evidence = (version.changes or {}).get('acquisition')
+        if record.acquisition is None and evidence:
+            # Raw API payload and internal review attestations remain in version history.
+            record.acquisition = {key: value for key, value in evidence.items()
+                                  if key not in {'raw_record', 'verified_fields'}}
+    return records
+
+
 def _event_values(db: Session, event: EventCreate) -> dict:
     if event.organization_id is not None:
         organization = db.get(Organization, event.organization_id)
@@ -35,7 +54,7 @@ def _event_values(db: Session, event: EventCreate) -> dict:
 
 def get_events(db: Session):
     with database_operation(db):
-        return db.scalars(select(Hackathon).order_by(Hackathon.id)).all()
+        return with_attribution(db, db.scalars(select(Hackathon).order_by(Hackathon.id)).all())
 
 
 def get_event_page(db: Session, query: EventListParams):
@@ -71,12 +90,12 @@ def get_event_page(db: Session, query: EventListParams):
             .offset((page - 1) * page_size)
             .limit(page_size)
         ).all()
-        return {"data": items, "total": total, "page": page, "page_size": page_size}
+        return {"data": with_attribution(db, items), "total": total, "page": page, "page_size": page_size}
 
 
 def get_event(db: Session, event_id: int):
     with database_operation(db):
-        return _find_event(db, event_id)
+        return with_attribution(db, [_find_event(db, event_id)])[0]
 
 
 def create_event(db: Session, event: EventCreate):

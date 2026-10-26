@@ -59,7 +59,9 @@ def policy_reason(policy, now, allow_live):
         return 'source_disabled'
     if policy.reviewed_at > now or policy.expires_at <= now:
         return 'approval_expired_or_future'
-    if policy.adapter == 'unstop-v1':
+    if policy.adapter not in {'curated-v1', 'unstop-v1'}:
+        return 'unsupported_adapter'
+    if policy.adapter != 'curated-v1':
         if not policy.terms_permit:
             return 'permission_missing'
         if not allow_live:
@@ -72,6 +74,8 @@ def collect_source(policy):
         raw = (BACKEND / 'data' / 'curated-mvp-20261013.json').read_text(encoding='utf-8')
         return validate_records(json.loads(raw)), 0, {'checksum': hashlib.sha256(raw.encode()).hexdigest(),
             'document_url': policy.url, 'adapter_version': policy.adapter, 'transport': 'offline'}
+    if policy.adapter != "unstop-v1":
+        raise ValueError("unsupported_adapter")
     # Use the existing governed collector: robots, terms, redirects, DNS/IP gates,
     # bounded transfer, retries and atomic raw storage. Never use standalone fetch.
     sys.path.insert(0, str(BACKEND / 'modules' / '2.2-collector' / 'src'))

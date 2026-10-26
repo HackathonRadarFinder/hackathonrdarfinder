@@ -10,3 +10,7 @@ __pycache__/
 .pytest_cache/
 pytest-cache-files-*/
 .test-support/
+
+.local-backups/
+backend/radar_collector/output/
+

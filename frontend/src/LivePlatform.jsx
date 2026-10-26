@@ -9,6 +9,7 @@ import { CompanyLogo } from './demo/CompanyLogo';
 import './index.css';
 import './App.css';
 import './platform.css';
+import ProviderCredit from './components/ProviderCredit';
 
 function useResource(load) {
   const [state, setState] = useState({ key: null });
@@ -42,14 +43,16 @@ function date(value, dayOnly = false) {
     : parsed.toLocaleString(undefined, { timeZoneName: 'short' });
 }
 
-function EventCard({ event, saved, toggle, organization }) {
+export function EventCard({ event, saved, toggle, organization }) {
   return <article className="platform-card">
     <div className="platform-card-top"><span className="platform-org"><CompanyLogo name={organization || ''} size={24} />{organization || 'Organization not provided'}</span>
       <button aria-label={`${saved ? 'Remove' : 'Add'} saved event for ${event.title}`} aria-pressed={saved} onClick={() => toggle(event.id)}><Bookmark size={18} fill={saved ? 'currentColor' : 'none'} /></button></div>
     <h2><Link to={`/event/${event.id}`}>{event.title}</Link></h2>
     <p>{event.description || 'No description provided.'}</p>
     <dl><div><dt>Mode</dt><dd>{event.mode || 'Not provided'}</dd></div><div><dt>Location</dt><dd>{event.location || 'Not provided'}</dd></div>
+      <div><dt>Registration deadline</dt><dd>{date(event.registration_deadline)}</dd></div>
       <div><dt>Starts</dt><dd>{date(event.start_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div></dl>
+    <ProviderCredit acquisition={event.acquisition} />
     <Link className="platform-action" to={`/event/${event.id}`}>View details →</Link>
   </article>;
 }
@@ -91,6 +94,7 @@ function EventDetails({ saved, toggle }) {
   return <section className="platform-detail"><Link to="/explore">← Back to events</Link><Feedback resource={resource} />{event && <>
     <span className="platform-eyebrow">EVENT DETAILS</span><h1>{event.title}</h1><p className="platform-description">{event.description || 'No description provided.'}</p>
     <dl><div><dt>Starts</dt><dd>{date(event.start_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Ends</dt><dd>{date(event.end_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Registration deadline</dt><dd>{date(event.registration_deadline)}</dd></div><div><dt>Location / mode</dt><dd>{event.location || 'Not provided'} / {event.mode || 'Not provided'}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div><div><dt>Source</dt><dd>{event.source || 'Not provided'}</dd></div></dl>
+    <ProviderCredit acquisition={event.acquisition} />
     <button onClick={() => toggle(event.id)} aria-pressed={saved.includes(event.id)}>{saved.includes(event.id) ? 'Remove saved event' : 'Save to account'}</button>
     {link ? <a className="platform-action" href={link} target="_blank" rel="noopener noreferrer">Visit organizer website <ExternalLink size={16} /></a> : <p>No valid organizer link is available.</p>}
     <p className="platform-muted">Source observed: {date(event.scraped_at)}. This is a stored snapshot; check the organizer for changes.</p>

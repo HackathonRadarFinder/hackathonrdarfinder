@@ -18,6 +18,7 @@ env/
 modules/*
 !modules/2.2-collector/
 **/tests/
+radar_collector/output/
 **/.pytest_cache/
 backend/
 frontend/

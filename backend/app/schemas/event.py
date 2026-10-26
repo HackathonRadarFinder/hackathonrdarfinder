@@ -42,6 +42,19 @@ class EventCreate(HackathonCreate):
         return self
 
 
+class ProviderAttribution(BaseModel):
+    provider: str
+    provider_id: str
+    provider_url: str
+    attribution: str
+    method: str
+    original_platform: str
+    original_url: str
+    acquired_at: str
+    source_refreshed_at: str
+    api_record_sha256: str
+
+
 class EventResponse(BaseModel):
     # Reads remain tolerant of historical scraper data. Write constraints above
     # must not turn otherwise readable legacy rows into response errors.
@@ -59,6 +72,7 @@ class EventResponse(BaseModel):
     url: str | None = None
     source: str | None = None
     scraped_at: datetime | None = None
+    acquisition: ProviderAttribution | None = None
 
 
 class EventListParams(BaseModel):
