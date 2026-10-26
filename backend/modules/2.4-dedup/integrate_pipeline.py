@@ -1,4 +1,3 @@
-```python
 """Integration adapter for Module 2.3 JSON outputs -> Module 2.4.
 
 Expected input directory (default: module_2_3/output):
@@ -169,4 +168,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-```
