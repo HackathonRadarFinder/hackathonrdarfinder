@@ -135,7 +135,11 @@ def _stage(db, approved, reviewer: str):
     for reviewed in approved:
         event, sha, precision, collection_mode, permission_reference, evidence = reviewed
         url = str(event.url)
-        if merged_alias_id(db, url) is not None:
+        alias_id = merged_alias_id(db, url)
+        existing = db.get(Hackathon, alias_id) if alias_id is not None else db.scalar(select(Hackathon).where(Hackathon.url == url).order_by(Hackathon.id).limit(1))
+        if existing is not None and existing.start_date and event.start_date and existing.start_date.year != event.start_date.year:
+            raise ValueError('URL belongs to a different event edition; use a verified edition-specific URL or manual review')
+        if alias_id is not None:
             duplicate += 1
             continue
         provider_key = (event.source, evidence['provider_id']) if evidence else None

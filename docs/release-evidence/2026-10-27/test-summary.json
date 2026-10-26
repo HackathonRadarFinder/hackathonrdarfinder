@@ -1,0 +1,59 @@
+{
+  "backend": {
+    "passed": 483,
+    "skipped": 11,
+    "failed": 0,
+    "note": "PostgreSQL cases intentionally excluded from default run; all11 executed separately"
+  },
+  "postgres": {
+    "passed": 11,
+    "skipped": 0,
+    "failed": 0
+  },
+  "frontend_unit": {
+    "passed": 20,
+    "skipped": 1,
+    "failed": 0,
+    "note": "Single opt-in integration executed separately:1 passed"
+  },
+  "frontend_disposable_integration": {
+    "passed": 1,
+    "skipped": 0,
+    "failed": 0
+  },
+  "collector": {
+    "passed": 157,
+    "skipped": 0
+  },
+  "module24": {
+    "passed": 33,
+    "skipped": 0
+  },
+  "operations": {
+    "passed": 66,
+    "skipped": 0
+  },
+  "browser": {
+    "base_checks": 30,
+    "base_axe_scans": 22,
+    "india_checks": 4,
+    "new_workflow_checks": 6,
+    "new_workflow_axe_scans": 2,
+    "browser_errors": 0
+  },
+  "frontend_lint": "passed",
+  "frontend_build": "passed",
+  "workflow_validation": "passed",
+  "note": "Counts are separate suites; focused reruns overlap and must not be added as independent tests.",
+  "final_affected_ingestion_rerun": {
+    "passed": 48,
+    "failed": 0,
+    "skipped": 0,
+    "note": "Overlapping rerun after annual-edition protection; full suite count precedes this new regression."
+  },
+  "email_docker_dry_run": {
+    "mode": "dry-run",
+    "queued": 0,
+    "accepted": 0
+  }
+}

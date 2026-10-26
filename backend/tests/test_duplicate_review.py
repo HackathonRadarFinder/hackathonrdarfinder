@@ -182,3 +182,19 @@ def test_conflicting_merged_alias_claim_is_rejected(db):
     db.flush()
     with pytest.raises(MergeConflict, match='Conflicting merged URL'):
         merged_alias_id(db, url)
+
+
+def test_reviewed_import_rejects_reused_annual_url(db):
+    from app.schemas.event import EventCreate
+    from workers.import_reviewed_public import stage, ReviewedRecord
+    from datetime import datetime
+    a, b, admin, *_ = seed(db)
+    a.url = 'https://unstop.com/hackathons/annual-999999'
+    a.source = 'Unstop'
+    db.commit()
+    next_edition = EventCreate(title=a.title, organization=a.organization.name, url=a.url, start_date=datetime(a.start_date.year + 1, a.start_date.month, a.start_date.day), source=a.source, scraped_at=datetime(2026,10,26), description='Synthetic approved edition facts')
+    row = ReviewedRecord(next_edition, 'a'*64, 'exact', 'reviewed_manual', 'Synthetic fixture approval')
+    with pytest.raises(ValueError, match='different event edition'):
+        stage(db, [row], 'Synthetic edition reviewer')
+    db.rollback()
+    assert db.get(Hackathon, a.id).start_date.year != next_edition.start_date.year

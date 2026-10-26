@@ -18,3 +18,8 @@ backend/radar_collector/output/
 .pytest*/
 backend/.pytest*/
 *.dump
+
+backend/.pytest-*.json
+/tatus -sb
+/e -p hackathonradarfinder ps
+/ersnakulOneDriveDocumentsDesktop*

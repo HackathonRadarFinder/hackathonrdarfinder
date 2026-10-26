@@ -134,6 +134,10 @@ def ingest_discovery(db, source, run, records, metadata, observed):
         seen.add(url)
         alias_id = merged_alias_id(db, url)
         if alias_id is not None:
+            retained = db.get(Hackathon, alias_id)
+            if retained.start_date and incoming.start_date and retained.start_date.year != incoming.start_date.year:
+                counts['conflicts'] += 1
+                continue
             identity = db.scalar(select(DiscoveryEvent).where(
                 DiscoveryEvent.source_id == source.source_id, DiscoveryEvent.canonical_url == url))
             if identity is not None and identity.hackathon_id != alias_id:
@@ -153,6 +157,11 @@ def ingest_discovery(db, source, run, records, metadata, observed):
             DiscoveryEvent.source_id == source.source_id, DiscoveryEvent.canonical_url == url))
         record = db.get(Hackathon, identity.hackathon_id) if identity else db.scalar(
             select(Hackathon).where(Hackathon.url == url).order_by(Hackathon.id).limit(1))
+        # A reused annual landing URL is not evidence that two editions are one event.
+        if (record is not None and record.start_date and incoming.start_date
+                and record.start_date.year != incoming.start_date.year):
+            counts['conflicts'] += 1
+            continue
         # Do not overwrite another source's or manually administered event.
         if record is not None and record.source != incoming.source:
             counts['conflicts'] += 1

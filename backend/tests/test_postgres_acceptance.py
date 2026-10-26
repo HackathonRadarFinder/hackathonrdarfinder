@@ -15,7 +15,7 @@ from alembic.script import ScriptDirectory
 from sqlalchemy import create_engine, select, func, text, inspect, event as sql_event, delete
 from sqlalchemy.orm import Session, sessionmaker
 
-from app.core.database import get_db
+from app.core.database import Base, get_db
 from app.main import app
 from app.models.core import EventVersion
 from app.models.hackathon import Hackathon
@@ -67,7 +67,7 @@ def database(pg):
     # The pg fixture has already verified the unique database/container identity.
     # Delete test rows only, retaining the schema built by actual migrations.
     with pg.begin() as connection:
-        for table in (EventVersion.__table__, Hackathon.__table__, Organization.__table__):
+        for table in reversed(Base.metadata.sorted_tables):
             connection.execute(delete(table))
     yield pg
 
@@ -191,29 +191,6 @@ def test_postgres_unsafe_isolation_refused(database, records):
                 stage(db, records, 'Disposable PostgreSQL operator')
 
 
-def test_postgres_health_events_and_details(database, records):
-    factory = sessionmaker(bind=database)
-    with factory.begin() as db:
-        stage(db, records, 'Disposable PostgreSQL operator')
-    def dependency():
-        with factory() as db:
-            yield db
-    previous = dict(app.dependency_overrides)
-    app.dependency_overrides[get_db] = dependency
-    try:
-        with TestClient(app) as client:
-            assert client.get('/health').json()['status'] == 'healthy'
-            result = client.get('/events/', params={'page': 1, 'page_size': 1})
-            assert result.status_code == 200 and result.json()['total'] == 1
-            item = result.json()['data'][0]
-            assert item['acquisition']['provider'] == 'Brabble.ai'
-            assert client.get(f"/events/{item['id']}").json()['data'] == item
-            assert client.get('/events/', params={'page': 2, 'page_size': 1}).json()['data'] == []
-    finally:
-        app.dependency_overrides.clear()
-        app.dependency_overrides.update(previous)
-
-
 def test_postgres_dataset_review_publication_is_idempotent(database):
     import base64
     from datetime import datetime, timedelta, timezone
@@ -251,3 +228,26 @@ def test_postgres_dataset_review_publication_is_idempotent(database):
             assert client.get('/events/?q=Synthetic%20release%20test').json()['total'] == 1
     finally:
         app.dependency_overrides.clear(); app.dependency_overrides.update(previous)
+
+
+def test_postgres_health_events_and_details(database, records):
+    factory = sessionmaker(bind=database)
+    with factory.begin() as db:
+        stage(db, records, 'Disposable PostgreSQL operator')
+    def dependency():
+        with factory() as db:
+            yield db
+    previous = dict(app.dependency_overrides)
+    app.dependency_overrides[get_db] = dependency
+    try:
+        with TestClient(app) as client:
+            assert client.get('/health').json()['status'] == 'healthy'
+            result = client.get('/events/', params={'page': 1, 'page_size': 1})
+            assert result.status_code == 200 and result.json()['total'] == 1
+            item = result.json()['data'][0]
+            assert item['acquisition']['provider'] == 'Brabble.ai'
+            assert client.get(f"/events/{item['id']}").json()['data'] == item
+            assert client.get('/events/', params={'page': 2, 'page_size': 1}).json()['data'] == []
+    finally:
+        app.dependency_overrides.clear()
+        app.dependency_overrides.update(previous)
