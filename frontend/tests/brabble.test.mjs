@@ -16,7 +16,7 @@ test('approved synthetic Brabble records flow through SQLite, /events/, API clie
   let vite;
   try {
     const output = join(directory, 'response.json');
-    const python = process.env.RADAR_TEST_PYTHON || resolve('../backend/.venv/Scripts/python.exe');
+    const python = process.env.RADAR_TEST_PYTHON || (process.platform === 'win32' ? resolve('../backend/.venv/Scripts/python.exe') : 'python');
     const processResult = spawnSync(python, [resolve('../scripts/brabble_ui_fixture.py'), output],
       { encoding: 'utf-8', timeout: 60000 });
     assert.equal(processResult.status, 0, processResult.stderr || processResult.error?.message);
@@ -61,7 +61,7 @@ test('genuinely reviewed pilot passes disposable import, API pagination and actu
   const directory = mkdtempSync(join(tmpdir(), 'radar-brabble-ui-'));
   let vite;
   try {
-    const python = process.env.RADAR_TEST_PYTHON || resolve('../backend/.venv/Scripts/python.exe');
+    const python = process.env.RADAR_TEST_PYTHON || (process.platform === 'win32' ? resolve('../backend/.venv/Scripts/python.exe') : 'python');
     const result = spawnSync(python, ['-m', 'workers.accept_brabble_pilot', '--out', directory], {
       cwd: resolve('../backend'), encoding: 'utf-8', timeout: 60000,
       env: { ...process.env, DEBUG: 'false', DATABASE_URL: 'sqlite+pysqlite://',

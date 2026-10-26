@@ -1,7 +1,7 @@
 """Validated event writes with the legacy organization-name input retained."""
 from datetime import date, datetime, timezone
 import re
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, StringConstraints, field_validator, model_validator
 
@@ -98,10 +98,14 @@ class EventListParams(BaseModel):
         str, StringConstraints(strip_whitespace=True, min_length=1, max_length=50)
     ] | None = None
     organization_id: int | None = Field(default=None, ge=1, le=2_147_483_647)
+    sort: Literal['id', 'title', 'start_date', 'deadline'] | None = None
+    period: Literal['upcoming', 'past'] | None = None
+    deadline_from: date | None = None
+    deadline_to: date | None = None
     start_from: date | None = Field(default=None, description="Inclusive event start date in UTC (YYYY-MM-DD).")
     start_to: date | None = Field(default=None, description="Inclusive event start date in UTC (YYYY-MM-DD).")
 
-    @field_validator("start_from", "start_to", mode="before")
+    @field_validator("start_from", "start_to", "deadline_from", "deadline_to", mode="before")
     @classmethod
     def require_calendar_date(cls, value):
         if value is None or type(value) is date:
@@ -116,6 +120,8 @@ class EventListParams(BaseModel):
     def validate_date_window(self):
         if self.start_from is not None and self.start_to is not None and self.start_from > self.start_to:
             raise ValueError("start_to must not precede start_from")
+        if self.deadline_from is not None and self.deadline_to is not None and self.deadline_from > self.deadline_to:
+            raise ValueError("deadline_to must not precede deadline_from")
         return self
 
 

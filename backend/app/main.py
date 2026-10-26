@@ -1,5 +1,9 @@
 from app.api.router import api_router
 from app.api.routes.discovery import router as discovery_router
+from app.api.routes.release_admin import router as release_admin_router
+from app.api.routes.duplicate_review import router as duplicate_review_router
+from app.api.routes.dataset_import import router as dataset_import_router
+from app.api.routes.personalized import router as personalized_router
 import time
 from datetime import datetime, timezone
 
@@ -44,6 +48,10 @@ app.include_router(notifications.router)
 app.include_router(admin.router)
 app.include_router(account.router)
 app.include_router(discovery_router)
+app.include_router(release_admin_router)
+app.include_router(duplicate_review_router)
+app.include_router(dataset_import_router)
+app.include_router(personalized_router)
 from app.api.routes.institutions import router as institutions_router
 app.include_router(institutions_router)
 # Versioned API routes
@@ -61,6 +69,29 @@ async def health_check():
         "service": "hackathon-radar-api",
         "version": settings.APP_VERSION,
     }
+
+
+@app.get("/ready", tags=["Health"])
+def readiness_check():
+    """Readiness requires database connectivity and every shipped migration."""
+    from pathlib import Path
+    from alembic.config import Config
+    from alembic.script import ScriptDirectory
+    from sqlalchemy import text
+    from sqlalchemy.exc import SQLAlchemyError
+    from app.core.database import engine
+    backend = Path(__file__).resolve().parents[1]
+    config = Config()
+    config.set_main_option("script_location", str(backend / "database" / "migrations"))
+    expected = set(ScriptDirectory.from_config(config).get_heads())
+    try:
+        with engine.connect() as connection:
+            current = set(connection.scalars(text("SELECT version_num FROM alembic_version")))
+        if current != expected:
+            raise AppException(code="SCHEMA_NOT_READY", message="Database migrations are required.", status_code=503)
+    except SQLAlchemyError:
+        raise AppException(code="DATABASE_NOT_READY", message="Database is unavailable or migrations are required.", status_code=503) from None
+    return {"status": "ready", "database": "connected", "migrations": "current"}
 
 
 # Request ID and request logging

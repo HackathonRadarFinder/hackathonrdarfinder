@@ -78,7 +78,7 @@ class DirectoryImport(BaseModel):
     def permission(self):
         public_https(self.source_url)
         host = urlsplit(self.source_url).hostname
-        domains = {'aishe': ('aishe.gov.in', 'data.gov.in'), 'ugc': ('ugc.gov.in', 'data.gov.in')}
+        domains = {'aishe': ('aishe.gov.in', 'data.gov.in', 'aikosh.indiaai.gov.in'), 'ugc': ('ugc.gov.in', 'data.gov.in')}
         if self.provider in domains and not any(host == d or host.endswith('.' + d) for d in domains[self.provider]):
             raise ValueError('Official provider provenance required')
         if not self.reuse_permitted:

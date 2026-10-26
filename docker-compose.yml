@@ -16,10 +16,28 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
+  migrate:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: hackathonradarfinder-backend:local
+    env_file:
+      - ./backend/.env
+    environment:
+      ENVIRONMENT: development
+      DEBUG: "false"
+    command: ["alembic", "upgrade", "head"]
+    depends_on:
+      db:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+    restart: "no"
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    image: hackathonradarfinder-backend:local
     container_name: hackathon-radar-backend
     restart: unless-stopped
     env_file:
@@ -32,6 +50,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     security_opt:
       - no-new-privileges:true
   frontend:
@@ -52,5 +72,23 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+  in-app-reminders:
+    image: hackathonradarfinder-backend:local
+    profiles: [workers]
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      EMAIL_MODE: disabled
+      DEBUG: "false"
+    command: ["python", "-m", "workers.in_app_reminders", "--watch"]
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      disable: true
+    security_opt:
+      - no-new-privileges:true
+
 volumes:
   radar_postgres_data:

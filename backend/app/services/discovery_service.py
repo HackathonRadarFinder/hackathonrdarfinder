@@ -15,6 +15,7 @@ from app.models.organization import Organization
 from app.schemas.discovery import SourcePolicy
 from app.services.scraper_ingestion import normalize_unstop_collection
 from workers.ingest_curated import validate_records
+from app.services.duplicate_review import merged_alias_id, MergeConflict
 
 BACKEND = Path(__file__).resolve().parents[2]
 MATERIAL_FIELDS = ('title', 'organization_id', 'start_date', 'end_date', 'registration_deadline',
@@ -86,6 +87,8 @@ def collect_source(policy):
         raw = (BACKEND / 'data' / 'curated-mvp-20261013.json').read_text(encoding='utf-8')
         return validate_records(json.loads(raw)), 0, {'checksum': hashlib.sha256(raw.encode()).hexdigest(),
             'document_url': policy.url, 'adapter_version': policy.adapter, 'transport': 'offline'}
+    if policy.adapter not in {'curated-v1', 'unstop-v1', 'official-html-v1', 'events-json-v1', 'rss-v1', 'sitemap-v1'}:
+        raise ValueError('unsupported_adapter')
     if policy.adapter not in ('curated-v1', 'unstop-v1'):
         from app.services.nationwide_collection import collect_announcements
         return collect_announcements(policy)
@@ -129,6 +132,23 @@ def ingest_discovery(db, source, run, records, metadata, observed):
             counts['unchanged'] += 1
             continue
         seen.add(url)
+        alias_id = merged_alias_id(db, url)
+        if alias_id is not None:
+            identity = db.scalar(select(DiscoveryEvent).where(
+                DiscoveryEvent.source_id == source.source_id, DiscoveryEvent.canonical_url == url))
+            if identity is not None and identity.hackathon_id != alias_id:
+                raise MergeConflict('Discovery identity conflicts with reviewed merged URL')
+            if identity is None:
+                identity = DiscoveryEvent(source_id=source.source_id, canonical_url=url,
+                    hackathon_id=alias_id, last_observed_at=observed)
+                db.add(identity)
+            identity.last_observed_at = observed
+            db.add(DiscoveryEvidence(hackathon_id=alias_id, source_id=source.source_id,
+                run_id=run.id, observed_at=observed, checksum=metadata['checksum'],
+                document_url=metadata['document_url'], adapter_version=metadata['adapter_version'],
+                snapshot=incoming.model_dump(mode='json')))
+            counts['unchanged'] += 1
+            continue
         identity = db.scalar(select(DiscoveryEvent).where(
             DiscoveryEvent.source_id == source.source_id, DiscoveryEvent.canonical_url == url))
         record = db.get(Hackathon, identity.hackathon_id) if identity else db.scalar(

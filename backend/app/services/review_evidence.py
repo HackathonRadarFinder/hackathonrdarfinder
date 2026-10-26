@@ -11,6 +11,12 @@ CHECK_FIELDS = ('title', 'organization', 'url', 'start_date', 'end_date',
 
 def event_digest(event):
     values = event.model_dump(mode='json')
+    # Optional India directory fields did not exist in the original review contract.
+    # Preserve old attestations only when these facts remain absent; any supplied
+    # value is hashed and therefore requires a fresh factual review.
+    for field in ('state', 'institution_id', 'registration_url', 'eligibility'):
+        if values.get(field) is None:
+            values.pop(field, None)
     if values.get('url'):
         values['url'] = clean_url(values['url'])
     return hashlib.sha256(json.dumps(values, sort_keys=True, ensure_ascii=False,

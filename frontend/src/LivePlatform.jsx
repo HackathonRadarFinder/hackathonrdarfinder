@@ -10,6 +10,7 @@ import './index.css';
 import './App.css';
 import './platform.css';
 import ProviderCredit from './components/ProviderCredit';
+import AdminWorkspace from './AdminWorkspace';
 
 function useResource(load) {
   const [state, setState] = useState({ key: null });
@@ -58,7 +59,7 @@ export function EventCard({ event, saved, toggle, organization }) {
 }
 
 function Explore({ saved, toggle }) {
-  const [filters, setFilters] = useState({ q: '', location: '', mode: '', organizationId: '', state: '', institutionId: '', startFrom: '', startTo: '', pageSize: 12 });
+  const [filters, setFilters] = useState({ q: '', location: '', mode: '', organizationId: '', state: '', institutionId: '', startFrom: '', startTo: '', deadlineFrom: '', deadlineTo: '', period: '', sort: 'id', pageSize: 12 });
   const [draft, setDraft] = useState(filters);
   const [collegeSearch, setCollegeSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -81,10 +82,14 @@ function Explore({ saved, toggle }) {
         <label>Organization<select value={draft.organizationId} onChange={event => setDraft({ ...draft, organizationId: event.target.value })}><option value="">All organizations</option>{(organizations.data || []).map(org => <option key={org.id} value={org.id}>{org.name}</option>)}</select></label>
         <label>Starts on or after (UTC)<input type="date" value={draft.startFrom} max={draft.startTo || undefined} onChange={event => setDraft({ ...draft, startFrom: event.target.value })} /></label>
         <label>Starts on or before (UTC)<input type="date" value={draft.startTo} min={draft.startFrom || undefined} onChange={event => setDraft({ ...draft, startTo: event.target.value })} /></label>
+        <label>Registration deadline on or after (UTC)<input type="date" value={draft.deadlineFrom} max={draft.deadlineTo || undefined} onChange={event => setDraft({ ...draft, deadlineFrom: event.target.value })} /></label>
+        <label>Registration deadline on or before (UTC)<input type="date" value={draft.deadlineTo} min={draft.deadlineFrom || undefined} onChange={event => setDraft({ ...draft, deadlineTo: event.target.value })} /></label>
+        <label>Event period<select value={draft.period} onChange={event => setDraft({ ...draft, period: event.target.value })}><option value="">All dates</option><option value="upcoming">Upcoming or ongoing</option><option value="past">Past</option></select></label>
+        <label>Sort events<select value={draft.sort} onChange={event => setDraft({ ...draft, sort: event.target.value })}><option value="id">Catalog order</option><option value="title">Title</option><option value="start_date">Start date</option><option value="deadline">Registration deadline</option></select></label>
         {organizations.error && <p role="alert">Organization filters could not load. <button type="button" onClick={organizations.retry}>Retry</button></p>}
         <label>Events per page<select value={draft.pageSize} onChange={event => setDraft({ ...draft, pageSize: Number(event.target.value) })}><option>12</option><option>24</option><option>48</option></select></label>
-        <button className="platform-primary" type="submit">Apply filters</button><button type="button" onClick={() => { const cleared = { q: '', location: '', mode: '', organizationId: '', state: '', institutionId: '', startFrom: '', startTo: '', pageSize: 12 }; setCollegeSearch(''); setDraft(cleared); setFilters(cleared); setPage(1); }}>Reset</button>
-      </form><p className="platform-muted">The catalog includes historical events. Use start dates to narrow upcoming results. Dates filter by UTC calendar day; events without start dates are excluded when filtering. Results are sorted by event ID.</p>
+        <button className="platform-primary" type="submit">Apply filters</button><button type="button" onClick={() => { const cleared = { q: '', location: '', mode: '', organizationId: '', state: '', institutionId: '', startFrom: '', startTo: '', deadlineFrom: '', deadlineTo: '', period: '', sort: 'id', pageSize: 12 }; setCollegeSearch(''); setDraft(cleared); setFilters(cleared); setPage(1); }}>Reset</button>
+      </form><p className="platform-muted">The catalog includes historical events. Use start dates to narrow upcoming results. Dates filter by UTC calendar day; events without start dates are excluded when filtering. Choose a sort order above; dates without published values appear last.</p>
     </aside><section aria-label="Event results" aria-busy={resource.loading}><Feedback resource={resource} />
       {result && <><p role="status">{result.total} events · page {result.page}</p>{!result.data.length && <div className="platform-empty"><h2>No events found</h2><p>Try another location or reset your filters.</p></div>}
         <div className="platform-grid">{result.data.map(event => <EventCard key={event.id} event={event} saved={saved.includes(event.id)} toggle={toggle} organization={names.get(event.organization_id)} />)}</div>
@@ -141,11 +146,12 @@ function DiscoveryCoverage() {
 function Admin() {
   const { user } = useAuth();
   const resource = useResource(useCallback(signal => user ? api.admin(signal) : Promise.reject(new Error('Sign in to request admin access.')), [user]));
-  return <section><h1>Administration</h1>{['administrator', 'source_manager'].includes(user?.role) && <DiscoveryCoverage />}<p>Live, read-only administration. The backend checks permissions on every request.</p><Feedback resource={resource} />
+  return <section><h1>Administration</h1>{['administrator', 'source_manager'].includes(user?.role) && <DiscoveryCoverage />}<p>The backend checks current permissions on every request.</p><Feedback resource={resource} />
     {!user && <Link to="/login">Sign in</Link>}{resource.data && <><div className="platform-grid">{Object.entries(resource.data.stats).map(([key, value]) => <article className="platform-card" key={key}><h2>{value}</h2><p>{key.replaceAll('_', ' ')}</p></article>)}</div>
       <h2>Users</h2><div className="platform-table" tabIndex={0} role="region" aria-label="User accounts table"><table><thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Roles</th></tr></thead><tbody>{resource.data.users.map(user => <tr key={user.id}><td>{user.name}</td><td>{user.email}</td><td>{user.status}</td><td>{user.roles.join(', ')}</td></tr>)}</tbody></table></div>
       <h2>Organizations</h2><ul>{resource.data.organizations.map(org => <li key={org.id}>{org.name}</li>)}</ul>
-      <p className="platform-muted">These backend admin lists are currently unpaginated. Role changes and announcement review are available only through authorized backend operations.</p></>}
+      <p className="platform-muted">Use the administration tools below to manage records, review announcements, and inspect audit history.</p></>}
+    {user?.role === 'administrator' && <AdminWorkspace />}
   </section>;
 }
 
@@ -164,6 +170,28 @@ function Predictions() {
         <li key={`${item.date}-${index}`}>{item.date}: {safeEventUrl(item.url) ? <a href={safeEventUrl(item.url)} target="_blank" rel="noopener noreferrer">{item.title}</a> : item.title}</li>)}</ul></details>}
     </article>)}</div>
     {resource.data?.length === 0 && <p>No eligible public predictions. The current baseline is uncalibrated; insufficient or sub-threshold forecasts remain internal for evaluation. Confirmed events are still available in Explore.</p>}</section>;
+}
+
+function Personalization() {
+  const { user } = useAuth();
+  const resource = useResource(useCallback(signal => api.request('/account/discovery-preferences', { signal }), []));
+  const recommendations = useResource(useCallback(signal => api.request('/account/recommendations', { signal }), []));
+  const [draft, setDraft] = useState(null);
+  const [message, setMessage] = useState('');
+  const [busy, setBusy] = useState(false);
+  const values = draft || resource.data;
+  async function submit(event) {
+    event.preventDefault(); setBusy(true); setMessage('');
+    try { await api.request('/account/discovery-preferences', { method: 'PUT', body: values }); setMessage('Discovery preferences saved.'); recommendations.retry(); }
+    catch (error) { setMessage(error.message); }
+    finally { setBusy(false); }
+  }
+  return <section aria-label="Personalization"><h2>Your account and interests</h2><p>{user?.name} ? {user?.email}</p><Feedback resource={resource} />
+    {values && <form onSubmit={submit}>{Object.entries({preferred_location:'Preferred city or location',preferred_mode:'Preferred mode',interests:'Interests (comma separated)'}).map(([key,label]) => <label key={key}>{label}<input value={values[key]} maxLength={key === 'interests' ? 255 : key === 'preferred_mode' ? 50 : 100} onChange={event => setDraft({...values,[key]:event.target.value})} /></label>)}<label><input type="checkbox" checked={values.in_app_reminders} onChange={event => setDraft({...values,in_app_reminders:event.target.checked})} />In-app saved-event reminders</label><button disabled={busy}>Save discovery preferences</button></form>}
+    {message && <p role="status">{message}</p>}<h2>Recommended for you</h2><p>Matches use stated preferences and saved events. Relevance scores are rules, not prediction probabilities.</p><Feedback resource={recommendations} />
+    {recommendations.data?.data.length === 0 && <p>No matching upcoming events yet. Add interests or save events to improve matching.</p>}
+    {recommendations.data?.data.map(({event,reasons}) => <article className="platform-card" key={event.id}><h3><Link to={`/event/${event.id}`}>{event.title}</Link></h3><p>{reasons.join(' ? ')}</p></article>)}
+  </section>;
 }
 
 function Preferences() {
@@ -189,6 +217,7 @@ function Preferences() {
     {user && values && <form onSubmit={submit}>{Object.entries({email_reminders: 'I consent to email reminders', email_registration_reminders: 'Registration deadlines', email_upcoming_reminders: 'Upcoming events'}).map(([key, label]) =>
       <label key={key}><input type="checkbox" checked={values[key]} onChange={event => setDraft({userId: user.id, values: {...values, [key]: event.target.checked}})} />{label}</label>)}
       <button disabled={busy} type="submit">Save preferences</button></form>}{message && <p role="status">{message}</p>}
+    {user && <Personalization key={user.id} />}
     {user && <><h2>Account notifications</h2><p>Latest 100 stored notices. Email delivery records are separate.</p><Feedback resource={notifications} />
       {notifications.data?.length === 0 && <p>No account notifications yet.</p>}
       {notifications.data?.map(row => <article className="platform-card" key={row.id}><h3>{row.title}</h3><p>{row.message}</p>

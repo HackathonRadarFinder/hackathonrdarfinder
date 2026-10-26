@@ -74,11 +74,41 @@ def database(pg):
 
 @pytest.fixture
 def records():
-    return load_approved(BACKEND / 'radar_collector/output/brabble-pilot/reviewed.csv')[0]
+    return load_approved(BACKEND / 'radar_collector/fixtures/reviewed_snapshot_20261025/brabble-pilot/reviewed.csv')[0]
 
 
 def count(db, model):
     return db.scalar(select(func.count()).select_from(model))
+
+
+def test_postgres_reviewed_merge_reimport_preserves_identity(database, records):
+    from app.models.core import User, SavedItem, AuditLog
+    from app.services.duplicate_review import merge_reviewed, review_token, merged_alias_id
+    from app.services.duplicate_review import MergeConflict
+    with Session(database) as db:
+        assert stage(db, records, 'Disposable PostgreSQL duplicate reviewer')['inserted'] == 1
+        original = db.scalar(select(Hackathon))
+        actor = User(name='Disposable duplicate reviewer', email='duplicate-review@fixture.test', password_hash='unused')
+        db.add(actor); db.flush()
+        keep = Hackathon(title=original.title, organization_id=original.organization_id,
+            start_date=original.start_date, end_date=original.end_date, location=original.location,
+            mode=original.mode, url='https://organizer.example.test/retained', source='Retained official record')
+        db.add(keep); db.flush()
+        db.add_all([SavedItem(user_id=actor.id, hackathon_id=keep.id), SavedItem(user_id=actor.id, hackathon_id=original.id)])
+        db.flush()
+        old_id, old_url = original.id, original.url
+        token = review_token(keep, original)
+        merge_reviewed(db, keep.id, original.id, token, actor.id, 'Same-edition organizer evidence reviewed')
+        assert merged_alias_id(db, old_url) == keep.id
+        assert stage(db, records, 'Disposable PostgreSQL repeat import') == {'inserted': 0, 'duplicate_urls': 1}
+        assert db.get(Hackathon, old_id) is None
+        assert count(db, Hackathon) == count(db, SavedItem) == count(db, AuditLog) == 1
+        assert count(db, EventVersion) == 4
+        assert keep.source == 'Retained official record'
+        with pytest.raises(MergeConflict):
+            merge_reviewed(db, keep.id, old_id, token, actor.id, 'Stale repeat request')
+        # This test owns only a transaction in the ownership-verified disposable DB.
+        db.rollback()
 
 
 def test_actual_migrations_match_required_tables(pg):
@@ -182,3 +212,42 @@ def test_postgres_health_events_and_details(database, records):
     finally:
         app.dependency_overrides.clear()
         app.dependency_overrides.update(previous)
+
+
+def test_postgres_dataset_review_publication_is_idempotent(database):
+    import base64
+    from datetime import datetime, timedelta, timezone
+    from app.models.core import User, Role
+    from app.core.security import create_access_token
+    factory = sessionmaker(bind=database)
+    with factory.begin() as db:
+        role = Role(name='administrator')
+        user = User(name='Synthetic acceptance admin', email='import-admin@example.com', password_hash='isolated-test-only', roles=[role])
+        db.add(user); db.flush(); user_id = user.id
+    def dependency():
+        with factory() as db:
+            yield db
+    previous = dict(app.dependency_overrides)
+    app.dependency_overrides[get_db] = dependency
+    try:
+        with TestClient(app) as client:
+            client.headers['Authorization'] = f'Bearer {create_access_token(user_id, "administrator")}'
+            now = datetime.now(timezone.utc)
+            policy = dict(key='pg-synthetic-import', name='Synthetic acceptance fixture', adapter='events-json-v1', url='https://example.org/fixture', enabled=True, owner='Disposable acceptance', basis='Synthetic records owned by test', reference='synthetic-fixture-only', reviewed_at=now.isoformat(), expires_at=(now+timedelta(days=1)).isoformat(), terms_permit=True)
+            assert client.put('/admin/discovery/sources', json=policy).status_code == 200
+            csv = 'title,url,organization,start_date,location,mode\nSynthetic release test,https://example.org/release-event,Synthetic organizer,2027-01-15T10:00:00+00:00,Delhi,Online\n'
+            body = dict(source_key=policy['key'], filename='synthetic.csv', content_base64=base64.b64encode(csv.encode()).decode(), approval_reference=policy['reference'])
+            first = client.post('/admin/discovery/dataset-imports', json=body)
+            assert first.status_code == 200 and first.json()['candidates_inserted'] == 1
+            assert client.post('/admin/discovery/dataset-imports', json=body).json()['candidate_duplicates'] == 1
+            candidate = client.get('/admin/discovery/announcements').json()['data'][0]
+            event = {key:value for key,value in candidate['payload'].items() if key != 'scraped_at'}
+            published = client.post(f"/admin/discovery/announcements/{candidate['id']}/review", json={'decision':'approved','note':'Explicit synthetic acceptance review','event':event})
+            assert published.status_code == 200, published.text
+            event_id = published.json()['event_id']
+            assert client.get(f'/events/{event_id}').json()['data']['title'] == 'Synthetic release test'
+            assert client.get('/admin/audit').json()['total'] >= 3
+            assert client.post('/admin/discovery/dataset-imports', json=body).json()['candidate_duplicates'] == 1
+            assert client.get('/events/?q=Synthetic%20release%20test').json()['total'] == 1
+    finally:
+        app.dependency_overrides.clear(); app.dependency_overrides.update(previous)

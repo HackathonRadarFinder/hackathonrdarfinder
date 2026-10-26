@@ -78,8 +78,8 @@ def accept(csv_file, output):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--csv', type=Path, default=Path('radar_collector/output/brabble-pilot/reviewed.csv'))
-    parser.add_argument('--out', type=Path, default=Path('radar_collector/output/brabble-pilot/acceptance'))
+    parser.add_argument('--csv', type=Path, default=Path('radar_collector/fixtures/reviewed_snapshot_20261025/brabble-pilot/reviewed.csv'))
+    parser.add_argument('--out', type=Path, default=Path('radar_collector/fixtures/reviewed_snapshot_20261025/brabble-pilot/acceptance'))
     args = parser.parse_args()
     print(json.dumps(accept(args.csv, args.out), indent=2))
 

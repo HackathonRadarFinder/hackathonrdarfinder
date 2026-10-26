@@ -1,4 +1,4 @@
-from datetime import datetime, time
+from datetime import datetime, time, timezone
 
 from fastapi import HTTPException
 from sqlalchemy import func, select, or_
@@ -87,6 +87,18 @@ def get_event_page(db: Session, query: EventListParams):
     if query.start_to is not None:
         filters.append(Hackathon.start_date <= datetime.combine(query.start_to, time.max))
 
+    if query.deadline_from is not None:
+        filters.append(Hackathon.registration_deadline >= datetime.combine(query.deadline_from, time.min))
+    if query.deadline_to is not None:
+        filters.append(Hackathon.registration_deadline <= datetime.combine(query.deadline_to, time.max))
+    if query.period is not None:
+        boundary = datetime.now(timezone.utc).replace(tzinfo=None)
+        event_end = func.coalesce(Hackathon.end_date, Hackathon.start_date)
+        filters.append(event_end >= boundary if query.period == 'upcoming' else event_end < boundary)
+    column = {'id': Hackathon.id, 'title': Hackathon.title,
+              'start_date': Hackathon.start_date, 'deadline': Hackathon.registration_deadline}[query.sort or 'id']
+    ordering = [column.asc().nulls_last(), Hackathon.id.asc()] if query.sort != 'id' else [Hackathon.id.asc()]
+
     # Reuse exactly the same predicates for the count and page. Autoescape treats
     # %, _ and the escape character as literal text, not client-supplied wildcards.
     with database_operation(db):
@@ -94,7 +106,7 @@ def get_event_page(db: Session, query: EventListParams):
         items = db.scalars(
             select(Hackathon)
             .where(*filters)
-            .order_by(Hackathon.id)
+            .order_by(*ordering)
             .offset((page - 1) * page_size)
             .limit(page_size)
         ).all()

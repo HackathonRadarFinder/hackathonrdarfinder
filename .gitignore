@@ -14,3 +14,7 @@ pytest-cache-files-*/
 .local-backups/
 backend/radar_collector/output/
 
+
+.pytest*/
+backend/.pytest*/
+*.dump

@@ -24,6 +24,7 @@ from app.models.core import EventVersion
 from app.models.hackathon import Hackathon
 from app.models.organization import Organization
 from app.schemas.event import EventCreate
+from app.services.duplicate_review import merged_alias_id
 
 ACCEPT = ("title", "organization", "start_date", "end_date", "registration_deadline",
           "location", "mode", "prize", "description", "url", "source", "scraped_at")
@@ -134,6 +135,9 @@ def _stage(db, approved, reviewer: str):
     for reviewed in approved:
         event, sha, precision, collection_mode, permission_reference, evidence = reviewed
         url = str(event.url)
+        if merged_alias_id(db, url) is not None:
+            duplicate += 1
+            continue
         provider_key = (event.source, evidence['provider_id']) if evidence else None
         if url in urls or clean_url(url) in existing_urls or (provider_key and provider_key in provider_ids):
             duplicate += 1

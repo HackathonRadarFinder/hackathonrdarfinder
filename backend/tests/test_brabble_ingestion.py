@@ -18,7 +18,7 @@ from app.services.brabble_adapter import normalize, prepare, validate_evidence
 from radar_collector.radar_scraper import save
 from workers.import_reviewed_public import ACCEPT, load_approved, stage
 
-DATA = Path(__file__).resolve().parents[1] / 'radar_collector/output/brabble-live'
+DATA = Path(__file__).resolve().parents[1] / 'radar_collector/fixtures/reviewed_snapshot_20261025/brabble-live'
 
 
 @pytest.fixture
@@ -170,7 +170,8 @@ def test_approved_api_records_are_idempotent_and_retrievable(inputs, tmp_path):
                 db.add(user)
                 db.flush()
                 user_id = user.id
-            app.dependency_overrides[get_current_db_user] = lambda: SimpleNamespace(id=user_id)
+            from app.core.security import create_access_token
+            client.headers['Authorization'] = f'Bearer {create_access_token(user_id, "user")}'
             event_id = response.json()['data'][0]['id']
             assert client.put(f'/account/saved/{event_id}').status_code == 200
             saved = client.get('/account/saved')

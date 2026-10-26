@@ -9,7 +9,7 @@ from workers.import_reviewed_public import load_approved, validate_approved
 from workers.prepare_brabble_pilot import prepare_pilot
 from workers.accept_brabble_pilot import accept
 
-BASE = Path(__file__).resolve().parents[1] / 'radar_collector/output'
+BASE = Path(__file__).resolve().parents[1] / 'radar_collector/fixtures/reviewed_snapshot_20261025'
 PILOT = BASE / 'brabble-pilot'
 
 
@@ -129,3 +129,13 @@ def test_cli_apply_rejects_ai_only_before_opening_database(monkeypatch, capsys):
     assert importer.main() == 1
     assert 'Human approval is required' in capsys.readouterr().out
     assert opened == []
+
+
+def test_review_attestation_survives_absent_optional_fields_but_binds_new_facts():
+    from app.services.review_evidence import event_digest
+    row = load_approved(PILOT / 'reviewed.csv')[0][0]
+    assert event_digest(row.event) == row.acquisition_evidence['review']['event_sha256']
+    changed = row.event.model_copy(update={'state': 'Punjab'})
+    assert event_digest(changed) != event_digest(row.event)
+    with pytest.raises(ValueError, match='Reviewed facts changed'):
+        validate_approved(row._replace(event=changed))
