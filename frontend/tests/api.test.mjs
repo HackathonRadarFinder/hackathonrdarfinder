@@ -147,3 +147,40 @@ test('request cancellation stays abortable', async () => {
   const client = createApiClient('/api', async () => { throw error; });
   await assert.rejects(client.events(), caught => caught === error);
 });
+
+
+test('profile edits notify the active session and whitelist name', async () => {
+  const calls=[];let lastUser;
+  const original={id:'owned-account',name:'Before',email:'user@example.com',role:'user'};
+  const client=createApiClient('/api',async (url,options)=>{
+    calls.push([url,options]);
+    if(url.endsWith('/auth/login')) return ok({access_token:jwt('user'),token_type:'bearer'});
+    if(url.endsWith('/auth/me')) return ok(original);
+    return ok({...original,name:'After'});
+  });
+  client.subscribe(user=>{lastUser=user;});
+  await client.login('user@example.com','password');
+  await client.updateProfile('  After  ');
+  assert.equal(lastUser.name,'After');
+  const call=calls.find(([url])=>url.endsWith('/account/profile'));
+  assert.equal(call[1].method,'PUT');
+  assert.deepEqual(JSON.parse(call[1].body),{name:'After'});
+  client.clearSession();
+});
+
+test('late profile response cannot restore a logged-out account',async()=>{
+  let resolveUpdate,lastUser;
+  const original={id:'owned-account',name:'Before',email:'user@example.com',role:'user'};
+  const client=createApiClient('/api',async url=>{
+    if(url.endsWith('/auth/login')) return ok({access_token:jwt('user'),token_type:'bearer'});
+    if(url.endsWith('/auth/me')) return ok(original);
+    return new Promise(resolve=>{resolveUpdate=resolve;});
+  });
+  client.subscribe(user=>{lastUser=user;});
+  await client.login('user@example.com','password');
+  const update=client.updateProfile('After');
+  client.clearSession();
+  resolveUpdate(ok({...original,name:'After'}));
+  await assert.rejects(update,/session ended/);
+  assert.equal(lastUser,null);
+});

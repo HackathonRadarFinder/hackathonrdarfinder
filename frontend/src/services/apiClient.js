@@ -91,6 +91,15 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
   }
   return {
     request, login, logout, clearSession,
+    async updateProfile(name) {
+      const updateVersion = version;
+      const profile = await request('/account/profile', { method: 'PUT', body: { name: name.trim() } });
+      if (updateVersion !== version || !token || !user) throw new Error('Profile update session ended. Sign in again.');
+      if (profile.id !== user.id || typeof profile.name !== 'string') throw new Error('Invalid profile response.');
+      user = profile;
+      notify();
+      return profile;
+    },
     subscribe(listener) { listeners.add(listener); listener(user); return () => listeners.delete(listener); },
     async register({ name, email, password }) {
       await request('/auth/register', { method: 'POST', authenticated: false, body: { name: name.trim(), email: email.trim(), password } });
@@ -122,7 +131,7 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
       const result = await request(`/events/${id}`, { signal, authenticated: false });
       return result.data;
     },
-    async institutions(state, search, signal) { const params = new URLSearchParams({ page_size: '100' }); if (state) params.set('state', state); if (search?.trim()) params.set('q', search.trim()); return request(`/institutions?${params}`, { signal, authenticated: false }); },
+    async institutions(state, search, signal, page = 1, pageSize = 100) { const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) }); if (state) params.set('state', state); if (search?.trim()) params.set('q', search.trim()); return request(`/institutions?${params}`, { signal, authenticated: false }); },
     async discoveryCoverage(signal) { return request('/admin/discovery/coverage', { signal }); },
     async discoveryRuns(signal) { return (await request('/admin/discovery/runs', { signal })).data; },
     async organizations(signal) { return (await request('/organizations/', { signal, authenticated: false })).data; },
