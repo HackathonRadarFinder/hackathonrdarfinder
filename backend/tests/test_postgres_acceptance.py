@@ -289,6 +289,9 @@ def test_postgres_complete_reviewed_release_journey(database, monkeypatch):
             signed_in = client.post('/auth/login', json={'email':'release-user@example.com','password':'DisposableReleasePassword123!'})
             assert signed_in.status_code == 200
             user_headers = {'Authorization': 'Bearer ' + signed_in.json()['access_token']}
+            profile = client.put('/account/profile', headers=user_headers, json={'name':'Updated synthetic account'})
+            assert profile.status_code == 200 and profile.json()['name'] == 'Updated synthetic account'
+            assert client.get('/auth/me', headers=user_headers).json()['name'] == 'Updated synthetic account'
             for path in ['/admin/audit','/admin/duplicates','/admin/notification-monitor']:
                 assert client.get(path, headers=user_headers).status_code == 403
             assert client.post('/admin/discovery/dataset-imports', headers=user_headers, json=upload).status_code == 403
@@ -343,6 +346,52 @@ def test_postgres_complete_reviewed_release_journey(database, monkeypatch):
             'smtp_attempts':0, 'remaining_public_events_after_merge':1, 'status':'passed'}, indent=2), encoding='utf-8')
     finally:
         app.dependency_overrides.clear(); app.dependency_overrides.update(previous)
+
+
+def test_postgres_maximum_dataset_import_is_batched_and_idempotent(database):
+    import base64
+    from datetime import datetime, timedelta, timezone
+    from time import perf_counter
+    from types import SimpleNamespace
+    from app.models.core import User, Source
+    from app.models.discovery import DiscoverySource
+    from app.models.institution import Announcement
+    from app.api.routes.dataset_import import DatasetUpload
+    from app.services.dataset_import import import_dataset
+    now = datetime.now(timezone.utc)
+    with Session(database) as db:
+        user = User(name='Synthetic capacity operator', email='capacity@example.com', password_hash='unused')
+        source = Source(name='Synthetic owned capacity data', url='https://example.org/capacity')
+        db.add_all([user,source]); db.flush()
+        policy = dict(key='capacity-fixture', name=source.name, adapter='events-json-v1', url=source.url,
+            enabled=True, interval_seconds=21600, owner='Disposable test', basis='Synthetic fixture owned by test',
+            reference='synthetic-only', terms_permit=True, reviewed_at=now.isoformat(), expires_at=(now+timedelta(days=1)).isoformat())
+        db.add(DiscoverySource(source_id=source.id, key=policy['key'], config=policy, enabled=True,
+            interval_seconds=21600, next_run_at=now.replace(tzinfo=None)))
+        db.commit(); actor=SimpleNamespace(sub=str(user.id))
+        csv='title,url,organization,start_date\n'+''.join(f'Synthetic capacity {i},https://example.org/capacity-{i},Synthetic College,2027-01-01T10:00:00+00:00\n' for i in range(1000))
+        upload=DatasetUpload(source_key=policy['key'], filename='synthetic-capacity.csv', approval_reference=policy['reference'], content_base64=base64.b64encode(csv.encode()).decode())
+        selects=[]
+        def observe(conn,cursor,statement,parameters,context,executemany):
+            if statement.lstrip().upper().startswith('SELECT'):
+                selects.append(statement)
+        sql_event.listen(database,'before_cursor_execute',observe)
+        try:
+            started=perf_counter();first=import_dataset(db,upload,actor);first_seconds=perf_counter()-started
+            first_queries=len(selects);selects.clear()
+            started=perf_counter();repeat=import_dataset(db,upload,actor);repeat_seconds=perf_counter()-started
+            repeat_queries=len(selects)
+        finally:
+            sql_event.remove(database,'before_cursor_execute',observe)
+        assert first['candidates_inserted']==repeat['candidate_duplicates']==1000
+        assert first_queries<=4 and repeat_queries<=4, (first_queries,repeat_queries)
+        assert db.scalar(select(func.count()).select_from(Announcement))==1000
+        assert db.scalar(select(func.count()).select_from(Hackathon))==0
+        output=Path(os.environ['RADAR_POSTGRES_ACCEPTANCE_MANIFEST']).parent/'import-performance.json'
+        output.write_text(json.dumps({'rows':1000,'database':'owned disposable PostgreSQL 16',
+            'first_import_seconds':first_seconds,'repeat_import_seconds':repeat_seconds,
+            'first_selects':first_queries,'repeat_selects':repeat_queries,
+            'published_events':0,'idempotency':'passed','synthetic_data_only':True},indent=2),encoding='utf-8')
 
 def test_postgres_health_events_and_details(database, records):
     factory = sessionmaker(bind=database)

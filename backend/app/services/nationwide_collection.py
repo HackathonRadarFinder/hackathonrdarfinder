@@ -61,6 +61,7 @@ def stage_announcements(db, source, rows, metadata, observed):
         raise ValueError('batch_too_large')
     institution = db.get(Institution, source.config.get('institution_id')) if source.config.get('institution_id') else None
     counts = dict(candidates_inserted=0, candidate_duplicates=0)
+    prepared = []
     for extracted in rows:
         item = dict(extracted)
         issues = list(item.pop('_issues', []))
@@ -78,17 +79,28 @@ def stage_announcements(db, source, rows, metadata, observed):
                 item['organization'] = institution.name
         stable = {key: value for key, value in item.items() if key != 'scraped_at'}
         fingerprint = hashlib.sha256(json.dumps(dict(payload=stable, dates=dates, issues=issues), sort_keys=True).encode()).hexdigest()
-        existing = db.scalar(select(Announcement).where(Announcement.source_id == source.source_id,
-            Announcement.fingerprint == fingerprint))
-        if existing:
+        prepared.append((fingerprint, item, issues, dates))
+    # Fetch identities in bounded batches before adding rows. Avoid one SELECT
+    # (and an autoflush) per uploaded record while respecting parameter limits.
+    fingerprints = list(dict.fromkeys(row[0] for row in prepared))
+    existing_items = {}
+    for offset in range(0, len(fingerprints), 500):
+        found = db.scalars(select(Announcement).where(Announcement.source_id == source.source_id,
+            Announcement.fingerprint.in_(fingerprints[offset:offset + 500]))).all()
+        existing_items.update({candidate.fingerprint: candidate for candidate in found})
+    for fingerprint, item, issues, dates in prepared:
+        existing = existing_items.get(fingerprint)
+        if existing is not None:
             existing.last_seen_at = observed
             counts['candidate_duplicates'] += 1
             continue
-        db.add(Announcement(source_id=source.source_id, institution_id=institution.id if institution else None,
+        candidate = Announcement(source_id=source.source_id, institution_id=institution.id if institution else None,
             fingerprint=fingerprint, payload=item, observed_at=observed, last_seen_at=observed,
             status='pending', evidence=dict(checksum=metadata['checksum'], document_url=metadata['document_url'],
                 adapter_version=metadata['adapter_version'], fetched_at=metadata.get('fetched_at'),
-                issues=issues, raw_dates=dates)))
+                issues=issues, raw_dates=dates))
+        db.add(candidate)
+        existing_items[fingerprint] = candidate
         counts['candidates_inserted'] += 1
     db.flush()
     return counts

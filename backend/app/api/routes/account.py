@@ -1,19 +1,45 @@
 """Account-owned saved events and explicit email consent; no SMTP in requests."""
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel, ConfigDict, StrictBool
+from pydantic import BaseModel, ConfigDict, StrictBool, Field, field_validator
 from sqlalchemy import select, delete
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_db_user
+from app.api.deps import get_current_db_user, get_current_user
 from app.core.database import get_db
-from app.models.core import Preference, SavedItem, Notification
+from app.models.core import Preference, SavedItem, Notification, AuditLog
 from app.models.hackathon import Hackathon
 from app.schemas.event import EventResponse
+from app.schemas.user import UserResponse
 from app.schemas.responses import DatabaseId, DataResponse, MessageResponse
 from app.services.database import database_operation
 from app.services.event_service import get_event, with_attribution
 
 router = APIRouter(prefix="/account", tags=["Account"])
+
+
+class ProfileUpdate(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    name: str = Field(min_length=1, max_length=100)
+
+    @field_validator('name')
+    @classmethod
+    def name_without_controls(cls, value):
+        if any(ord(character) < 32 or ord(character) == 127 for character in value):
+            raise ValueError('Display name cannot contain control characters')
+        return value
+
+
+@router.put('/profile', response_model=UserResponse)
+def update_profile(body: ProfileUpdate, user=Depends(get_current_db_user), db: Session = Depends(get_db)):
+    """Update the authenticated account's display name; identity and roles are immutable here."""
+    with database_operation(db):
+        profile = get_current_user(user)  # Validate the current role before any write.
+        if user.name != body.name:
+            user.name = body.name
+            db.add(AuditLog(user_id=user.id, action='account_profile_updated', entity_type='user',
+                entity_id=user.id, details='{"changed_fields":["name"]}'))
+            db.commit()
+        return {**profile, "name": user.name}
 
 
 class ReminderPreferences(BaseModel):
