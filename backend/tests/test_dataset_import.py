@@ -157,3 +157,22 @@ def test_same_upload_repeated_rows_share_one_candidate(context):
     result = import_dataset(db, body(raw), SimpleNamespace(sub=str(user.id)))
     assert result['candidates_inserted'] == 1 and result['candidate_duplicates'] == 2
     assert db.scalar(select(func.count()).select_from(Announcement)) == 1
+
+
+def test_root_url_normalization_keeps_review_identity_and_deduplication(context):
+    from app.schemas.event import EventCreate
+    db, user, registry = context
+    raw = b'title,url,registration_url,organization,start_date\nSynthetic root,https://root.example.edu,https://register.example.edu,Example University,2027-01-01T10:00:00+00:00\nSynthetic root,https://root.example.edu/,https://register.example.edu/,Example University,2027-01-01T10:00:00+00:00\n'
+    result = import_dataset(db, body(raw), SimpleNamespace(sub=str(user.id)))
+    assert result['candidates_inserted'] == result['candidate_duplicates'] == 1
+    candidate = db.scalar(select(Announcement))
+    assert candidate.payload['url'] == 'https://root.example.edu/'
+    assert candidate.payload['registration_url'] == 'https://register.example.edu/'
+    assert str(EventCreate.model_validate(candidate.payload).url) == candidate.payload['url']
+
+
+@pytest.mark.parametrize('url', ['https://%31%32%37.0.0.1/', 'https://127.0.0.1./'])
+def test_url_normalization_cannot_hide_a_private_address(url):
+    with pytest.raises(HTTPException) as failure:
+        parse_rows([['title','url'],['Synthetic private URL',url]])
+    assert failure.value.status_code == 422

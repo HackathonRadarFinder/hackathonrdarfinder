@@ -264,7 +264,7 @@ def test_postgres_complete_reviewed_release_journey(database, monkeypatch):
             admin_headers = {'Authorization': f'Bearer {create_access_token(admin_id, "administrator")}'}
             assert client.put('/admin/discovery/sources', headers=admin_headers, json=policy).status_code == 200
             content = ('title,url,organization,start_date,location,mode\n'
-                f'Synthetic Release Buildathon,https://example.org/release-a,Synthetic College,{date},Delhi,Online\n'
+                f'Synthetic Release Buildathon,https://root-release.example.org,Synthetic College,{date},Delhi,Online\n'
                 f'Synthetic Release Buildathon,https://example.org/release-b,Synthetic College,{date},Delhi,Online\n')
             upload = dict(source_key=policy['key'], filename='owned-fixture.csv',
                 content_base64=base64.b64encode(content.encode()).decode(), approval_reference=policy['reference'])
