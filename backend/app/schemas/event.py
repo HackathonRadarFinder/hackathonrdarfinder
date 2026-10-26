@@ -1,7 +1,7 @@
 """Validated event writes with the legacy organization-name input retained."""
 from datetime import date, datetime, timezone
 import re
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, StringConstraints, field_validator, model_validator
 
@@ -12,6 +12,10 @@ RequiredName = Annotated[str, StringConstraints(strip_whitespace=True, min_lengt
 
 
 class EventCreate(HackathonCreate):
+    state: str | None = Field(default=None, max_length=100)
+    institution_id: int | None = Field(default=None, strict=True, gt=0)
+    registration_url: HttpUrl | None = Field(default=None, max_length=500)
+    eligibility: str | None = Field(default=None, max_length=5000)
     title: RequiredName
     organization: RequiredName | None = None
     organization_id: int | None = Field(default=None, strict=True, gt=0, le=2_147_483_647)
@@ -42,11 +46,28 @@ class EventCreate(HackathonCreate):
         return self
 
 
+class ProviderAttribution(BaseModel):
+    provider: str
+    provider_id: str
+    provider_url: str
+    attribution: str
+    method: str
+    original_platform: str
+    original_url: str
+    acquired_at: str
+    source_refreshed_at: str
+    api_record_sha256: str
+
+
 class EventResponse(BaseModel):
     # Reads remain tolerant of historical scraper data. Write constraints above
     # must not turn otherwise readable legacy rows into response errors.
     model_config = ConfigDict(from_attributes=True)
     id: int
+    state: str | None = None
+    institution_id: int | None = None
+    registration_url: str | None = None
+    eligibility: str | None = None
     title: str
     organization_id: int | None = None
     start_date: datetime | None = None
@@ -59,11 +80,14 @@ class EventResponse(BaseModel):
     url: str | None = None
     source: str | None = None
     scraped_at: datetime | None = None
+    acquisition: ProviderAttribution | None = None
 
 
 class EventListParams(BaseModel):
     """Any supported query parameter opts into pagination; omitted values default later."""
 
+    state: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)] | None = None
+    institution_id: int | None = Field(default=None, ge=1, le=2_147_483_647)
     page: int | None = Field(default=None, ge=1, le=2_147_483_647)
     q: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)] | None = None
     page_size: int | None = Field(default=None, ge=1, le=100)
@@ -74,10 +98,14 @@ class EventListParams(BaseModel):
         str, StringConstraints(strip_whitespace=True, min_length=1, max_length=50)
     ] | None = None
     organization_id: int | None = Field(default=None, ge=1, le=2_147_483_647)
+    sort: Literal['id', 'title', 'start_date', 'deadline'] | None = None
+    period: Literal['upcoming', 'past'] | None = None
+    deadline_from: date | None = None
+    deadline_to: date | None = None
     start_from: date | None = Field(default=None, description="Inclusive event start date in UTC (YYYY-MM-DD).")
     start_to: date | None = Field(default=None, description="Inclusive event start date in UTC (YYYY-MM-DD).")
 
-    @field_validator("start_from", "start_to", mode="before")
+    @field_validator("start_from", "start_to", "deadline_from", "deadline_to", mode="before")
     @classmethod
     def require_calendar_date(cls, value):
         if value is None or type(value) is date:
@@ -92,6 +120,8 @@ class EventListParams(BaseModel):
     def validate_date_window(self):
         if self.start_from is not None and self.start_to is not None and self.start_from > self.start_to:
             raise ValueError("start_to must not precede start_from")
+        if self.deadline_from is not None and self.deadline_to is not None and self.deadline_from > self.deadline_to:
+            raise ValueError("deadline_to must not precede deadline_from")
         return self
 
 

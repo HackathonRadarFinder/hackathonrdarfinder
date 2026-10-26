@@ -1,0 +1,5 @@
+# Paste public individual event URLs below (not a login or registration endpoint).
+https://hacknauts26.devfolio.co/
+https://devnexus2.devfolio.co/
+https://unstop.com/o/1771427
+https://unstop.com/o/1754636

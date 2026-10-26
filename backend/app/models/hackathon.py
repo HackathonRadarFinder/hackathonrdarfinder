@@ -30,4 +30,9 @@ class Hackathon(Base):
     source = Column(String(100), nullable=True)
     scraped_at = Column(DateTime, nullable=True)
 
+    state = Column(String(100), index=True)
+    institution_id = Column(Integer, ForeignKey("institutions.id"), index=True)
+    registration_url = Column(String(500))
+    eligibility = Column(Text)
+
     organization = relationship("Organization")

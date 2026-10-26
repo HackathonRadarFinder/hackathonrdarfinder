@@ -1,0 +1,255 @@
+﻿[
+    {
+        "id":  "devfolio-0ad8f867250d46bd987623adb920028f",
+        "title":  "Surat Hack 2026",
+        "organiser":  "See listing",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Devfolio",
+        "url":  "https://surat-hack-2026.devfolio.co",
+        "shareUrl":  "https://brabble.ai/s/devfolio-0ad8f867250d46bd987623adb920028f",
+        "deadline":  "2026-10-28T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Surat",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "AI"
+                        ],
+        "registered":  9
+    },
+    {
+        "id":  "devfolio-4c311506be0e4a6e9299199c09efe290",
+        "title":  "AgentVerse",
+        "organiser":  "See listing",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Devfolio",
+        "url":  "https://agentverse.devfolio.co",
+        "shareUrl":  "https://brabble.ai/s/devfolio-4c311506be0e4a6e9299199c09efe290",
+        "deadline":  "2026-10-29T00:00:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "UCL East - Marshgate, Sidings Street, London, UK",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+
+                        ],
+        "registered":  84
+    },
+    {
+        "id":  "devfolio-528f2495b98b4f38ae41139390594a3a",
+        "title":  "TUM Blockchain \u0026 AI Hackathon",
+        "organiser":  "See listing",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Devfolio",
+        "url":  "https://tum.devfolio.co",
+        "shareUrl":  "https://brabble.ai/s/devfolio-528f2495b98b4f38ae41139390594a3a",
+        "deadline":  "2026-10-29T12:00:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "MÃ¼nchen",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+
+                        ],
+        "registered":  646
+    },
+    {
+        "id":  "devfolio-8b69c2039a8d4b4085c3869b9b25d9c9",
+        "title":  "Lean In Hacks 8.0",
+        "organiser":  "See listing",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Devfolio",
+        "url":  "https://lean-in-hacks-8.devfolio.co",
+        "shareUrl":  "https://brabble.ai/s/devfolio-8b69c2039a8d4b4085c3869b9b25d9c9",
+        "deadline":  "2026-10-30T17:00:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "See listing",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+
+                        ],
+        "registered":  110
+    },
+    {
+        "id":  "devfolio-c4045a4afcb94f6f89cfb8c48dfdf892",
+        "title":  "Hacknauts 2.0",
+        "organiser":  "See listing",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Devfolio",
+        "url":  "https://hacknauts26.devfolio.co",
+        "shareUrl":  "https://brabble.ai/s/devfolio-c4045a4afcb94f6f89cfb8c48dfdf892",
+        "deadline":  "2026-10-30T18:00:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Ludhiana",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+
+                        ],
+        "registered":  939
+    },
+    {
+        "id":  "devfolio-c84b90d65eff4ae083366fc1cc549e81",
+        "title":  "hackodisha-6.0",
+        "organiser":  "See listing",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Devfolio",
+        "url":  "https://hackodisha-6a.devfolio.co",
+        "shareUrl":  "https://brabble.ai/s/devfolio-c84b90d65eff4ae083366fc1cc549e81",
+        "deadline":  "2026-10-30T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+
+                        ],
+        "registered":  1188
+    },
+    {
+        "id":  "devfolio-50e23a48e3964f43878279a3bf81339d",
+        "title":  "haxfinity",
+        "organiser":  "See listing",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Devfolio",
+        "url":  "https://haxfinity.devfolio.co",
+        "shareUrl":  "https://brabble.ai/s/devfolio-50e23a48e3964f43878279a3bf81339d",
+        "deadline":  "2026-11-10T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Myladi",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+
+                        ],
+        "registered":  283
+    },
+    {
+        "id":  "devfolio-40f5203a0b9842038b51dd3f73236690",
+        "title":  "GeNarrative Clash",
+        "organiser":  "See listing",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Devfolio",
+        "url":  "https://genarrative-clash.devfolio.co",
+        "shareUrl":  "https://brabble.ai/s/devfolio-40f5203a0b9842038b51dd3f73236690",
+        "deadline":  "2026-11-10T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kolkata",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Design"
+                        ],
+        "registered":  692
+    },
+    {
+        "id":  "devfolio-d957bc2099f945e99edfae0c2972bed9",
+        "title":  "DevNexus 2.0",
+        "organiser":  "See listing",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Devfolio",
+        "url":  "https://devnexus2.devfolio.co",
+        "shareUrl":  "https://brabble.ai/s/devfolio-d957bc2099f945e99edfae0c2972bed9",
+        "deadline":  "2026-11-14T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kolkata",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+
+                        ],
+        "registered":  823
+    },
+    {
+        "id":  "devfolio-c163f2c5e7bb4c7bb7acbdb3c572bfa3",
+        "title":  "HACK WITH GDG S4",
+        "organiser":  "See listing",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Devfolio",
+        "url":  "https://hack-with-gdg-s4.devfolio.co",
+        "shareUrl":  "https://brabble.ai/s/devfolio-c163f2c5e7bb4c7bb7acbdb3c572bfa3",
+        "deadline":  "2026-12-31T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "KSR Kalvi Nagar",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+
+                        ],
+        "registered":  877
+    },
+    {
+        "id":  "devfolio-1c56ad13b8b0467ca2c3772566a0fdd2",
+        "title":  "HACK 6.0",
+        "organiser":  "See listing",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Devfolio",
+        "url":  "https://hack-1736.devfolio.co",
+        "shareUrl":  "https://brabble.ai/s/devfolio-1c56ad13b8b0467ca2c3772566a0fdd2",
+        "deadline":  "2027-01-03T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Hamirpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+
+                        ],
+        "registered":  7
+    }
+]

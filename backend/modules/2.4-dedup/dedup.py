@@ -251,6 +251,11 @@ def title_year(title):
 # ---------------- MATCHING ----------------
 def compare(a, b):
     """Return (label, reason, score). label in duplicate / uncertain / not_duplicate"""
+    # Registration pages are often reused for subsequent editions.
+    ya, yb = title_year(a.get("title", "")), title_year(b.get("title", ""))
+    da, db = parse_date(a.get("start_date", "")), parse_date(b.get("start_date", ""))
+    if (ya and yb and ya != yb) or (da and db and abs((da - db).days) > UNCERTAIN_DATE_DAYS):
+        return "not_duplicate", "conflicting edition dates or years", 0
     # Level 1: exact registration link
     la, lb = normalize_link(a["registration_link"]), normalize_link(b["registration_link"])
     if la and la == lb:
@@ -258,7 +263,8 @@ def compare(a, b):
 
     # Level 1b: same numeric source ID in both URLs (+ similar title) -> same listing re-published
     ida, idb = trailing_id(la), trailing_id(lb)
-    if ida and ida == idb and title_similarity(a["title"], b["title"]) >= 60:
+    if (ida and ida == idb and la.split('/')[0] == lb.split('/')[0]
+            and title_similarity(a["title"], b["title"]) >= 60):
         return "duplicate", "L1b same source ID in URL", 100
 
     # Level 2: fuzzy
@@ -342,7 +348,14 @@ def cluster(events):
     for i, j in _candidate_pairs(events):
         label, reason, score = compare(events[i], events[j])
         if label == "duplicate":
-            parent[find(i)] = find(j)
+            # Prevent a sparse bridge record from joining conflicting editions.
+            left = [k for k in range(len(events)) if find(k) == find(i)]
+            right = [k for k in range(len(events)) if find(k) == find(j)]
+            if all(compare(events[x], events[y])[0] == "duplicate" for x in left for y in right):
+                parent[find(i)] = find(j)
+            else:
+                uncertain.append({"id_a": events[i]["source_id"], "id_b": events[j]["source_id"],
+                                  "reason": "conflicting cluster members; manual review required"})
         elif label == "uncertain":
             uncertain.append({"id_a": events[i]["source_id"], "id_b": events[j]["source_id"],
                               "title_a": events[i]["title"], "title_b": events[j]["title"],
@@ -351,6 +364,11 @@ def cluster(events):
     for i in range(len(events)):
         groups.setdefault(find(i), []).append(events[i])
     return list(groups.values()), uncertain
+
+
+def are_duplicates(a, b, title_threshold=DUP_THRESHOLD):
+    """Compatibility entry point for the labeled-pair evaluator."""
+    return compare(map_record(a, 0), map_record(b, 1))[0] == "duplicate"
 
 # ---------------- MERGE ----------------
 def to_num(x):

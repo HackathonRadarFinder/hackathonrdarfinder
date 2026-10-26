@@ -3,10 +3,11 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { chromium } from 'playwright-core';
 import AxeBuilder from '@axe-core/playwright';
+import { disposableUrl } from './disposable-url.mjs';
 
 // Browser writes are restricted to the marked temporary SQLite fixture.
 const base = process.env.FRONTEND_DISPOSABLE_BROWSER_BASE;
-assert.equal(base, 'http://127.0.0.1:5174', 'Set FRONTEND_DISPOSABLE_BROWSER_BASE=http://127.0.0.1:5174; never target a live database.');
+disposableUrl(base);
 const marker = await fetch(`${base}/api/__disposable_fixture`).then(response => response.json());
 assert.equal(marker.database, 'temporary-sqlite-frontend-tests');
 const executablePath = process.env.BROWSER_EXECUTABLE_PATH || [

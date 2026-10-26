@@ -14,7 +14,7 @@ from app.services import notification_service
 assert engine.dialect.name == 'postgresql'
 assert engine.url.database.startswith('mvp_disposable_')
 with SessionLocal() as db:
-    assert db.scalar(text('SELECT version_num FROM alembic_version')) == 'd9e0f1a2b3c4'
+    assert db.scalar(text('SELECT version_num FROM alembic_version')) == 'e0f1a2b3c4d5'
     org = Organization(name='Disposable test organizer')
     db.add(org); db.flush()
     now = datetime.now(timezone.utc).replace(tzinfo=None)

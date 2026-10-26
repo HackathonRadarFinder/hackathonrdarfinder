@@ -11,7 +11,7 @@ from app.models.hackathon import Hackathon
 from app.schemas.event import EventResponse
 from app.schemas.responses import DatabaseId, DataResponse, MessageResponse
 from app.services.database import database_operation
-from app.services.event_service import get_event
+from app.services.event_service import get_event, with_attribution
 
 router = APIRouter(prefix="/account", tags=["Account"])
 
@@ -28,7 +28,7 @@ def saved_events(user=Depends(get_current_db_user), db: Session = Depends(get_db
     with database_operation(db):
         rows = db.scalars(select(Hackathon).join(SavedItem).where(
             SavedItem.user_id == user.id).order_by(Hackathon.id)).all()
-        return {"message": "Saved events fetched", "data": rows}
+        return {"message": "Saved events fetched", "data": with_attribution(db, rows)}
 
 
 @router.put("/saved/{event_id}", response_model=MessageResponse)

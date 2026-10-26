@@ -11,7 +11,7 @@ import argparse
 import json
 from pathlib import Path
 
-from dedup import map_record, cluster, merge_group
+from dedup import map_record, cluster, merge_group, to_iso, FIELD_MAP
 from master_db import save_master
 
 
@@ -74,6 +74,16 @@ def run_pipeline(input_dir, output_dir, db_path, include_expired=False):
         map_record(event, index)
         for index, event in enumerate(raw_events)
     ]
+    for index, (raw, event) in enumerate(zip(raw_events, events)):
+        lowered = {str(k).strip().lower(): v for k, v in raw.items()}
+        if not event["title"] or event["source"] == "unknown" or not any(lowered.get(k) for k in FIELD_MAP["source_id"]):
+            raise ValueError(f"Record {index} requires title, source and stable source_id")
+        for field in ("start_date", "end_date", "registration_deadline"):
+            supplied = next((lowered[k] for k in FIELD_MAP[field] if lowered.get(k) not in (None, "")), "")
+            if supplied and not to_iso(str(supplied)):
+                raise ValueError(f"Record {index} has invalid {field}")
+        if event["start_date"] and event["end_date"] and event["end_date"] < event["start_date"]:
+            raise ValueError(f"Record {index} ends before it starts")
 
     groups, uncertain = cluster(events)
 
@@ -85,6 +95,9 @@ def run_pipeline(input_dir, output_dir, db_path, include_expired=False):
     master_path = output_dir / "master_events.json"
     review_path = output_dir / "uncertain_pairs.json"
 
+    # Persist before publishing output artifacts; a failed merge must not look successful.
+    stats = save_master(master, db_path=str(db_path))
+
     master_path.write_text(
         json.dumps(master, indent=2, ensure_ascii=False),
         encoding="utf-8",
@@ -94,8 +107,6 @@ def run_pipeline(input_dir, output_dir, db_path, include_expired=False):
         json.dumps(uncertain, indent=2, ensure_ascii=False),
         encoding="utf-8",
     )
-
-    stats = save_master(master, db_path=str(db_path))
 
     return {
         "input": len(events),

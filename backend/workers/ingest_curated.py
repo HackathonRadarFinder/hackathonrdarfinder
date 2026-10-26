@@ -12,11 +12,15 @@ from app.core.database import SessionLocal
 from app.models.hackathon import Hackathon
 from app.models.organization import Organization
 from app.services.curated_validation import validate_records
+from app.services.duplicate_review import merged_alias_id
 
 
 def ingest(db, records):
     inserted = duplicates = 0
     for event in records:
+        if merged_alias_id(db, str(event.url)) is not None:
+            duplicates += 1
+            continue
         if db.scalar(select(Hackathon.id).where(Hackathon.url == str(event.url))) is not None:
             duplicates += 1
             continue

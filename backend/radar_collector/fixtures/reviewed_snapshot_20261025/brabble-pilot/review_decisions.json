@@ -1,0 +1,174 @@
+{
+  "review_session": "2026-10-25",
+  "additional_candidate_id": "devfolio-c4045a4afcb94f6f89cfb8c48dfdf892",
+  "decisions": {
+    "devfolio-c4045a4afcb94f6f89cfb8c48dfdf892": {
+      "decision": "approved",
+      "date_precision": "day",
+      "review": {
+        "decision": "approved",
+        "reviewer": "Codex ? factual pilot review",
+        "reviewer_type": "ai_assistant",
+        "reviewed_at": "2026-10-25T18:02:28+00:00",
+        "authorization": "Explicit user request for evidence-based pilot review; not an automated schema approval",
+        "permission_review": {
+          "basis_url": "https://brabble.ai/docs",
+          "note": "API-row reuse is permitted with visible Brabble credit. No direct platform scraping permission is asserted.",
+          "checked_on": "2026-10-25"
+        },
+        "checks": {
+          "title": {
+            "status": "verified",
+            "evidence_url": "https://hacknauts26.devfolio.co/",
+            "note": "Event heading confirms identity."
+          },
+          "organization": {
+            "status": "verified",
+            "evidence_url": "https://hacknauts26.devfolio.co/",
+            "note": "Organizer is explicitly named in the overview."
+          },
+          "url": {
+            "status": "verified",
+            "evidence_url": "https://hacknauts26.devfolio.co/",
+            "note": "Public event page returned readable content via the web research tool without authentication."
+          },
+          "start_date": {
+            "status": "verified",
+            "evidence_url": "https://hacknauts26.devfolio.co/",
+            "note": "Published November 14-15, 2026; calendar day only, midnight is a storage convention."
+          },
+          "end_date": {
+            "status": "verified",
+            "evidence_url": "https://hacknauts26.devfolio.co/",
+            "note": "Published two-day range; no exact end time established."
+          },
+          "registration_deadline": {
+            "status": "unknown",
+            "evidence_url": "https://hacknauts26.devfolio.co/",
+            "note": "No absolute application deadline verified; October 30 is labelled PPT submission, not registration."
+          },
+          "location": {
+            "status": "verified",
+            "evidence_url": "https://hacknauts26.devfolio.co/",
+            "note": "Event information names the college venue in Ludhiana."
+          },
+          "mode": {
+            "status": "verified",
+            "evidence_url": "https://hacknauts26.devfolio.co/",
+            "note": "Event information specifies in-person participation."
+          },
+          "prize": {
+            "status": "unknown",
+            "evidence_url": "https://hacknauts26.devfolio.co/",
+            "note": "No verified cash-only total; mixed sponsor award figure not imported as a cash prize."
+          }
+        },
+        "unresolved_conflicts": [],
+        "access_notes": "Public page reviewed through web research tool. Robots URL was unavailable to that tool; no governed direct-source collection was run or enabled."
+      },
+      "remaining_unknowns": "registration_deadline_unverified; cash_prize_total_unverified",
+      "verified_values": {
+        "organization": "Causmic Club",
+        "start_date": "2026-11-14T00:00:00",
+        "end_date": "2026-11-15T00:00:00",
+        "registration_deadline": "",
+        "location": "Guru Nanak Dev Engineering College, Ludhiana",
+        "mode": "Offline",
+        "prize": "",
+        "description": "Date precision: day; 00:00 is a storage convention, not an announced time. Hacknauts 2.0 is an in-person hackathon. Data provided through the Brabble.ai API, with selected facts checked against the original public event page. Application deadline and cash prize total remain unknown."
+      }
+    },
+    "unstop-1756040": {
+      "decision": "needs_review",
+      "blockers": [
+        "Original page has inconsistent registration deadline times and inconsistent start times. Clarification is required; API dates are not independently approved."
+      ],
+      "checks": {
+        "title": {
+          "status": "verified",
+          "verified_value": "WCC Forge 48",
+          "evidence_url": "https://unstop.com/hackathons/wcc-forge-48-wecodecoders-1756040/amp",
+          "note": "Publicly indexed AMP heading matches."
+        },
+        "organization": {
+          "status": "verified",
+          "verified_value": "WeCodeCoders",
+          "evidence_url": "https://unstop.com/hackathons/wcc-forge-48-wecodecoders-1756040/amp",
+          "note": "Organizer heading matches."
+        },
+        "registration_deadline": {
+          "status": "conflict",
+          "verified_value": null,
+          "note": "Overview says October 29 at 23:59 IST; deadline section says October 29 at 00:00 IST."
+        },
+        "start_date": {
+          "status": "conflict",
+          "verified_value": null,
+          "note": "Stage description says October 30 at 06:00 IST; overview says 18:00 IST."
+        }
+      }
+    }
+  },
+  "access_observations": {
+    "unstop-1769664": {
+      "status": "no_extractable_text",
+      "observed_on": "2026-10-25",
+      "method": "web research tool; not the direct-source scraper",
+      "note": "Search/index evidence alone is not treated as full original-page verification."
+    },
+    "unstop-1773221": {
+      "status": "no_extractable_text",
+      "observed_on": "2026-10-25",
+      "method": "web research tool; not the direct-source scraper",
+      "note": "Search/index evidence alone is not treated as full original-page verification."
+    },
+    "unstop-1770690": {
+      "status": "tool_inaccessible",
+      "observed_on": "2026-10-25",
+      "method": "web research tool; not the direct-source scraper",
+      "note": "Search/index evidence alone is not treated as full original-page verification."
+    },
+    "unstop-1756040": {
+      "status": "published_amp_readable_conflicting_dates",
+      "observed_on": "2026-10-25",
+      "method": "web research tool; not the direct-source scraper",
+      "note": "Search/index evidence alone is not treated as full original-page verification."
+    },
+    "unstop-1774722": {
+      "status": "tool_inaccessible",
+      "observed_on": "2026-10-25",
+      "method": "web research tool; not the direct-source scraper",
+      "note": "Search/index evidence alone is not treated as full original-page verification."
+    },
+    "unstop-1742777": {
+      "status": "no_extractable_text",
+      "observed_on": "2026-10-25",
+      "method": "web research tool; not the direct-source scraper",
+      "note": "Search/index evidence alone is not treated as full original-page verification."
+    },
+    "unstop-1768767": {
+      "status": "no_extractable_text",
+      "observed_on": "2026-10-25",
+      "method": "web research tool; not the direct-source scraper",
+      "note": "Search/index evidence alone is not treated as full original-page verification."
+    },
+    "unstop-1773307": {
+      "status": "primary_amp_tool_inaccessible_search_index_only",
+      "observed_on": "2026-10-25",
+      "method": "web research tool; not the direct-source scraper",
+      "note": "Search/index evidence alone is not treated as full original-page verification."
+    },
+    "unstop-1772753": {
+      "status": "search_index_only_not_primary_verification",
+      "observed_on": "2026-10-25",
+      "method": "web research tool; not the direct-source scraper",
+      "note": "Search/index evidence alone is not treated as full original-page verification."
+    },
+    "devfolio-c4045a4afcb94f6f89cfb8c48dfdf892": {
+      "status": "public_page_readable",
+      "observed_on": "2026-10-25",
+      "method": "web research tool; not the direct-source scraper",
+      "note": "Search/index evidence alone is not treated as full original-page verification."
+    }
+  }
+}

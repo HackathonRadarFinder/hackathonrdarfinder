@@ -36,6 +36,7 @@ def eligible(db, delivery):
     ))
     return (user is not None and user.status == "active" and event is not None and saved is not None
             and opted_in(db, user.id, delivery.kind)
+            and "Date precision: day" not in (event.description or "")
             and getattr(event, KINDS[delivery.kind]) == delivery.event_at), user, event
 
 

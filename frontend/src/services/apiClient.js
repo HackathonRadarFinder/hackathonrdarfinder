@@ -97,14 +97,20 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
       return login(email, password);
     },
     async forgotPassword() { throw new Error('Password reset is not supported by this backend yet. No email was sent.'); },
-    async events({ page = 1, pageSize = 12, q, location, mode, organizationId, startFrom, startTo } = {}, signal) {
+    async events({ page = 1, pageSize = 12, q, location, mode, organizationId, state, institutionId, startFrom, startTo, deadlineFrom, deadlineTo, sort, period } = {}, signal) {
       const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) });
       if (q?.trim()) params.set('q', q.trim());
       if (location?.trim()) params.set('location', location.trim());
       if (mode?.trim()) params.set('mode', mode.trim());
+      if (state?.trim()) params.set('state', state.trim());
+      if (institutionId) params.set('institution_id', String(institutionId));
       if (organizationId) params.set('organization_id', String(organizationId));
       if (startFrom) params.set('start_from', startFrom);
       if (startTo) params.set('start_to', startTo);
+      if (deadlineFrom) params.set('deadline_from', deadlineFrom);
+      if (deadlineTo) params.set('deadline_to', deadlineTo);
+      if (sort) params.set('sort', sort);
+      if (period) params.set('period', period);
       const result = await request(`/events/?${params}`, { signal, authenticated: false });
       if (!Array.isArray(result.data) || !Number.isInteger(result.total) || !Number.isInteger(result.page)) {
         throw new Error('Invalid event page response.');
@@ -116,6 +122,9 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
       const result = await request(`/events/${id}`, { signal, authenticated: false });
       return result.data;
     },
+    async institutions(state, search, signal) { const params = new URLSearchParams({ page_size: '100' }); if (state) params.set('state', state); if (search?.trim()) params.set('q', search.trim()); return request(`/institutions?${params}`, { signal, authenticated: false }); },
+    async discoveryCoverage(signal) { return request('/admin/discovery/coverage', { signal }); },
+    async discoveryRuns(signal) { return (await request('/admin/discovery/runs', { signal })).data; },
     async organizations(signal) { return (await request('/organizations/', { signal, authenticated: false })).data; },
     async eventDiscovery(id, signal) {
       if (!/^\d+$/.test(String(id)) || Number(id) < 1 || Number(id) > 2_147_483_647) throw new Error('Invalid event ID.');

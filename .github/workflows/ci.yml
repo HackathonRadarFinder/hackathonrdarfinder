@@ -3,7 +3,8 @@ on:
   pull_request:
     branches: [develop, main]
   push:
-    branches: [develop, main]
+    branches: [develop, main, 'release/**']
+  workflow_dispatch:
   workflow_call:
 permissions:
   contents: read
@@ -38,7 +39,7 @@ jobs:
           python-version: "3.12"
       - name: Install backend dependencies
         working-directory: backend
-        run: python -m pip install -r requirements.txt -r modules/2.2-collector/requirements.txt
+        run: python -m pip install -r requirements.txt -r modules/2.2-collector/requirements.txt -r radar_collector/requirements.txt
       - name: Check dependency consistency
         working-directory: backend
         run: python -m pip check
@@ -57,6 +58,23 @@ jobs:
           name: backend-test-results
           path: backend/test-results.xml
           retention-days: 7
+  module24-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+      - name: Install deduplication dependencies
+        run: python -m pip install -r backend/modules/2.4-dedup/requirements.txt
+      - name: Test persisted deduplication and edition boundaries
+        working-directory: backend/modules/2.4-dedup
+        run: python -m unittest discover -v
+      - name: Evaluate illustrative pairs
+        working-directory: backend/modules/2.4-dedup
+        run: python evaluate.py
   frontend-test:
     runs-on: ubuntu-latest
     steps:
@@ -68,6 +86,11 @@ jobs:
           node-version: "24"
           cache: npm
           cache-dependency-path: frontend/package-lock.json
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+      - name: Install offline import integration dependencies
+        run: python -m pip install -r backend/requirements.txt -r backend/radar_collector/requirements.txt
       - name: Install frontend dependencies
         working-directory: frontend
         run: npm ci
@@ -106,7 +129,7 @@ jobs:
           printf 'POSTGRES_DB=radar_ci\nPOSTGRES_USER=radar_ci\nPOSTGRES_PASSWORD=isolated-ci-password\nDATABASE_URL=postgresql+psycopg://radar_ci:isolated-ci-password@db:5432/radar_ci\nSECRET_KEY=isolated-ci-signing-key-at-least-32-characters\n' > backend/.env
           docker compose config --quiet
   docker-build:
-    needs: [backend-test, frontend-test, infrastructure-check]
+    needs: [backend-test, frontend-test, infrastructure-check, module24-test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
@@ -116,16 +139,26 @@ jobs:
         run: docker build -t hackathon-radar-backend:test ./backend
       - name: Build frontend image
         run: docker build -t hackathon-radar-frontend:test ./frontend
-      - name: Check Nginx configuration and API proxy
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install release acceptance dependencies
+        run: python -m pip install -r backend/requirements.txt -r backend/radar_collector/requirements.txt -r backend/modules/2.2-collector/requirements.txt
+      - name: Install browser acceptance dependencies
+        working-directory: frontend
         run: |
-          docker network create radar-ci
-          docker run -d --name backend --network radar-ci -e DATABASE_URL=sqlite+pysqlite:// -e SECRET_KEY=isolated-ci-signing-key-at-least-32-characters hackathon-radar-backend:test
-          docker run --rm --network radar-ci hackathon-radar-frontend:test nginx -t
-          docker run -d --name frontend --network radar-ci hackathon-radar-frontend:test
-          docker exec frontend wget -qO- http://127.0.0.1:8080/health
-          for attempt in $(seq 1 30); do
-            printf 'Backend proxy health check attempt %s/30\n' "$attempt"
-            if docker exec frontend wget -qO- http://127.0.0.1:8080/api/health; then exit 0; fi
-            sleep 2
-          done
-          exit 1
+          npm ci
+          npx playwright-core install --with-deps chromium
+      - name: Verify built images and complete PostgreSQL release journeys
+        run: python scripts/postgres_acceptance.py --backend-image hackathon-radar-backend:test --frontend-image hackathon-radar-frontend:test --out .test-support/ci-acceptance
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: release-acceptance-evidence
+          path: .test-support/ci-acceptance
+          retention-days: 7
