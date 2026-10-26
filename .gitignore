@@ -23,3 +23,7 @@ backend/.pytest-*.json
 /tatus -sb
 /e -p hackathonradarfinder ps
 /ersnakulOneDriveDocumentsDesktop*
+
+# Preserve accidental root terminal/npm output without including it in release commits.
+/package-lock.json
+/t *Latest develop included*

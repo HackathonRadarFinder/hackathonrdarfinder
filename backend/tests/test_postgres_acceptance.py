@@ -230,6 +230,120 @@ def test_postgres_dataset_review_publication_is_idempotent(database):
         app.dependency_overrides.clear(); app.dependency_overrides.update(previous)
 
 
+
+def test_postgres_complete_reviewed_release_journey(database, monkeypatch):
+    """Synthetic owned data; actual API authorization, publication and merge transactions."""
+    import base64
+    from datetime import datetime, timedelta, timezone
+    from types import SimpleNamespace
+    from app.models.core import User, Role
+    from app.core.security import create_access_token
+    from app.services.in_app_reminders import enqueue_in_app
+    from app.services.notification_service import enqueue_due, dispatch_due
+    from app.services import notification_service
+    factory = sessionmaker(bind=database)
+    with factory.begin() as db:
+        admin = User(name='Synthetic release administrator', email='release-admin@example.com',
+            password_hash='not-a-login-password', roles=[Role(name='administrator')])
+        db.add(admin); db.flush(); admin_id = admin.id
+    def dependency():
+        with factory() as db:
+            yield db
+    previous = dict(app.dependency_overrides)
+    app.dependency_overrides[get_db] = dependency
+    checks = []
+    try:
+        with TestClient(app) as client:
+            now = datetime.now(timezone.utc)
+            date = (now + timedelta(hours=6)).isoformat()
+            policy = dict(key='complete-release-fixture', name='Synthetic owned acceptance source',
+                adapter='events-json-v1', url='https://example.org/owned-fixture', enabled=True,
+                owner='Disposable acceptance', basis='Synthetic data generated only for isolated tests',
+                reference='synthetic-owned-data-only', reviewed_at=now.isoformat(),
+                expires_at=(now + timedelta(days=1)).isoformat(), terms_permit=True)
+            admin_headers = {'Authorization': f'Bearer {create_access_token(admin_id, "administrator")}'}
+            assert client.put('/admin/discovery/sources', headers=admin_headers, json=policy).status_code == 200
+            content = ('title,url,organization,start_date,location,mode\n'
+                f'Synthetic Release Buildathon,https://example.org/release-a,Synthetic College,{date},Delhi,Online\n'
+                f'Synthetic Release Buildathon,https://example.org/release-b,Synthetic College,{date},Delhi,Online\n')
+            upload = dict(source_key=policy['key'], filename='owned-fixture.csv',
+                content_base64=base64.b64encode(content.encode()).decode(), approval_reference=policy['reference'])
+            staged = client.post('/admin/discovery/dataset-imports', headers=admin_headers, json=upload)
+            assert staged.status_code == 200 and staged.json()['candidates_inserted'] == 2
+            assert client.get('/events/?page=1').json()['total'] == 0
+            repeated = client.post('/admin/discovery/dataset-imports', headers=admin_headers, json=upload)
+            assert repeated.json()['candidate_duplicates'] == 2
+            candidates = client.get('/admin/discovery/announcements', headers=admin_headers).json()['data']
+            published = []
+            for candidate in candidates:
+                event = dict(candidate['payload']); event.pop('scraped_at', None)
+                result = client.post(f"/admin/discovery/announcements/{candidate['id']}/review",
+                    headers=admin_headers, json={'decision':'approved', 'note':'Explicit synthetic owned-data review', 'event':event})
+                assert result.status_code == 200, result.text
+                published.append(result.json()['event_id'])
+            assert len(published) == 2 and client.get('/events/?page=1').json()['total'] == 2
+            checks.append('source registration, import, repeat idempotency, review and publication')
+            registration = client.post('/auth/register', json={'name':'Synthetic release user',
+                'email':'release-user@example.com', 'password':'DisposableReleasePassword123!'})
+            assert registration.status_code in (200, 201), registration.text
+            signed_in = client.post('/auth/login', json={'email':'release-user@example.com','password':'DisposableReleasePassword123!'})
+            assert signed_in.status_code == 200
+            user_headers = {'Authorization': 'Bearer ' + signed_in.json()['access_token']}
+            for path in ['/admin/audit','/admin/duplicates','/admin/notification-monitor']:
+                assert client.get(path, headers=user_headers).status_code == 403
+            assert client.post('/admin/discovery/dataset-imports', headers=user_headers, json=upload).status_code == 403
+            assert client.put('/account/discovery-preferences', headers=user_headers, json={
+                'preferred_location':'Delhi','preferred_mode':'Online','interests':'Buildathon','in_app_reminders':True}).status_code == 200
+            matches = client.get('/account/recommendations', headers=user_headers).json()['data']
+            assert len(matches) == 2 and all(row['reasons'] for row in matches)
+            assert client.get('/account/discovery-preferences', headers=admin_headers).json()['interests'] == ''
+            for event_id in published:
+                assert client.put(f'/account/saved/{event_id}', headers=user_headers).status_code == 200
+            assert len(client.get('/account/saved', headers=user_headers).json()['data']) == 2
+            pairs = client.get('/admin/duplicates', headers=admin_headers).json()['data']
+            assert len(pairs) == 1
+            pair = pairs[0]
+            merge_body = {'survivor_id':pair['survivor']['id'], 'duplicate_id':pair['duplicate']['id'],
+                'review_token':pair['review_token'], 'note':'Confirmed same synthetic edition across two listing URLs'}
+            assert client.post('/admin/duplicates/merge', headers=user_headers, json=merge_body).status_code == 403
+            merged = client.post('/admin/duplicates/merge', headers=admin_headers, json=merge_body)
+            assert merged.status_code == 200, merged.text
+            assert client.get('/events/?page=1').json()['total'] == 1
+            saved = client.get('/account/saved', headers=user_headers).json()['data']
+            assert len(saved) == 1 and saved[0]['id'] == pair['survivor']['id']
+            assert client.post('/admin/discovery/dataset-imports', headers=admin_headers, json=upload).json()['candidate_duplicates'] == 2
+            assert client.get('/admin/duplicates', headers=admin_headers).json()['data'] == []
+            assert client.post('/admin/duplicates/merge', headers=admin_headers, json=merge_body).status_code == 409
+            checks.append('live role denials, private preferences, recommendations and saved-item-preserving duplicate merge')
+            with factory() as db:
+                assert enqueue_in_app(db, now)['inserted'] == 1
+                assert enqueue_in_app(db, now)['inserted'] == 0
+            notices = client.get('/notifications/', headers=user_headers).json()['data']
+            assert notices and client.get('/notifications/', headers=admin_headers).json()['data'] == []
+            assert client.put(f"/notifications/{notices[0]['id']}/read", headers=user_headers).json()['is_read'] is True
+            assert client.put(f"/notifications/{notices[0]['id']}/read", headers=admin_headers).status_code == 404
+            assert client.put('/account/preferences', headers=user_headers, json={'email_reminders':True}).status_code == 200
+            def forbidden(*args, **kwargs):
+                raise AssertionError('Release acceptance must never contact SMTP')
+            monkeypatch.setattr(notification_service, 'send_message', forbidden)
+            with factory() as db:
+                assert enqueue_due(db, now) == 1
+                assert dispatch_due(db, SimpleNamespace(EMAIL_MODE='dry-run'), now) == {'dry-run':0}
+            assert client.put('/account/preferences', headers=user_headers, json={'email_reminders':False}).status_code == 200
+            readiness = client.get('/predictions/readiness')
+            assert readiness.status_code == 200 and readiness.json()['data']['public_predictions_enabled'] is False
+            assert client.get('/predictions/catalog').json()['data'] == []
+            actions = {row['action'] for row in client.get('/admin/audit', headers=admin_headers).json()['data']}
+            assert {'dataset_import_staged','announcement_reviewed','duplicate_events_merged'}.issubset(actions)
+            assert client.post('/auth/logout', headers=user_headers).status_code == 200
+            assert client.get('/account/saved', headers=user_headers).status_code == 401
+            checks.append('idempotent scheduled notices, owned read state, email consent/dry-run, ML suppression and logout revocation')
+        output = Path(os.environ['RADAR_POSTGRES_ACCEPTANCE_MANIFEST']).parent / 'complete-release-journey.json'
+        output.write_text(json.dumps({'synthetic_owned_data_only':True, 'checks':checks,
+            'smtp_attempts':0, 'remaining_public_events_after_merge':1, 'status':'passed'}, indent=2), encoding='utf-8')
+    finally:
+        app.dependency_overrides.clear(); app.dependency_overrides.update(previous)
+
 def test_postgres_health_events_and_details(database, records):
     factory = sessionmaker(bind=database)
     with factory.begin() as db:

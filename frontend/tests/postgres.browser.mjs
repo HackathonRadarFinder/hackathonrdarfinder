@@ -15,8 +15,8 @@ mkdirSync(artifact, { recursive: true });
 const executablePath = process.env.BROWSER_EXECUTABLE_PATH || [
   'C:/Program Files/Google/Chrome/Application/chrome.exe',
   'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
-].find(existsSync);
-assert.ok(executablePath);
+].find(existsSync) || chromium.executablePath();
+assert.ok(executablePath && existsSync(executablePath), 'Install Chromium with playwright-core or set BROWSER_EXECUTABLE_PATH.');
 const browser = await chromium.launch({ executablePath, headless: true });
 const report = { run_id: runId, database: 'owned disposable PostgreSQL 16', checks: [], errors: [] };
 try {
