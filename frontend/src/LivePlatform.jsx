@@ -58,11 +58,13 @@ export function EventCard({ event, saved, toggle, organization }) {
 }
 
 function Explore({ saved, toggle }) {
-  const [filters, setFilters] = useState({ q: '', location: '', mode: '', organizationId: '', startFrom: '', startTo: '', pageSize: 12 });
+  const [filters, setFilters] = useState({ q: '', location: '', mode: '', organizationId: '', state: '', institutionId: '', startFrom: '', startTo: '', pageSize: 12 });
   const [draft, setDraft] = useState(filters);
+  const [collegeSearch, setCollegeSearch] = useState('');
   const [page, setPage] = useState(1);
   const organizations = useResource(api.organizations);
   const resource = useResource(useCallback(signal => api.events({ ...filters, page }, signal), [filters, page]));
+  const institutions = useResource(useCallback(signal => api.institutions(draft.state, collegeSearch, signal), [draft.state, collegeSearch]));
   const names = new Map((organizations.data || []).map(org => [org.id, org.name]));
   const result = resource.data;
   return <><section className="platform-hero"><span className="platform-eyebrow">HACKATHON RADAR</span><h1>Find your next<br /><em>building opportunity.</em></h1><p>Explore events from the backend catalog. Clear filters, real dates, and a place to keep your next idea.</p><a href="/demo/">Explore the design demo →</a></section>
@@ -70,13 +72,18 @@ function Explore({ saved, toggle }) {
       <form onSubmit={event => { event.preventDefault(); setPage(1); setFilters({ ...draft }); }}>
         <label>Search<input value={draft.q} maxLength={255} placeholder="Title or description" onChange={event => setDraft({ ...draft, q: event.target.value })} /></label>
         <label>Location<input value={draft.location} maxLength={255} placeholder="City or region" onChange={event => setDraft({ ...draft, location: event.target.value })} /></label>
+        <label>State or union territory<input value={draft.state} maxLength={100} placeholder="Exact state name" onChange={event => setDraft({ ...draft, state: event.target.value, institutionId: '' })} /></label>
+        <label>Find a college<input value={collegeSearch} maxLength={255} placeholder="Institution name" onChange={event => { setCollegeSearch(event.target.value); setDraft({ ...draft, institutionId: '' }); }} /></label>
+        <label>College or university<select value={draft.institutionId} onChange={event => setDraft({ ...draft, institutionId: event.target.value })}><option value="">All institutions</option>{(institutions.data?.data || []).map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select></label>
+        {institutions.data?.total > 100 && <p>Showing the first 100 institutions. Narrow by state and institution name.</p>}
+        {institutions.error && <p role="alert">Institution directory could not load. <button type="button" onClick={institutions.retry}>Retry directory</button></p>}
         <label>Mode<input value={draft.mode} maxLength={50} placeholder="Online, hybrid…" onChange={event => setDraft({ ...draft, mode: event.target.value })} /></label>
         <label>Organization<select value={draft.organizationId} onChange={event => setDraft({ ...draft, organizationId: event.target.value })}><option value="">All organizations</option>{(organizations.data || []).map(org => <option key={org.id} value={org.id}>{org.name}</option>)}</select></label>
         <label>Starts on or after (UTC)<input type="date" value={draft.startFrom} max={draft.startTo || undefined} onChange={event => setDraft({ ...draft, startFrom: event.target.value })} /></label>
         <label>Starts on or before (UTC)<input type="date" value={draft.startTo} min={draft.startFrom || undefined} onChange={event => setDraft({ ...draft, startTo: event.target.value })} /></label>
         {organizations.error && <p role="alert">Organization filters could not load. <button type="button" onClick={organizations.retry}>Retry</button></p>}
         <label>Events per page<select value={draft.pageSize} onChange={event => setDraft({ ...draft, pageSize: Number(event.target.value) })}><option>12</option><option>24</option><option>48</option></select></label>
-        <button className="platform-primary" type="submit">Apply filters</button><button type="button" onClick={() => { const cleared = { q: '', location: '', mode: '', organizationId: '', startFrom: '', startTo: '', pageSize: 12 }; setDraft(cleared); setFilters(cleared); setPage(1); }}>Reset</button>
+        <button className="platform-primary" type="submit">Apply filters</button><button type="button" onClick={() => { const cleared = { q: '', location: '', mode: '', organizationId: '', state: '', institutionId: '', startFrom: '', startTo: '', pageSize: 12 }; setCollegeSearch(''); setDraft(cleared); setFilters(cleared); setPage(1); }}>Reset</button>
       </form><p className="platform-muted">The catalog includes historical events. Use start dates to narrow upcoming results. Dates filter by UTC calendar day; events without start dates are excluded when filtering. Results are sorted by event ID.</p>
     </aside><section aria-label="Event results" aria-busy={resource.loading}><Feedback resource={resource} />
       {result && <><p role="status">{result.total} events · page {result.page}</p>{!result.data.length && <div className="platform-empty"><h2>No events found</h2><p>Try another location or reset your filters.</p></div>}
@@ -91,12 +98,18 @@ function EventDetails({ saved, toggle }) {
   const discovery = useResource(useCallback(signal => api.eventDiscovery(id, signal), [id]));
   const event = resource.data;
   const link = safeEventUrl(event?.url);
+  const registrationLink = safeEventUrl(event?.registration_url);
   return <section className="platform-detail"><Link to="/explore">← Back to events</Link><Feedback resource={resource} />{event && <>
     <span className="platform-eyebrow">EVENT DETAILS</span><h1>{event.title}</h1><p className="platform-description">{event.description || 'No description provided.'}</p>
+<<<<<<< HEAD
     <dl><div><dt>Starts</dt><dd>{date(event.start_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Ends</dt><dd>{date(event.end_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Registration deadline</dt><dd>{date(event.registration_deadline)}</dd></div><div><dt>Location / mode</dt><dd>{event.location || 'Not provided'} / {event.mode || 'Not provided'}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div><div><dt>Source</dt><dd>{event.source || 'Not provided'}</dd></div></dl>
     <ProviderCredit acquisition={event.acquisition} />
+=======
+    <dl><div><dt>Starts</dt><dd>{date(event.start_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Ends</dt><dd>{date(event.end_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Registration deadline</dt><dd>{date(event.registration_deadline)}</dd></div><div><dt>Location / mode</dt><dd>{event.location || 'Not provided'} / {event.mode || 'Not provided'}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div><div><dt>Source</dt><dd>{event.source || 'Not provided'}</dd></div><div><dt>State</dt><dd>{event.state || 'Not provided'}</dd></div><div><dt>Eligibility</dt><dd>{event.eligibility || 'Not provided'}</dd></div></dl>
+>>>>>>> feature/india-wide-discovery
     <button onClick={() => toggle(event.id)} aria-pressed={saved.includes(event.id)}>{saved.includes(event.id) ? 'Remove saved event' : 'Save to account'}</button>
     {link ? <a className="platform-action" href={link} target="_blank" rel="noopener noreferrer">Visit organizer website <ExternalLink size={16} /></a> : <p>No valid organizer link is available.</p>}
+    {registrationLink && <a className="platform-action" href={registrationLink} target="_blank" rel="noopener noreferrer">Registration information <ExternalLink size={16} /></a>}
     <p className="platform-muted">Source observed: {date(event.scraped_at)}. This is a stored snapshot; check the organizer for changes.</p>
     <section aria-label="Discovery history"><h2>Discovery and update history</h2><Feedback resource={discovery} />
       {discovery.data && <>{discovery.data.evidence.length === 0 && <p>No automated discovery evidence is recorded for this event.</p>}
@@ -118,14 +131,25 @@ function Bookmarks({ saved, toggle }) {
     <div className="platform-grid">{resource.data?.map(event => <EventCard key={event.id} event={event} saved toggle={toggle} />)}</div></section>;
 }
 
+function DiscoveryCoverage() {
+  const resource = useResource(api.discoveryCoverage);
+  const runs = useResource(api.discoveryRuns);
+  const labels = { institutions_indexed: 'Institutions indexed', institutions_with_verified_websites: 'Verified institution websites', approved_sources: 'Approved sources', institutions_with_approved_sources: 'Institutions with approved sources', sources_successfully_checked: 'Sources successfully checked', events_discovered: 'Announcement revisions discovered', validated_events: 'Validated event revisions', pending_review: 'Awaiting review', duplicate_records: 'Duplicate observations', failed_collections: 'Failed collections', sources_awaiting_permission: 'Sources awaiting permission' };
+  return <section aria-label="Discovery coverage"><h2>Discovery coverage and failures</h2><p>Source coverage does not measure hackathon coverage. Only reviewed announcements enter the public catalog.</p><Feedback resource={resource} />
+    {resource.data && <><dl>{Object.entries(labels).map(([key, label]) => <div key={key}><dt>{label}</dt><dd>{resource.data[key]}</dd></div>)}</dl><p>Last successful collection: {date(resource.data.last_successful_collection)}</p></>}
+    <h3>Recent collection runs</h3><Feedback resource={runs} />{runs.data?.length === 0 && <p>No collection runs recorded.</p>}
+    <ul>{runs.data?.slice(0, 20).map(run => <li key={run.id}>{run.source_key || run.source_id}: {run.status} ? {date(run.started_at)}{run.error_code ? ` ? ${run.error_code}` : ''}</li>)}</ul>
+  </section>;
+}
+
 function Admin() {
   const { user } = useAuth();
   const resource = useResource(useCallback(signal => user ? api.admin(signal) : Promise.reject(new Error('Sign in to request admin access.')), [user]));
-  return <section><h1>Administration</h1><p>Live, read-only administration. The backend checks permissions on every request.</p><Feedback resource={resource} />
+  return <section><h1>Administration</h1>{['administrator', 'source_manager'].includes(user?.role) && <DiscoveryCoverage />}<p>Live, read-only administration. The backend checks permissions on every request.</p><Feedback resource={resource} />
     {!user && <Link to="/login">Sign in</Link>}{resource.data && <><div className="platform-grid">{Object.entries(resource.data.stats).map(([key, value]) => <article className="platform-card" key={key}><h2>{value}</h2><p>{key.replaceAll('_', ' ')}</p></article>)}</div>
-      <h2>Users</h2><div className="platform-table"><table><thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Roles</th></tr></thead><tbody>{resource.data.users.map(user => <tr key={user.id}><td>{user.name}</td><td>{user.email}</td><td>{user.status}</td><td>{user.roles.join(', ')}</td></tr>)}</tbody></table></div>
+      <h2>Users</h2><div className="platform-table" tabIndex={0} role="region" aria-label="User accounts table"><table><thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Roles</th></tr></thead><tbody>{resource.data.users.map(user => <tr key={user.id}><td>{user.name}</td><td>{user.email}</td><td>{user.status}</td><td>{user.roles.join(', ')}</td></tr>)}</tbody></table></div>
       <h2>Organizations</h2><ul>{resource.data.organizations.map(org => <li key={org.id}>{org.name}</li>)}</ul>
-      <p className="platform-muted">These backend admin lists are currently unpaginated. Role changes, review queues and system metrics are not available here.</p></>}
+      <p className="platform-muted">These backend admin lists are currently unpaginated. Role changes and announcement review are available only through authorized backend operations.</p></>}
   </section>;
 }
 

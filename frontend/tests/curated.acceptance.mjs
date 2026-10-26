@@ -6,9 +6,10 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { chromium } from 'playwright-core';
 import AxeBuilder from '@axe-core/playwright';
+import { disposableUrl } from './disposable-url.mjs';
 
 const base = process.env.FRONTEND_CURATED_DEMO_BASE;
-assert.equal(base, 'http://127.0.0.1:5176');
+disposableUrl(base);
 const marker = await fetch(`${base}/api/__local_demo`).then(response => response.json());
 assert.equal(marker.database, 'temporary-curated-local-demo');
 assert.equal(marker.email, 'disabled');

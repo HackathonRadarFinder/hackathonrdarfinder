@@ -18,7 +18,8 @@ from workers.ingest_curated import validate_records
 
 BACKEND = Path(__file__).resolve().parents[2]
 MATERIAL_FIELDS = ('title', 'organization_id', 'start_date', 'end_date', 'registration_deadline',
-                   'location', 'mode', 'prize', 'description', 'url', 'source')
+                   'location', 'mode', 'prize', 'description', 'url', 'source',
+                   'state', 'institution_id', 'registration_url', 'eligibility')
 
 
 def utc(value):
@@ -30,6 +31,12 @@ def utc(value):
 def register_source(db, policy, now, *, commit=True):
     """Protected callers supply reviewed policy; registration never fetches."""
     policy = SourcePolicy.model_validate(policy)
+    institution = None
+    if policy.adapter not in ('curated-v1', 'unstop-v1') and policy.institution_id is not None:
+        from app.models.institution import Institution
+        institution = db.get(Institution, policy.institution_id)
+        if institution is None or not institution.website_verified_at or policy.url not in institution.event_urls:
+            raise ValueError('Source must be an explicitly verified institution event URL')
     row = db.scalar(select(DiscoverySource).where(DiscoverySource.key == policy.key))
     if row is None:
         source = Source(name=policy.name, url=policy.url)
@@ -39,8 +46,13 @@ def register_source(db, policy, now, *, commit=True):
     else:
         source = db.get(Source, row.source_id)
         source.name, source.url = policy.name, policy.url
-    row.config = policy.model_dump(mode='json')
+    config = policy.model_dump(mode='json')
+    if row.config != config:
+        row.next_run_at = utc(now)
+    row.config = config
     row.enabled, row.interval_seconds = policy.enabled, policy.interval_seconds
+    if institution is not None:
+        institution.permission_status = 'approved' if not policy_reason(policy, now, True) else 'awaiting_permission'
     if commit:
         db.commit()
     return row
@@ -59,7 +71,7 @@ def policy_reason(policy, now, allow_live):
         return 'source_disabled'
     if policy.reviewed_at > now or policy.expires_at <= now:
         return 'approval_expired_or_future'
-    if policy.adapter not in {'curated-v1', 'unstop-v1'}:
+    if policy.adapter not in {'curated-v1', 'unstop-v1', 'official-html-v1', 'events-json-v1', 'rss-v1', 'sitemap-v1'}:
         return 'unsupported_adapter'
     if policy.adapter != 'curated-v1':
         if not policy.terms_permit:
@@ -74,8 +86,9 @@ def collect_source(policy):
         raw = (BACKEND / 'data' / 'curated-mvp-20261013.json').read_text(encoding='utf-8')
         return validate_records(json.loads(raw)), 0, {'checksum': hashlib.sha256(raw.encode()).hexdigest(),
             'document_url': policy.url, 'adapter_version': policy.adapter, 'transport': 'offline'}
-    if policy.adapter != "unstop-v1":
-        raise ValueError("unsupported_adapter")
+    if policy.adapter not in ('curated-v1', 'unstop-v1'):
+        from app.services.nationwide_collection import collect_announcements
+        return collect_announcements(policy)
     # Use the existing governed collector: robots, terms, redirects, DNS/IP gates,
     # bounded transfer, retries and atomic raw storage. Never use standalone fetch.
     sys.path.insert(0, str(BACKEND / 'modules' / '2.2-collector' / 'src'))
@@ -131,7 +144,8 @@ def ingest_discovery(db, source, run, records, metadata, observed):
         if org is None:
             org = Organization(name=incoming.organization); db.add(org); db.flush()
         values = incoming.model_dump(exclude={'organization', 'organization_id'})
-        values.update(url=url, organization_id=org.id)
+        values.update(url=url, organization_id=org.id,
+            registration_url=str(incoming.registration_url) if incoming.registration_url else None)
         before = snapshot(record) if record else None
         if record is None:
             record = Hackathon(**values); db.add(record); db.flush()
@@ -211,7 +225,14 @@ def run_source(db, key, now, *, allow_live=False, collector=None):
             observed = max(current, utc(datetime.now(timezone.utc)))
             if policy_reason(policy, observed.replace(tzinfo=timezone.utc), allow_live):
                 raise ValueError('approval_expired_during_collection')
-            metrics = {**ingest_discovery(db, source, run, records, metadata, observed),
+            if policy.adapter not in ('curated-v1', 'unstop-v1'):
+                from app.services.nationwide_collection import stage_announcements
+                if records:
+                    raise ValueError('New adapters must stage announcements for review')
+                candidate_counts = stage_announcements(db, source, metadata.pop('announcements'), metadata, observed)
+            else:
+                candidate_counts = {}
+            metrics = {**candidate_counts, **ingest_discovery(db, source, run, records, metadata, observed),
                        'rejected': rejected, **metadata}
             status, error = 'success', None
     except Exception:

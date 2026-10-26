@@ -9,6 +9,7 @@ from app.models.hackathon import Hackathon
 from app.models.email_delivery import EmailDelivery
 from app.models.discovery import DiscoveryEvent, DiscoveryEvidence
 from app.models.organization import Organization
+from app.models.institution import Institution, Announcement
 from app.schemas.event import EventCreate, EventListParams
 from app.services.database import database_operation
 
@@ -46,9 +47,12 @@ def _event_values(db: Session, event: EventCreate) -> dict:
         organization = db.scalar(select(Organization).where(Organization.name == event.organization))
     if organization is None:
         raise HTTPException(status_code=404, detail="Organization not found. Create the organization first.")
+    if event.institution_id is not None and db.get(Institution, event.institution_id) is None:
+        raise HTTPException(status_code=404, detail="Institution not found")
     values = event.model_dump(exclude={"organization", "organization_id"})
     values["organization_id"] = organization.id
     values["url"] = str(event.url) if event.url is not None else None
+    values["registration_url"] = str(event.registration_url) if event.registration_url is not None else None
     return values
 
 
@@ -62,6 +66,10 @@ def get_event_page(db: Session, query: EventListParams):
     page = query.page if query.page is not None else 1
     page_size = query.page_size if query.page_size is not None else 10
     filters = []
+    if query.state is not None:
+        filters.append(func.lower(Hackathon.state) == query.state.lower())
+    if query.institution_id is not None:
+        filters.append(Hackathon.institution_id == query.institution_id)
     if query.q is not None:
         filters.append(or_(Hackathon.title.icontains(query.q, autoescape=True),
                            Hackathon.description.icontains(query.q, autoescape=True)))
@@ -120,7 +128,7 @@ def update_event(db: Session, event_id: int, event: EventCreate):
 def delete_event(db: Session, event_id: int):
     with database_operation(db, "Event has related records and cannot be deleted"):
         record = _find_event(db, event_id)
-        for model in (EventVersion, Prediction, SavedItem, EmailDelivery, DiscoveryEvent, DiscoveryEvidence):
+        for model in (EventVersion, Prediction, SavedItem, EmailDelivery, DiscoveryEvent, DiscoveryEvidence, Announcement):
             if db.scalar(select(model.id).where(model.hackathon_id == event_id).limit(1)) is not None:
                 raise HTTPException(status_code=409, detail="Event has related records and cannot be deleted")
         db.delete(record)

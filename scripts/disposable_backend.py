@@ -1,9 +1,15 @@
 ﻿from pathlib import Path
 import os, sys, tempfile, subprocess
+import argparse
+parser = argparse.ArgumentParser(description='Loopback-only temporary browser fixture')
+parser.add_argument('--port', type=int, default=8020)
+args = parser.parse_args()
+if not 1024 <= args.port <= 65535:
+    parser.error('Use an unprivileged port between 1024 and 65535')
 root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(root / 'backend'))
 temporary = tempfile.TemporaryDirectory(prefix='radar-disposable-')
-os.environ.update(DATABASE_URL=f"sqlite:///{Path(temporary.name).as_posix()}/fixture.db", SECRET_KEY='disposable-frontend-test-secret-key-123456789', DEBUG='false', EMAIL_MODE='disabled')
+os.environ.update(DATABASE_URL=f"sqlite:///{Path(temporary.name).as_posix()}/fixture.db", SECRET_KEY='disposable-frontend-test-secret-key-123456789', DEBUG='false', ENVIRONMENT='test', EMAIL_MODE='disabled')
 subprocess.run([sys.executable, '-m', 'alembic', 'upgrade', 'head'], cwd=root / 'backend', env=os.environ, check=True)
 from app.main import app
 
@@ -29,7 +35,7 @@ with SessionLocal() as db:
 if __name__ == '__main__':
     import uvicorn
     try:
-        uvicorn.run(app, host='127.0.0.1', port=8020, log_level='warning')
+        uvicorn.run(app, host='127.0.0.1', port=args.port, log_level='warning')
     finally:
         engine.dispose()
         temporary.cleanup()

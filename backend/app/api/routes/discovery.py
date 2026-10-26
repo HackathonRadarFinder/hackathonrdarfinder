@@ -2,7 +2,7 @@
 from datetime import datetime, timezone
 import json
 import uuid
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.api.deps import require_source_manager
@@ -30,7 +30,11 @@ def sources(db: Session = Depends(get_db)):
 @router.put('/admin/discovery/sources')
 def configure_source(body: SourcePolicy, actor=Depends(require_source_manager), db: Session = Depends(get_db)):
     with database_operation(db):
-        row = register_source(db, body, datetime.now(timezone.utc), commit=False)
+        try:
+            row = register_source(db, body, datetime.now(timezone.utc), commit=False)
+        except ValueError:
+            db.rollback()
+            raise HTTPException(422, 'Source must match a verified institution event URL') from None
         db.add(AuditLog(user_id=uuid.UUID(actor.sub), action='discovery_source_configured',
             entity_type='source', entity_id=row.source_id,
             details=json.dumps(body.model_dump(mode='json'))))
@@ -41,10 +45,12 @@ def configure_source(body: SourcePolicy, actor=Depends(require_source_manager), 
 @router.get('/admin/discovery/runs', dependencies=[Depends(require_source_manager)])
 def runs(db: Session = Depends(get_db)):
     with database_operation(db):
-        rows = db.scalars(select(DiscoveryRun).order_by(DiscoveryRun.started_at.desc(), DiscoveryRun.id).limit(100)).all()
-        return {'data': [{'id': row.id, 'source_id': row.source_id, 'status': row.status,
+        rows = db.execute(select(DiscoveryRun, DiscoverySource.key).join(DiscoverySource,
+            DiscoverySource.source_id == DiscoveryRun.source_id)
+            .order_by(DiscoveryRun.started_at.desc(), DiscoveryRun.id).limit(100)).all()
+        return {'data': [{'id': row.id, 'source_id': row.source_id, 'source_key': key, 'status': row.status,
             'started_at': row.started_at, 'finished_at': row.finished_at,
-            'error_code': row.error_code, 'metrics': row.metrics} for row in rows]}
+            'error_code': row.error_code, 'metrics': row.metrics} for row, key in rows]}
 
 
 @router.get('/events/{event_id}/discovery')
