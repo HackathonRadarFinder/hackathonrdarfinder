@@ -1,0 +1,11 @@
+{
+  "rows": 1000,
+  "database": "owned disposable PostgreSQL 16",
+  "first_import_seconds": 0.308981499998481,
+  "repeat_import_seconds": 0.19229870000708615,
+  "first_selects": 3,
+  "repeat_selects": 3,
+  "published_events": 0,
+  "idempotency": "passed",
+  "synthetic_data_only": true
+}

@@ -1,0 +1,327 @@
+{
+  "review_checksum": "788e94dfc7eae29604f262a3205a1cc174bfbe668c09a6c25bd9024877e4ef24",
+  "observations": [
+    {
+      "event_id": "https://hhuh.io/",
+      "observed_at": "2026-10-13T00:00:00",
+      "checksum": "1285cb90a7b916f8462664ecf5ee205a5ef04899612012e8c29b62867f24e459",
+      "document_url": "https://hhuh.io/",
+      "source_id": "reviewed-offline-manifest",
+      "adapter_version": "curated-v1",
+      "snapshot": {
+        "title": "HackHarvard 2026",
+        "organization": "HackHarvard",
+        "start_date": "2026-10-16T20:00:00",
+        "end_date": "2026-10-18T20:00:00",
+        "registration_deadline": null,
+        "location": "Cambridge, Massachusetts, USA",
+        "mode": "In-Person",
+        "prize": null,
+        "description": "Date precision: scheduled time in America/New_York. Organizer schedule October 16\u201318; registration begins at noon Friday and closing ceremony ends at 4 PM Sunday. Applications are closed; late admission is not guaranteed. Check the organizer website for changes.",
+        "url": "https://hhuh.io/",
+        "source": "Official organizer (manual)",
+        "scraped_at": "2026-10-13T00:00:00",
+        "state": null,
+        "institution_id": null,
+        "registration_url": null,
+        "eligibility": null,
+        "organization_id": null
+      }
+    },
+    {
+      "event_id": "https://www.mitpolicyhackathon.org/faq2026",
+      "observed_at": "2026-10-13T00:00:00",
+      "checksum": "1285cb90a7b916f8462664ecf5ee205a5ef04899612012e8c29b62867f24e459",
+      "document_url": "https://www.mitpolicyhackathon.org/faq2026",
+      "source_id": "reviewed-offline-manifest",
+      "adapter_version": "curated-v1",
+      "snapshot": {
+        "title": "MIT Policy Hackathon 2026",
+        "organization": "MIT Policy Hackathon",
+        "start_date": "2026-11-20T00:00:00",
+        "end_date": "2026-11-22T00:00:00",
+        "registration_deadline": null,
+        "location": "Cambridge, Massachusetts, USA",
+        "mode": "In-Person",
+        "prize": null,
+        "description": "Date precision: day; UTC midnight is a calendar-date storage convention, not an announced start time. Organizer FAQ lists November 20\u201322 and application closing October 14, 2026 without a precise deadline time. Deadline field remains unset. Check the source before applying.",
+        "url": "https://www.mitpolicyhackathon.org/faq2026",
+        "source": "Official organizer (manual)",
+        "scraped_at": "2026-10-13T00:00:00",
+        "state": null,
+        "institution_id": null,
+        "registration_url": null,
+        "eligibility": null,
+        "organization_id": null
+      }
+    },
+    {
+      "event_id": "https://megathon.in/",
+      "observed_at": "2026-10-13T00:00:00",
+      "checksum": "1285cb90a7b916f8462664ecf5ee205a5ef04899612012e8c29b62867f24e459",
+      "document_url": "https://megathon.in/",
+      "source_id": "reviewed-offline-manifest",
+      "adapter_version": "curated-v1",
+      "snapshot": {
+        "title": "Megathon X: Singularity 2026",
+        "organization": "E-Cell IIIT Hyderabad",
+        "start_date": "2026-10-10T00:00:00",
+        "end_date": "2026-10-11T00:00:00",
+        "registration_deadline": null,
+        "location": "Hyderabad, India",
+        "mode": "In-Person",
+        "prize": null,
+        "description": "Date precision: day; UTC midnight represents the published calendar dates, not event times. Organizer site lists October 10\u201311, 2026. Historical event; not open for new registration.",
+        "url": "https://megathon.in/",
+        "source": "Official organizer (manual)",
+        "scraped_at": "2026-10-13T00:00:00",
+        "state": null,
+        "institution_id": null,
+        "registration_url": null,
+        "eligibility": null,
+        "organization_id": null
+      }
+    },
+    {
+      "event_id": "https://www.iiit.ac.in/megathon-2025-11-and-12-october-2025-3/",
+      "observed_at": "2026-10-13T00:00:00",
+      "checksum": "1285cb90a7b916f8462664ecf5ee205a5ef04899612012e8c29b62867f24e459",
+      "document_url": "https://www.iiit.ac.in/megathon-2025-11-and-12-october-2025-3/",
+      "source_id": "reviewed-offline-manifest",
+      "adapter_version": "curated-v1",
+      "snapshot": {
+        "title": "Megathon 2025: The Deccan Edition",
+        "organization": "E-Cell IIIT Hyderabad",
+        "start_date": "2025-10-11T00:00:00",
+        "end_date": "2025-10-12T00:00:00",
+        "registration_deadline": null,
+        "location": "Hyderabad, India",
+        "mode": "In-Person",
+        "prize": null,
+        "description": "Date precision: day; UTC midnight represents published calendar dates only. IIIT Hyderabad announcement lists October 11\u201312, 2025. Historical organizer record.",
+        "url": "https://www.iiit.ac.in/megathon-2025-11-and-12-october-2025-3/",
+        "source": "Official organizer (manual)",
+        "scraped_at": "2026-10-13T00:00:00",
+        "state": null,
+        "institution_id": null,
+        "registration_url": null,
+        "eligibility": null,
+        "organization_id": null
+      }
+    },
+    {
+      "event_id": "https://ecell.iiit.ac.in/events/hackathons/megathon-22.html",
+      "observed_at": "2026-10-13T00:00:00",
+      "checksum": "1285cb90a7b916f8462664ecf5ee205a5ef04899612012e8c29b62867f24e459",
+      "document_url": "https://ecell.iiit.ac.in/events/hackathons/megathon-22.html",
+      "source_id": "reviewed-offline-manifest",
+      "adapter_version": "curated-v1",
+      "snapshot": {
+        "title": "Megathon 2022",
+        "organization": "E-Cell IIIT Hyderabad",
+        "start_date": "2022-10-22T00:00:00",
+        "end_date": "2022-10-23T00:00:00",
+        "registration_deadline": null,
+        "location": "Hyderabad, India",
+        "mode": "In-Person",
+        "prize": null,
+        "description": "Date precision: day; UTC midnight represents published calendar dates only. E-Cell retrospective confirms October 22\u201323, 2022. Historical record. Missing years must not be inferred as events.",
+        "url": "https://ecell.iiit.ac.in/events/hackathons/megathon-22.html",
+        "source": "Official organizer (manual)",
+        "scraped_at": "2026-10-13T00:00:00",
+        "state": null,
+        "institution_id": null,
+        "registration_url": null,
+        "eligibility": null,
+        "organization_id": null
+      }
+    }
+  ],
+  "evaluation": {
+    "schema_version": 1,
+    "generated_at": "2026-10-26T23:37:59.388554",
+    "status": "insufficient_history",
+    "public_predictions_enabled": false,
+    "publication_approved": false,
+    "label_kind": "source_announced_start_date",
+    "actual_occurrence_labels": 0,
+    "dataset": {
+      "observations": 5,
+      "editions": 5,
+      "rejected": {},
+      "recurring_series": 1
+    },
+    "series": [
+      {
+        "family": "hackharvard",
+        "organization": "HackHarvard",
+        "edition_count": 1,
+        "historical_dates": [
+          "2026-10-16"
+        ],
+        "interval_days": [],
+        "mean_interval_days": null,
+        "median_interval_days": null,
+        "interval_std_days": null,
+        "seasonal_month_counts": {
+          "10": 1
+        },
+        "observed_year_gaps": [],
+        "all_observed_editions_consecutive": false
+      },
+      {
+        "family": "megathon-iiit-hyderabad",
+        "organization": "E-Cell IIIT Hyderabad",
+        "edition_count": 3,
+        "historical_dates": [
+          "2022-10-22",
+          "2025-10-11",
+          "2026-10-10"
+        ],
+        "interval_days": [
+          1085,
+          364
+        ],
+        "mean_interval_days": 724.5,
+        "median_interval_days": 724.5,
+        "interval_std_days": 360.5,
+        "seasonal_month_counts": {
+          "10": 3
+        },
+        "observed_year_gaps": [
+          3,
+          1
+        ],
+        "all_observed_editions_consecutive": false
+      }
+    ],
+    "metrics": {
+      "existing_mean_gap": {
+        "held_out_editions": 0,
+        "announced_date_mae_days": null,
+        "actual_occurrence_mae_days": null,
+        "actual_test_editions": 0,
+        "actual_date_window_coverage": null,
+        "date_window_coverage": null,
+        "coverage_test_editions": 0,
+        "target_coverage": 0.8,
+        "calibration_status": "insufficient_evaluation",
+        "probability": null,
+        "confidence": null
+      },
+      "median_gap": {
+        "held_out_editions": 0,
+        "announced_date_mae_days": null,
+        "actual_occurrence_mae_days": null,
+        "actual_test_editions": 0,
+        "actual_date_window_coverage": null,
+        "date_window_coverage": null,
+        "coverage_test_editions": 0,
+        "target_coverage": 0.8,
+        "calibration_status": "insufficient_evaluation",
+        "probability": null,
+        "confidence": null
+      },
+      "last_gap": {
+        "held_out_editions": 0,
+        "announced_date_mae_days": null,
+        "actual_occurrence_mae_days": null,
+        "actual_test_editions": 0,
+        "actual_date_window_coverage": null,
+        "date_window_coverage": null,
+        "coverage_test_editions": 0,
+        "target_coverage": 0.8,
+        "calibration_status": "insufficient_evaluation",
+        "probability": null,
+        "confidence": null
+      },
+      "seasonal_anniversary": {
+        "held_out_editions": 0,
+        "announced_date_mae_days": null,
+        "actual_occurrence_mae_days": null,
+        "actual_test_editions": 0,
+        "actual_date_window_coverage": null,
+        "date_window_coverage": null,
+        "coverage_test_editions": 0,
+        "target_coverage": 0.8,
+        "calibration_status": "insufficient_evaluation",
+        "probability": null,
+        "confidence": null
+      },
+      "neural": {
+        "held_out_editions": 0,
+        "announced_date_mae_days": null,
+        "actual_occurrence_mae_days": null,
+        "actual_test_editions": 0,
+        "actual_date_window_coverage": null,
+        "date_window_coverage": null,
+        "coverage_test_editions": 0,
+        "target_coverage": 0.8,
+        "calibration_status": "insufficient_evaluation",
+        "probability": null,
+        "confidence": null
+      }
+    },
+    "folds": [],
+    "internal_candidates": [
+      {
+        "family": "megathon-iiit-hyderabad",
+        "organization": "E-Cell IIIT Hyderabad",
+        "model": "existing_mean_gap",
+        "predicted_date": "2028-10-03",
+        "window": null,
+        "confidence": null,
+        "public_eligible": false,
+        "historical_editions": 3,
+        "suppression_reason": "uncalibrated_and_unpromoted",
+        "label_kind": "source_announced_start_date"
+      },
+      {
+        "family": "megathon-iiit-hyderabad",
+        "organization": "E-Cell IIIT Hyderabad",
+        "model": "median_gap",
+        "predicted_date": "2028-10-03",
+        "window": null,
+        "confidence": null,
+        "public_eligible": false,
+        "historical_editions": 3,
+        "suppression_reason": "uncalibrated_and_unpromoted",
+        "label_kind": "source_announced_start_date"
+      },
+      {
+        "family": "megathon-iiit-hyderabad",
+        "organization": "E-Cell IIIT Hyderabad",
+        "model": "last_gap",
+        "predicted_date": "2027-10-09",
+        "window": null,
+        "confidence": null,
+        "public_eligible": false,
+        "historical_editions": 3,
+        "suppression_reason": "uncalibrated_and_unpromoted",
+        "label_kind": "source_announced_start_date"
+      },
+      {
+        "family": "megathon-iiit-hyderabad",
+        "organization": "E-Cell IIIT Hyderabad",
+        "model": "seasonal_anniversary",
+        "predicted_date": "2027-10-10",
+        "window": null,
+        "confidence": null,
+        "public_eligible": false,
+        "historical_editions": 3,
+        "suppression_reason": "uncalibrated_and_unpromoted",
+        "label_kind": "source_announced_start_date"
+      }
+    ],
+    "model_availability": {
+      "existing_mean_gap": "evaluated_when_history_allows",
+      "neural": "research_temporal_refit_requested",
+      "classifier": "occurrence_probability_model_requires_verified_positive_and_negative_labels"
+    },
+    "blockers": [
+      "No confirmed occurrence labels",
+      "No publication approval",
+      "Insufficient temporal evidence or calibration"
+    ]
+  }
+}

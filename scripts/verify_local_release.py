@@ -10,13 +10,22 @@ OUT = ROOT / '.test-support/release-final/local-stack.json'
 CODE = """import hashlib,json
 from sqlalchemy import text
 from app.core.database import engine
+columns={
+ 'hackathons':['id','title','organization_id','start_date','end_date','registration_deadline','location','mode','url','source','state','institution_id'],
+ 'users':['id','name','email','status','created_at'],
+ 'saved_items':['id','user_id','hackathon_id','created_at'],
+ 'institutions':['id','identifier','name','state','city','district','category','website','permission_status','last_verified_at']}
 with engine.connect() as c:
+ c.execute(text('SET TRANSACTION READ ONLY'))
  result={'revision':c.execute(text('select version_num from alembic_version')).scalar(),'tables':{}}
- for table in ['hackathons','users','saved_items','institutions']:
-  ids=sorted(str(x) for x in c.scalars(text('select id from '+table)))
-  result['tables'][table]={'count':len(ids),'identity_sha256':hashlib.sha256(json.dumps(ids).encode()).hexdigest()}
+ for table,names in columns.items():
+  rows=[dict(row) for row in c.execute(text('select '+','.join(names)+' from '+table+' order by id')).mappings()]
+  ids=sorted(str(row['id']) for row in rows)
+  result['tables'][table]={'count':len(rows),'identity_sha256':hashlib.sha256(json.dumps(ids).encode()).hexdigest(),'value_sha256':hashlib.sha256(json.dumps(rows,sort_keys=True,default=str).encode()).hexdigest()}
+ result['directory']={'unique_identifiers':c.execute(text('select count(distinct identifier) from institutions')).scalar(),'states':c.execute(text('select count(distinct state) from institutions')).scalar()}
  print(json.dumps(result))
 """
+
 def state():
     return json.loads(subprocess.check_output(['docker','exec','hackathon-radar-backend','python','-c',CODE],text=True))
 def ready():

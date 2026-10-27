@@ -10,7 +10,7 @@ import zipfile
 from datetime import datetime, timezone
 from pathlib import PurePath
 from fastapi import HTTPException
-from pydantic import ValidationError
+from pydantic import ValidationError, HttpUrl
 from sqlalchemy import select
 from app.models.core import AuditLog
 from app.models.discovery import DiscoverySource
@@ -125,6 +125,10 @@ def parse_rows(table):
             if field in {'url', 'registration_url'}:
                 try:
                     public_https(value)
+                    value = str(HttpUrl(value))
+                    public_https(value)
+                    if len(value) > LIMITS[field]:
+                        raise ValueError('Normalized URL exceeds supported bounds')
                 except (ValueError, ValidationError):
                     invalid(f'Row {index}: source and registration links must be public HTTPS URLs')
             item[field] = value

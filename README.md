@@ -33,4 +33,4 @@ Live collection stays disabled unless explicitly configured with valid source pe
 
 ## Validation and release status
 
-See [FINAL_RELEASE_REPORT.md](FINAL_RELEASE_REPORT.md) for verified counts, commands, limitations and deployment guidance. [RELEASE_CHECKPOINT.md](RELEASE_CHECKPOINT.md) records exact follow-up actions. Source-backed stored facts can be stale; check organizer pages. Public ML forecasts remain withheld until temporal evidence and calibration support them.
+See [FINAL_RELEASE_REPORT.md](FINAL_RELEASE_REPORT.md) for verified counts, commands, limitations and deployment guidance. [RELEASE_CHECKPOINT.md](RELEASE_CHECKPOINT.md) records exact follow-up actions. See [DEMO_CHECKLIST.md](DEMO_CHECKLIST.md) for startup and fixture demonstrations and [REMAINING_BLOCKERS.md](REMAINING_BLOCKERS.md) for external dependencies. Public university browsing is at `/universities`; signed-in Preferences includes display-name editing. Source-backed stored facts can be stale; check organizer pages. Public ML forecasts remain withheld until temporal evidence and calibration support them.

@@ -1,0 +1,128 @@
+{
+  "run_started_at": "2026-10-26T23:38:36.325Z",
+  "browser": "156.0.8078.47",
+  "database": "temporary-sqlite-frontend-tests",
+  "checks": [
+    "Responsive 320px /explore",
+    "Responsive 320px /login",
+    "Responsive 320px /register",
+    "Responsive 320px /predictions",
+    "Responsive 390px /explore",
+    "Responsive 390px /login",
+    "Responsive 390px /register",
+    "Responsive 390px /predictions",
+    "Responsive 768px /explore",
+    "Responsive 768px /login",
+    "Responsive 768px /register",
+    "Responsive 768px /predictions",
+    "Responsive 1440px /explore",
+    "Responsive 1440px /login",
+    "Responsive 1440px /register",
+    "Responsive 1440px /predictions",
+    "Labeled login errors and password visibility",
+    "Password blur validation announces and identifies error",
+    "Browser registration and authenticated catalog",
+    "Distinct pagination pages",
+    "Keyword filtering, saving and safe organizer links",
+    "Explicit consent and persistent notification read state",
+    "Ordinary account admin denial",
+    "Logout server revocation",
+    "Saved event, consent and notification persist across login sessions",
+    "Mobile menu keyboard activation, route closure and content focus",
+    "Uncalibrated public forecasts are suppressed",
+    "Reduced motion preference",
+    "Synthetic prediction UI fixture: range, disclaimer, confidence, evidence and model timestamp",
+    "No browser credential persistence or unhandled exceptions"
+  ],
+  "evidence": [
+    {
+      "label": "320px /explore light",
+      "failures": []
+    },
+    {
+      "label": "320px /login light",
+      "failures": []
+    },
+    {
+      "label": "320px /register light",
+      "failures": []
+    },
+    {
+      "label": "320px /predictions light",
+      "failures": []
+    },
+    {
+      "label": "390px /explore light",
+      "failures": []
+    },
+    {
+      "label": "390px /login light",
+      "failures": []
+    },
+    {
+      "label": "390px /register light",
+      "failures": []
+    },
+    {
+      "label": "390px /predictions light",
+      "failures": []
+    },
+    {
+      "label": "768px /explore light",
+      "failures": []
+    },
+    {
+      "label": "768px /login light",
+      "failures": []
+    },
+    {
+      "label": "768px /register light",
+      "failures": []
+    },
+    {
+      "label": "768px /predictions light",
+      "failures": []
+    },
+    {
+      "label": "1440px /explore light",
+      "failures": []
+    },
+    {
+      "label": "1440px /login light",
+      "failures": []
+    },
+    {
+      "label": "1440px /register light",
+      "failures": []
+    },
+    {
+      "label": "1440px /predictions light",
+      "failures": []
+    },
+    {
+      "label": "Light theme login field errors",
+      "failures": []
+    },
+    {
+      "label": "Light theme focused password field",
+      "failures": []
+    },
+    {
+      "label": "Dark theme focused password field",
+      "failures": []
+    },
+    {
+      "label": "Authenticated mobile predictions and keyboard navigation",
+      "failures": []
+    },
+    {
+      "label": "Dark mobile predictions",
+      "failures": []
+    },
+    {
+      "label": "Synthetic date range, confidence, evidence, model and generated-time presentation",
+      "failures": []
+    }
+  ],
+  "errors": []
+}

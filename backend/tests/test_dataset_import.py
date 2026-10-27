@@ -125,3 +125,54 @@ def test_upload_route_checks_current_database_role(context):
         assert client.post('/admin/discovery/dataset-imports', json=body().model_dump()).status_code == 200
         user.roles = [Role(name='user')]; db.commit()
         assert client.post('/admin/discovery/dataset-imports', json=body().model_dump()).status_code == 403
+
+
+def test_maximum_upload_batches_identity_queries_and_repeat_dedup(context):
+    from sqlalchemy import event
+    db, user, registry = context
+    actor = SimpleNamespace(sub=str(user.id))
+    raw = ('title,url,organization,start_date\n' + ''.join(f'Synthetic capacity {number},https://example.edu/capacity-{number},Synthetic College,2027-01-01T10:00:00+00:00\n' for number in range(1000))).encode()
+    selects = []
+    def observe(connection, cursor, statement, parameters, execution_context, executemany):
+        if statement.lstrip().upper().startswith('SELECT'):
+            selects.append(statement)
+    event.listen(db.bind, 'before_cursor_execute', observe)
+    try:
+        first = import_dataset(db, body(raw), actor)
+        first_count = len(selects); selects.clear()
+        repeated = import_dataset(db, body(raw), actor)
+        second_count = len(selects)
+    finally:
+        event.remove(db.bind, 'before_cursor_execute', observe)
+    assert first['candidates_inserted'] == repeated['candidate_duplicates'] == 1000
+    assert first['published'] is repeated['published'] is False
+    assert first_count <= 4 and second_count <= 4, (first_count, second_count)
+    assert db.scalar(select(func.count()).select_from(Announcement)) == 1000
+
+
+def test_same_upload_repeated_rows_share_one_candidate(context):
+    db, user, registry = context
+    row = 'Synthetic repeated,https://example.edu/repeated,Example University,2027-01-01T10:00:00+00:00\n'
+    raw = ('title,url,organization,start_date\n' + row * 3).encode()
+    result = import_dataset(db, body(raw), SimpleNamespace(sub=str(user.id)))
+    assert result['candidates_inserted'] == 1 and result['candidate_duplicates'] == 2
+    assert db.scalar(select(func.count()).select_from(Announcement)) == 1
+
+
+def test_root_url_normalization_keeps_review_identity_and_deduplication(context):
+    from app.schemas.event import EventCreate
+    db, user, registry = context
+    raw = b'title,url,registration_url,organization,start_date\nSynthetic root,https://root.example.edu,https://register.example.edu,Example University,2027-01-01T10:00:00+00:00\nSynthetic root,https://root.example.edu/,https://register.example.edu/,Example University,2027-01-01T10:00:00+00:00\n'
+    result = import_dataset(db, body(raw), SimpleNamespace(sub=str(user.id)))
+    assert result['candidates_inserted'] == result['candidate_duplicates'] == 1
+    candidate = db.scalar(select(Announcement))
+    assert candidate.payload['url'] == 'https://root.example.edu/'
+    assert candidate.payload['registration_url'] == 'https://register.example.edu/'
+    assert str(EventCreate.model_validate(candidate.payload).url) == candidate.payload['url']
+
+
+@pytest.mark.parametrize('url', ['https://%31%32%37.0.0.1/', 'https://127.0.0.1./'])
+def test_url_normalization_cannot_hide_a_private_address(url):
+    with pytest.raises(HTTPException) as failure:
+        parse_rows([['title','url'],['Synthetic private URL',url]])
+    assert failure.value.status_code == 422

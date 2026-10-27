@@ -23,3 +23,16 @@ test('disposable browser URLs reject remote hosts and malformed or privileged ta
   }
   assert.equal(disposableUrl('http://127.0.0.1:5184'), 'http://127.0.0.1:5184');
 });
+
+
+test('institution directory pages use the existing public endpoint with bounded page size',async()=>{
+  let requested, options;
+  const client=createApiClient('/api',async(url,init)=>{requested=new URL(url,'http://127.0.0.1');options=init;return {ok:true,json:async()=>({data:[],total:0,page:2,page_size:25})};});
+  await client.institutions('Uttar Pradesh','College & University',undefined,2,25);
+  assert.equal(requested.pathname,'/api/institutions');
+  assert.equal(requested.searchParams.get('state'),'Uttar Pradesh');
+  assert.equal(requested.searchParams.get('q'),'College & University');
+  assert.equal(requested.searchParams.get('page'),'2');
+  assert.equal(requested.searchParams.get('page_size'),'25');
+  assert.equal(options.headers.Authorization,undefined);
+});

@@ -1,0 +1,13 @@
+{
+  "checks": [
+    "CSV upload through React stages candidate with permission reference",
+    "Authorized review publishes the synthetic candidate",
+    "Publication audit is visible in administration",
+    "Published candidate appears through frontend API proxy",
+    "Profile update refreshes authenticated account display without reload",
+    "Private preferences produce explainable recommendations",
+    "Personalized account has no accessibility violations or mobile overflow"
+  ],
+  "errors": [],
+  "synthetic_fixture_only": true
+}

@@ -97,6 +97,18 @@ function Explore({ saved, toggle }) {
     </section></div></>;
 }
 
+function InstitutionDirectory() {
+  const [filters, setFilters] = useState({state:'', q:''});
+  const [draft, setDraft] = useState(filters);
+  const [page, setPage] = useState(1);
+  const resource = useResource(useCallback(signal => api.institutions(filters.state, filters.q, signal, page, 25), [filters, page]));
+  const result = resource.data;
+  return <section aria-label="University directory"><h1>University directory</h1><p>Browse the stored institution directory. Directory entries do not imply permission to collect from their websites.</p>
+    <form onSubmit={event => {event.preventDefault();setFilters({...draft});setPage(1);}}><label>University name search<input maxLength={255} value={draft.q} onChange={event => setDraft({...draft,q:event.target.value})} /></label><label>Directory state<input maxLength={100} value={draft.state} placeholder="Exact state or union territory" onChange={event => setDraft({...draft,state:event.target.value})} /></label><button type="submit">Search universities</button><button type="button" onClick={() => {const empty={state:'',q:''};setDraft(empty);setFilters(empty);setPage(1);}}>Reset directory</button></form>
+    <Feedback resource={resource} />{result && <><p role="status">{result.total} institutions | page {page}</p>{!result.data.length && <p>No institutions match these filters.</p>}<div className="platform-grid">{result.data.map(row => <article className="platform-card" key={row.id}><h2>{row.name}</h2><p>{row.state}{row.city ? ` | ${row.city}` : ''}</p><p>{row.category} | {row.identifier}</p>{safeEventUrl(row.website) && <a href={safeEventUrl(row.website)} target="_blank" rel="noopener noreferrer">Institution website</a>}{safeEventUrl(row.source_url) && <p><a href={safeEventUrl(row.source_url)} target="_blank" rel="noopener noreferrer">Directory source</a></p>}<small>Directory verified: {date(row.last_verified_at, true)}</small></article>)}</div><nav aria-label="Directory pages" className="platform-pagination"><button disabled={page<=1 || resource.loading} onClick={() => setPage(value => value-1)}>Previous institutions</button><span>Page {page} of {Math.max(1,Math.ceil(result.total/25))}</span><button disabled={page*25>=result.total || resource.loading} onClick={() => setPage(value => value+1)}>Next institutions</button></nav></>}
+  </section>;
+}
+
 function EventDetails({ saved, toggle }) {
   const { id } = useParams();
   const resource = useResource(useCallback(signal => api.event(id, signal), [id]));
@@ -172,6 +184,20 @@ function Predictions() {
     {resource.data?.length === 0 && <p>No eligible public predictions. The current baseline is uncalibrated; insufficient or sub-threshold forecasts remain internal for evaluation. Confirmed events are still available in Explore.</p>}</section>;
 }
 
+function ProfileEditor() {
+  const { user } = useAuth();
+  const [name, setName] = useState(user?.name || '');
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState('');
+  async function submit(event) {
+    event.preventDefault(); setBusy(true); setMessage('');
+    try { await api.updateProfile(name); setMessage('Display name updated.'); }
+    catch (error) { setMessage(error.message); }
+    finally { setBusy(false); }
+  }
+  return <form onSubmit={submit} aria-label="Account profile"><label>Display name<input value={name} required minLength={1} maxLength={100} onChange={event => setName(event.target.value)} /></label><button disabled={busy || !name.trim()}>{busy ? 'Saving name...' : 'Update display name'}</button>{message && <p role="status">{message}</p>}</form>;
+}
+
 function Personalization() {
   const { user } = useAuth();
   const resource = useResource(useCallback(signal => api.request('/account/discovery-preferences', { signal }), []));
@@ -186,7 +212,7 @@ function Personalization() {
     catch (error) { setMessage(error.message); }
     finally { setBusy(false); }
   }
-  return <section aria-label="Personalization"><h2>Your account and interests</h2><p>{user?.name} ? {user?.email}</p><Feedback resource={resource} />
+  return <section aria-label="Personalization"><h2>Your account and interests</h2><ProfileEditor /><p>{user?.name} ? {user?.email}</p><Feedback resource={resource} />
     {values && <form onSubmit={submit}>{Object.entries({preferred_location:'Preferred city or location',preferred_mode:'Preferred mode',interests:'Interests (comma separated)'}).map(([key,label]) => <label key={key}>{label}<input value={values[key]} maxLength={key === 'interests' ? 255 : key === 'preferred_mode' ? 50 : 100} onChange={event => setDraft({...values,[key]:event.target.value})} /></label>)}<label><input type="checkbox" checked={values.in_app_reminders} onChange={event => setDraft({...values,in_app_reminders:event.target.checked})} />In-app saved-event reminders</label><button disabled={busy}>Save discovery preferences</button></form>}
     {message && <p role="status">{message}</p>}<h2>Recommended for you</h2><p>Matches use stated preferences and saved events. Relevance scores are rules, not prediction probabilities.</p><Feedback resource={recommendations} />
     {recommendations.data?.data.length === 0 && <p>No matching upcoming events yet. Add interests or save events to improve matching.</p>}
@@ -259,9 +285,9 @@ export default function LivePlatform() {
   return <div className={`platform ${dark ? 'platform-dark' : ''}`}><a className="platform-skip" href="#platform-content">Skip to content</a>
     <header className="platform-header"><Link className="platform-brand" to="/"><BrainCircuit size={26} />Hackathon <strong>Radar</strong></Link>
       <button className="platform-menu" aria-expanded={mobileOpen} aria-controls="platform-navigation" onClick={() => setMobileOpenKey(mobileOpen ? null : location.key)}>Menu</button>
-      <nav id="platform-navigation" className={mobileOpen ? 'open' : ''} aria-label="Main navigation"><NavLink to="/explore">Explore</NavLink><NavLink to="/saved">Saved events</NavLink><NavLink to="/predictions">Predictions</NavLink><NavLink to="/notifications">Preferences</NavLink><NavLink to="/admin">Admin</NavLink><a href="/demo/">Design demo</a></nav>
+      <nav id="platform-navigation" className={mobileOpen ? 'open' : ''} aria-label="Main navigation"><NavLink to="/explore">Explore</NavLink><NavLink to="/universities">Universities</NavLink><NavLink to="/saved">Saved events</NavLink><NavLink to="/predictions">Predictions</NavLink><NavLink to="/notifications">Preferences</NavLink><NavLink to="/admin">Admin</NavLink><a href="/demo/">Design demo</a></nav>
       <div className="platform-session"><button aria-label={`Use ${dark ? 'light' : 'dark'} theme`} onClick={() => setDark(value => !value)}>{dark ? <Sun size={18} /> : <Moon size={18} />}</button>{user ? <><span>{user.name}</span><button disabled={isLoading} onClick={logout}>Sign out</button></> : <Link to="/login">Sign in</Link>}</div>
     </header><main id="platform-content" tabIndex={-1}><div className="platform-container">{authError && <p role="alert">{authError}</p>}{bookmarkError && <p role="alert">{bookmarkError}</p>}
-      <Routes><Route path="/" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/home" element={<Navigate replace to="/" />} /><Route path="/explore" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/event/:id" element={<EventDetails saved={saved} toggle={toggle} />} /><Route path="/saved" element={<Bookmarks saved={saved} toggle={toggle} />} /><Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} /><Route path="/forgot-password" element={<section><h1>Password reset unavailable</h1><p>The current backend does not support password reset. No email has been sent.</p><Link to="/login">Return to sign in</Link></section>} /><Route path="/admin/*" element={<Admin />} /><Route path="/notifications" element={<Preferences key={user?.id || "guest"} />} /><Route path="/predictions" element={<Predictions />} /><Route path="*" element={<section><h1>Page not found</h1><Link to="/">Return to events</Link></section>} /></Routes>
+      <Routes><Route path="/" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/home" element={<Navigate replace to="/" />} /><Route path="/explore" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/event/:id" element={<EventDetails saved={saved} toggle={toggle} />} /><Route path="/universities" element={<InstitutionDirectory />} /><Route path="/saved" element={<Bookmarks saved={saved} toggle={toggle} />} /><Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} /><Route path="/forgot-password" element={<section><h1>Password reset unavailable</h1><p>The current backend does not support password reset. No email has been sent.</p><Link to="/login">Return to sign in</Link></section>} /><Route path="/admin/*" element={<Admin />} /><Route path="/notifications" element={<Preferences key={user?.id || "guest"} />} /><Route path="/predictions" element={<Predictions />} /><Route path="*" element={<section><h1>Page not found</h1><Link to="/">Return to events</Link></section>} /></Routes>
     </div></main><footer className="platform-footer">Hackathon Radar · Backend catalog and saved events. <a href="/demo/">Fictional design demo</a></footer></div>;
 }
