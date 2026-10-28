@@ -33,7 +33,14 @@ def main():
     def compose(*args):
         result = subprocess.run([*prefix, *args], cwd=ROOT, env=env, capture_output=True, text=True, timeout=360)
         if result.returncode:
-            raise RuntimeError('Owned Compose operation failed: ' + args[0])
+            # Compose stdout/stderr may include service environment or URLs with
+            # credentials; redact known generated secrets before reporting.
+            details = (result.stdout + '\n' + result.stderr)[-6000:]
+            for sensitive in (password, env_file.read_text(encoding='utf-8').split('SECRET_KEY=', 1)[-1].splitlines()[0]):
+                if sensitive:
+                    details = details.replace(sensitive, '[REDACTED]')
+            raise RuntimeError('Owned Compose operation failed: ' + args[0] +
+                               ' (exit ' + str(result.returncode) + ')\n' + details)
         return result.stdout.strip()
     def code(value):
         return compose('exec', '-T', 'backend', 'python', '-c', value)
