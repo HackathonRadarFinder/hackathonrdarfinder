@@ -1,3 +1,13 @@
+# Current launch/demo notes
+
+The local app is at http://127.0.0.1:5173; the collector service is included in the workers profile. SMTP/email controls are disabled; demonstrate in-app notification read state instead. Do not request SMTP credentials for launch.
+
+Release review is PR #100, not PR #98/#99. Check the repaired head's CI before owner review. Production Compose and restart/backup/restore were verified in an owned disposable stack; public hosting/DNS/secrets remain external requirements. Preserve the existing database and its 1362 institutions.
+
+Organizer collection must use COLLECTOR_RAW_DATA_DIR=/app/collector-data/raw on the persistent collector volume. Brabble API snapshots use COLLECTOR_SNAPSHOT_DIR. Never enable a source without its actual permission evidence/key, and never publish pending rows automatically.
+
+---
+
 # Hackathon Radar Finder demo checklist
 
 ## Start the existing local application
@@ -45,7 +55,7 @@ Open http://127.0.0.1:5180 and confirm http://127.0.0.1:5180/api/__disposable_fi
 4. Upload `docs/demo/synthetic-events.csv` **only to that disposable fixture**, with the matching reference. The file is explicitly fictional; never upload it to the persistent catalog. Import stages three pending candidates; repeating it creates none.
 5. Review -> inspect each synthetic candidate -> supply an explicit demonstration rationale -> approve/publish. Confirm catalog details and discovery history. Show rejection on another synthetic candidate if desired; already reviewed records cannot be approved twice.
 6. Duplicates -> inspect the two synthetic Buildathon records -> review merge -> enter rationale -> confirm. Verify one retained record, preserved provenance and audit history. Reimporting the file must not resurrect the duplicate.
-7. Preferences -> explain email opt-in and in-app consent -> show read/unread notices. Explain that real SMTP is disabled; scheduling and transport failure cases are covered by isolated tests, not a claim of delivered email.
+7. Preferences -> show profile/interests and in-app read/unread notices. Email-only controls are hidden and SMTP is disabled.
 8. Predictions -> show readiness and withheld forecasts. Five reviewed historical editions are insufficient for calibrated public predictions. Synthetic forecasts are test fixtures only.
 
 ## Safe restart and checks

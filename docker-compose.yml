@@ -102,7 +102,7 @@ services:
       EMAIL_MODE: disabled
       DEBUG: "false"
       COLLECTOR_SNAPSHOT_DIR: /app/collector-data
-      RAW_DATA_DIR: /app/collector-data/raw
+      COLLECTOR_RAW_DATA_DIR: /app/collector-data/raw
     command: [python, -m, workers.discovery, --watch, --allow-live]
     volumes: [collector_snapshots:/app/collector-data]
     depends_on:

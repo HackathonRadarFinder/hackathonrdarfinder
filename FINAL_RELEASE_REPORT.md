@@ -1,3 +1,31 @@
+# Release stabilization handoff
+
+PR #100 is the existing main-history bridge; no duplicate PR or protected merge was created. At 034b4716c523a195825d5af6312f6a486160dd5c, [CI](https://github.com/HackathonRadarFinder/hackathonrdarfinder/actions/runs/40734796936) and [Module 2.4](https://github.com/HackathonRadarFinder/hackathonrdarfinder/actions/runs/40734796812) passed. The bridge has zero file differences from develop and keeps the old main tip d968e3978284b557a255fee5a9051b206ec3a5ea as an ancestor. Original main remains recoverable without a reset or history rewrite.
+
+One focused repair corrects RAW_DATA_DIR to COLLECTOR_RAW_DATA_DIR in local/production Compose. The previous value was ignored by the actual organizer collector loader and could leave raw snapshots outside the durable volume. Both direct configuration checks passed and a regression was added; repair CI, not the older green run, determines readiness of the new head. No collector redesign, full audit, dataset reimport or image rebuild was performed during stabilization.
+
+| Area | Result | Evidence | Blocker |
+|---|---|---|---|
+| PR #100 | Existing draft; history bridge verified | Previous exact-head CI green; zero develop file differences before repair | Repair CI, owner review/merge |
+| Backend | Ready locally | HTTP readiness: connected/current; prior focused regressions reused | None beyond repair gate |
+| Frontend | Integrated | Prior 30 browser checks, 22 axe scans; 7 admin and 5 college checks | None |
+| PostgreSQL | Preserved | 5 events/3 users/3 saves/1362 institutions; stored-value hashes unchanged | None |
+| Scheduler | Implemented and restart-tested | Owned production Compose run: schedule, lock, recovery and backup/restore passed | Raw-storage configuration repair CI |
+| Live acquisition | Not tested with real credentials | Missing Brabble key; provider mocks passed 14 tests | Authorized key and source policy |
+| Review/publication | Human gate retained | 25 candidate review packet; two factual drafts; zero new real publications | Real human approval and conflicting facts |
+| Colleges | Directory ready; no invented matches | 1362 entries; 0 verified event associations, 0 upcoming associations | Verified publication links |
+| ML | Honest insufficient-history status | 5 editions/1 recurring series/0 folds; public forecasts disabled | Sufficient earlier observations/outcomes |
+| Production Docker | Isolated stack verified | Non-root images, scheduler recovery, persistence and backup/restore passed | Hosting/DNS/private production configuration |
+| Public deployment | No | Local application only at http://127.0.0.1:5173 | Owner authorization and real infrastructure |
+
+SMTP is disabled in release Compose and email-only controls are hidden. In-app notifications remain available. SMTP credentials/delivery are no longer launch requirements. Older report sections below are historical, including superseded email blockers.
+
+No secrets, generated collector datasets or dumps are tracked by the scoped path check. The untracked scraper and accidental terminal-output file were preserved. Local tests requiring elevation were unavailable because automatic approval review hit a usage limit; that rejected command was not executed. No bypass or fabricated passing test result is claimed. The added regression is intended for the new commit's CI.
+
+Exact next action: inspect PR #100's checks for the repair commit once; if green, the owner reviews and decides whether to merge. Configure real private deployment secrets/domain/hosting and authorized API/source policy separately. Do not equate a main merge with public deployment.
+
+---
+
 # Final execution sprint: 28 October 2026
 
 Fresh branch: `fix/2026-10-28-factual-review`, based on `origin/develop` after PR #97 was confirmed merged externally (`c996f16e9d5f737d8b3a7fcd99fb11e38ac6c9ae`). No duplicate PR #96/#97 was created, protected branch merged or production deployment performed by this sprint. The earlier release report below remains historical evidence.
