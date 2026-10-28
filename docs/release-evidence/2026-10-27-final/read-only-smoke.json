@@ -1,0 +1,72 @@
+{
+  "method": "GET only, small local loopback sample; not a load test",
+  "checks": {
+    "/api/ready": {
+      "http_status": 200,
+      "requests": 5,
+      "median_ms": 14.33,
+      "max_ms": 47.84
+    },
+    "/api/events/?page=1&page_size=5": {
+      "http_status": 200,
+      "requests": 5,
+      "median_ms": 20.77,
+      "max_ms": 38.58,
+      "total": 5
+    },
+    "/api/institutions?page=1&page_size=25": {
+      "http_status": 200,
+      "requests": 5,
+      "median_ms": 15.9,
+      "max_ms": 39.03,
+      "total": 1362
+    },
+    "/api/institutions?state=Uttar%20Pradesh&page_size=1": {
+      "http_status": 200,
+      "requests": 5,
+      "median_ms": 18.81,
+      "max_ms": 22.52,
+      "total": 117
+    },
+    "/api/institutions?state=Gujarat&page_size=1": {
+      "http_status": 200,
+      "requests": 5,
+      "median_ms": 28.65,
+      "max_ms": 31.7,
+      "total": 109
+    },
+    "/api/institutions?state=Maharashtra&page_size=1": {
+      "http_status": 200,
+      "requests": 5,
+      "median_ms": 14.74,
+      "max_ms": 16.2,
+      "total": 97
+    },
+    "/api/institutions?q=University&page_size=25": {
+      "http_status": 200,
+      "requests": 5,
+      "median_ms": 18.18,
+      "max_ms": 20.16,
+      "total": 1010
+    },
+    "/api/institutions?page=0": {
+      "http_status": 422,
+      "requests": 1,
+      "median_ms": 32.08,
+      "max_ms": 32.08
+    },
+    "/api/admin/stats": {
+      "http_status": 401,
+      "requests": 1,
+      "median_ms": 29.77,
+      "max_ms": 29.77
+    },
+    "/api/predictions/readiness": {
+      "http_status": 200,
+      "requests": 5,
+      "median_ms": 29.59,
+      "max_ms": 35.89,
+      "status": "insufficient_history"
+    }
+  }
+}

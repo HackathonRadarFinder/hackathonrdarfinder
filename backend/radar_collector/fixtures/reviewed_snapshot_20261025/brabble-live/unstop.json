@@ -1,0 +1,4823 @@
+﻿[
+    {
+        "id":  "unstop-1771873",
+        "title":  "CYPHER-DigiWeek",
+        "organiser":  "J.C. Bose University of Science and Technology, YMCA, Faridabad",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/cypher-digiweek-jc-bose-university-of-science-and-technology-ymca-faridabad-1771873",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771873",
+        "deadline":  "2026-10-25T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Faridabad",
+        "prize":  {
+                      "label":  "â¹18K",
+                      "inr":  18000
+                  },
+        "team":  "3 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate"
+                        ],
+        "registered":  115
+    },
+    {
+        "id":  "unstop-1767548",
+        "title":  "Build for Bharat 2026 | Software + Hardware Hackathon",
+        "organiser":  "KIET Group of Institutions, Delhi-NCR",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/build-for-bharat-2026-software-hardware-hackathon-kiet-group-of-institutions-delhi-ncr-1767548",
+        "shareUrl":  "https://brabble.ai/s/unstop-1767548",
+        "deadline":  "2026-10-25T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Ghaziabad",
+        "prize":  {
+                      "label":  "â¹1.2L",
+                      "inr":  120000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  816
+    },
+    {
+        "id":  "unstop-1771928",
+        "title":  "Tryb Weekend Challenge 1: Build, Launch \u0026 Play",
+        "organiser":  "Tryb",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/tryb-weekend-challenge-1-build-launch-play-tryb-arcade-26-the-build-play-festival-prizes-worth-rs225-lakhs-tr-1771928",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771928",
+        "deadline":  "2026-10-25T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹23K",
+                      "inr":  23000
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Fresher"
+                        ],
+        "registered":  43
+    },
+    {
+        "id":  "unstop-1766040",
+        "title":  "Jammu Smart City Hackathon",
+        "organiser":  "LEAD",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/jammu-smart-city-hackathon-jammu-smart-city-hackathon-lead-1766040",
+        "shareUrl":  "https://brabble.ai/s/unstop-1766040",
+        "deadline":  "2026-10-25T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Jammu",
+        "prize":  {
+                      "label":  "â¹1L",
+                      "inr":  100000
+                  },
+        "team":  "1 to 10",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  734
+    },
+    {
+        "id":  "unstop-1756946",
+        "title":  "ORBION: 8-Hour Hackathon",
+        "organiser":  "Institute of Engineering and Management",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/orbion-8-hour-hackathon-institute-of-engineering-and-managemet-1756946",
+        "shareUrl":  "https://brabble.ai/s/unstop-1756946",
+        "deadline":  "2026-10-25T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kolkata",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  690
+    },
+    {
+        "id":  "unstop-1773705",
+        "title":  "Campus Quest",
+        "organiser":  "Rajiv Gandhi Institute of Petroleum Technology (RGIPT), Jais, Uttar Pradesh",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/campus-quest-rajiv-gandhi-institute-of-petroleum-technology-rgipt-jais-uttar-pradesh-1773705",
+        "shareUrl":  "https://brabble.ai/s/unstop-1773705",
+        "deadline":  "2026-10-25T18:29:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Raebareli",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "School Students"
+                        ],
+        "registered":  41
+    },
+    {
+        "id":  "unstop-1770559",
+        "title":  "Low Latency Trading Experience | IICPC x Amalthea 2026, IIT Gandhinagar",
+        "organiser":  "Indian Institute of Technology (IIT), Gandhinagar",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/low-latency-trading-experience-iit-gandhinagar-1770559",
+        "shareUrl":  "https://brabble.ai/s/unstop-1770559",
+        "deadline":  "2026-10-25T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Gandhinagar",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  103
+    },
+    {
+        "id":  "unstop-1770019",
+        "title":  "Gwalior AI Summit 2026 â AI Innovation Challenge",
+        "organiser":  "Atal Bihari Vajpayee-Indian Institute of Information Technology and Management",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/gwalior-ai-summit-2026-ai-innovation-challenge-gwalior-ai-summit-29-30-oct-atal-bihari-vajpayee-indian-instit-1770019",
+        "shareUrl":  "https://brabble.ai/s/unstop-1770019",
+        "deadline":  "2026-10-25T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Gwalior",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 3",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  58
+    },
+    {
+        "id":  "unstop-1759829",
+        "title":  "DevHack 2026",
+        "organiser":  "Sahyadri College of Engineering \u0026 Management (SCEM), Mangaluru",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/devhack-2026-devhost-2026-sahyadri-open-source-community-1759829",
+        "shareUrl":  "https://brabble.ai/s/unstop-1759829",
+        "deadline":  "2026-10-25T18:29:04.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Mangaluru",
+        "prize":  {
+                      "label":  "â¹1L",
+                      "inr":  100000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Undergraduate",
+                            "Arts, Commerce, Sciences \u0026 Others"
+                        ],
+        "registered":  1293
+    },
+    {
+        "id":  "unstop-1767673",
+        "title":  "D3COY",
+        "organiser":  "Shri Vile Parle Kelavani Mandal\u0027s Dwarkadas J. Sanghvi College of Engineering (DJSCE), Mumbai",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/d3coy-shri-vile-parle-kelavani-mandals-dwarkadas-j-sanghvi-college-of-engineering-djsce-mumbai-1767673",
+        "shareUrl":  "https://brabble.ai/s/unstop-1767673",
+        "deadline":  "2026-10-25T18:29:35.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Vile Parle",
+        "prize":  {
+                      "label":  "â¹1.9L",
+                      "inr":  190000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Undergraduate",
+                            "Fresher",
+                            "Arts, Commerce, Sciences \u0026 Others"
+                        ],
+        "registered":  507
+    },
+    {
+        "id":  "unstop-1769328",
+        "title":  "Hackathon",
+        "organiser":  "National Institute of Technology (NIT), Arunachal Pradesh",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/hackathon-addovedi-2026-national-institute-of-technology-nit-arunachal-pradesh-1769328",
+        "shareUrl":  "https://brabble.ai/s/unstop-1769328",
+        "deadline":  "2026-10-25T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  90
+    },
+    {
+        "id":  "unstop-1769180",
+        "title":  "Circuit Debugging",
+        "organiser":  "National Institute of Technology (NIT), Arunachal Pradesh",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/circuit-debugging-addovedi-2026-national-institute-of-technology-nit-arunachal-pradesh-1769180",
+        "shareUrl":  "https://brabble.ai/s/unstop-1769180",
+        "deadline":  "2026-10-25T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 2",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  24
+    },
+    {
+        "id":  "unstop-1772228",
+        "title":  "MST Blockchain Buildathon | From Idea to MVP",
+        "organiser":  "MST Blockchain",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/mst-blockchain-buildathon-from-idea-to-mvp-mst-blockchain-1772228",
+        "shareUrl":  "https://brabble.ai/s/unstop-1772228",
+        "deadline":  "2026-10-25T18:31:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Pimpri",
+        "prize":  {
+                      "label":  "â¹25K",
+                      "inr":  25000
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Experienced Professionals",
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate"
+                        ],
+        "registered":  253
+    },
+    {
+        "id":  "unstop-1773100",
+        "title":  "Octocode",
+        "organiser":  "Chhattisgarh Institute of Technology, Raipur",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/octocode-chhattisgarh-institute-of-technology-raipur-1773100",
+        "shareUrl":  "https://brabble.ai/s/unstop-1773100",
+        "deadline":  "2026-10-25T18:31:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Raipur",
+        "prize":  {
+                      "label":  "â¹10K",
+                      "inr":  10000
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  89
+    },
+    {
+        "id":  "unstop-1774755",
+        "title":  "Engage 6.0 â Code with AI Hackathon",
+        "organiser":  "The NorthCap University (NCU), Gurgaon",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/engage-60-code-with-ai-hackathon-the-northcap-university-ncu-gurgaon-1774755",
+        "shareUrl":  "https://brabble.ai/s/unstop-1774755",
+        "deadline":  "2026-10-26T12:31:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Gurgaon",
+        "prize":  {
+                      "label":  "â¹15K",
+                      "inr":  15000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  11
+    },
+    {
+        "id":  "unstop-1736048",
+        "title":  "Idea Competition 2026",
+        "organiser":  "Fr. Conceicao Rodrigues College of Engineering (FRCRCE), Bandra",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/idea-competition-2026-fr-conceicao-rodrigues-college-of-engineering-frcrce-bandra-1736048",
+        "shareUrl":  "https://brabble.ai/s/unstop-1736048",
+        "deadline":  "2026-10-26T12:59:07.000Z",
+        "mode":  "HYBRID",
+        "city":  "Bandra",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  770
+    },
+    {
+        "id":  "unstop-1771598",
+        "title":  "Syntax Sprint",
+        "organiser":  "Indian Institute of Information Technology (IIIT), Bhagalpur",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/syntax-sprint-protofos-indian-institute-of-information-technology-iiit-bhagalpur-1771598",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771598",
+        "deadline":  "2026-10-26T13:03:26.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Bhagalpur",
+        "prize":  {
+                      "label":  "â¹15K",
+                      "inr":  15000
+                  },
+        "team":  "1",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  109
+    },
+    {
+        "id":  "unstop-1772304",
+        "title":  "Code Conqueror India 2026 - National Hackathon",
+        "organiser":  "WeCodeCoders",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/code-conqueror-india-2026-national-hackathon-wecodecoders-1772304",
+        "shareUrl":  "https://brabble.ai/s/unstop-1772304",
+        "deadline":  "2026-10-26T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  683
+    },
+    {
+        "id":  "unstop-1767506",
+        "title":  "Colossus 3.O",
+        "organiser":  "Dr. Ambedkar Institute of Technology (Dr. AIT), Bangalore",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/colossus-3o-dr-ambedkar-institute-of-technology-dr-ait-bangalore-1767506",
+        "shareUrl":  "https://brabble.ai/s/unstop-1767506",
+        "deadline":  "2026-10-26T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Bangalore Urban",
+        "prize":  {
+                      "label":  "â¹1L",
+                      "inr":  100000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  2013
+    },
+    {
+        "id":  "unstop-1760000",
+        "title":  "Catalyst Hack 2026",
+        "organiser":  "Catalyst Crew Dev Community",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/catalyst-hack-2026-catalyst-crew-dev-community-1760000",
+        "shareUrl":  "https://brabble.ai/s/unstop-1760000",
+        "deadline":  "2026-10-26T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹20K",
+                      "inr":  20000
+                  },
+        "team":  "2 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  538
+    },
+    {
+        "id":  "unstop-1769616",
+        "title":  "NHCE Ideathon 2026",
+        "organiser":  "New Horizon Collage Of Engineering",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/nhce-ideathon-2026-ideathon-2026-new-horizon-collage-of-engineering-1769616",
+        "shareUrl":  "https://brabble.ai/s/unstop-1769616",
+        "deadline":  "2026-10-26T18:29:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Bangalore Urban",
+        "prize":  {
+                      "label":  "â¹20K",
+                      "inr":  20000
+                  },
+        "team":  "1 to 6",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  23
+    },
+    {
+        "id":  "unstop-1769789",
+        "title":  "Hackcult",
+        "organiser":  "Indian Institute of Technology (IIT), Gandhinagar",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/hackcult-iit-gandhinagar-1769789",
+        "shareUrl":  "https://brabble.ai/s/unstop-1769789",
+        "deadline":  "2026-10-26T18:29:03.000Z",
+        "mode":  "HYBRID",
+        "city":  "Gandhinagar",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  1292
+    },
+    {
+        "id":  "unstop-1766721",
+        "title":  "Glitched",
+        "organiser":  "Fr. Conceicao Rodrigues College of Engineering (FRCRCE), Bandra",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/glitched-crescendo-gda-frcrce-1766721",
+        "shareUrl":  "https://brabble.ai/s/unstop-1766721",
+        "deadline":  "2026-10-26T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Mumbai",
+        "prize":  {
+                      "label":  "â¹3K",
+                      "inr":  3000
+                  },
+        "team":  "3",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Undergraduate"
+                        ],
+        "registered":  35
+    },
+    {
+        "id":  "unstop-1768309",
+        "title":  "Ecclesia 4.0- Hackathon",
+        "organiser":  "Assam down town University",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/ecclesia-2026-assam-down-town-university-1768309",
+        "shareUrl":  "https://brabble.ai/s/unstop-1768309",
+        "deadline":  "2026-10-26T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Guwahati",
+        "prize":  {
+                      "label":  "â¹20K",
+                      "inr":  20000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  218
+    },
+    {
+        "id":  "unstop-1763470",
+        "title":  "Bio-Economy Hackathon - Delhi",
+        "organiser":  "Indian Institute of Forest Management",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/competitions/bio-economy-hackathon-delhi-indian-institute-of-forest-management-1763470",
+        "shareUrl":  "https://brabble.ai/s/unstop-1763470",
+        "deadline":  "2026-10-26T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "New Delhi",
+        "prize":  {
+                      "label":  "â¹30K",
+                      "inr":  30000
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  90
+    },
+    {
+        "id":  "unstop-1771902",
+        "title":  "DEFCON 2.0",
+        "organiser":  "National Institute of Technology (NIT), Warangal",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/defcon-20-defcon-20-nit-warangal-1771902",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771902",
+        "deadline":  "2026-10-26T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Warangal",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  183
+    },
+    {
+        "id":  "unstop-1762158",
+        "title":  "CodeHack India - National Level Hackathon",
+        "organiser":  "WeCodeCoders",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codehack-india-national-level-hackathon-wecodecoders-1762158",
+        "shareUrl":  "https://brabble.ai/s/unstop-1762158",
+        "deadline":  "2026-10-27T07:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  3501
+    },
+    {
+        "id":  "unstop-1767480",
+        "title":  "Synergy 2026",
+        "organiser":  "Fr. Conceicao Rodrigues College of Engineering (FRCRCE), Bandra",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/synergy-2026-crescendo-26-fr-conceicao-rodrigues-college-of-engineering-frcrce-bandra-1767480",
+        "shareUrl":  "https://brabble.ai/s/unstop-1767480",
+        "deadline":  "2026-10-27T12:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Mumbai",
+        "prize":  {
+                      "label":  "â¹40K",
+                      "inr":  40000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  121
+    },
+    {
+        "id":  "unstop-1766724",
+        "title":  "Escape Room",
+        "organiser":  "Fr. Conceicao Rodrigues College of Engineering (FRCRCE), Bandra",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/escape-room-crescendo-codestorm-1766724",
+        "shareUrl":  "https://brabble.ai/s/unstop-1766724",
+        "deadline":  "2026-10-27T12:59:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Mumbai",
+        "prize":  {
+                      "label":  "â¹6K",
+                      "inr":  6000
+                  },
+        "team":  "1 to 2",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "School Students",
+                            "Engineering Students",
+                            "Undergraduate"
+                        ],
+        "registered":  88
+    },
+    {
+        "id":  "unstop-1770504",
+        "title":  "WebVision 2.0",
+        "organiser":  "Maharaja Agrasen Institute of Technology ",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/webvision-20-maharaja-agrasen-institute-of-technology-1770504",
+        "shareUrl":  "https://brabble.ai/s/unstop-1770504",
+        "deadline":  "2026-10-27T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Rohini",
+        "prize":  {
+                      "label":  "â¹25K",
+                      "inr":  25000
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  336
+    },
+    {
+        "id":  "unstop-1766733",
+        "title":  "Hack Into PCell v2.0",
+        "organiser":  "Fr. Conceicao Rodrigues College of Engineering (FRCRCE), Bandra",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/competitions/hack-into-pcell-v20-crescendo-fr-conceicao-rodrigues-college-of-engineering-frcrce-bandra-1766733",
+        "shareUrl":  "https://brabble.ai/s/unstop-1766733",
+        "deadline":  "2026-10-27T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Mumbai",
+        "prize":  {
+                      "label":  "â¹5K",
+                      "inr":  5000
+                  },
+        "team":  "2 to 3",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  52
+    },
+    {
+        "id":  "unstop-1771520",
+        "title":  "Prajwalan - 2K26",
+        "organiser":  "Ramdeobaba University",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/prajwalan-2k26-ramdeobaba-university-1771520",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771520",
+        "deadline":  "2026-10-27T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹9K",
+                      "inr":  9000
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  1047
+    },
+    {
+        "id":  "unstop-1775195",
+        "title":  "CTF",
+        "organiser":  "IIITDM Kancheepuram",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/ctf-iiitdm-kancheepuram-1775195",
+        "shareUrl":  "https://brabble.ai/s/unstop-1775195",
+        "deadline":  "2026-10-27T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 3",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  7
+    },
+    {
+        "id":  "unstop-1769022",
+        "title":  "Codekshetra",
+        "organiser":  "St. Vincent Pallotti College of Engineering and Technology (SVPCET), Nagpur",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codekshetra-st-vincent-pallotti-college-of-engineering-and-technology-svpcet-nagpur-1769022",
+        "shareUrl":  "https://brabble.ai/s/unstop-1769022",
+        "deadline":  "2026-10-27T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Nagpur",
+        "prize":  {
+                      "label":  "â¹30K",
+                      "inr":  30000
+                  },
+        "team":  "2 to 5",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  182
+    },
+    {
+        "id":  "unstop-1771647",
+        "title":  "Celestia",
+        "organiser":  "HyprLan",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/celestia-hyprlan-1771647",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771647",
+        "deadline":  "2026-10-27T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Bangalore",
+        "prize":  {
+                      "label":  "â¹35K",
+                      "inr":  35000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  414
+    },
+    {
+        "id":  "unstop-1767643",
+        "title":  "Bio-Economy Hackathon 2026 (Kolkata)",
+        "organiser":  "Indian Institute of Forest Management",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/competitions/bio-economy-hackathon-2026-kolkata-indian-institute-of-forest-management-1767643",
+        "shareUrl":  "https://brabble.ai/s/unstop-1767643",
+        "deadline":  "2026-10-27T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kolkata",
+        "prize":  {
+                      "label":  "â¹30K",
+                      "inr":  30000
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  47
+    },
+    {
+        "id":  "unstop-1773178",
+        "title":  "Yantravedh Hardware Hackathon",
+        "organiser":  "Marathwada Mitra Mandal\u0027s College of Engineering (MMCOE), Pune",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/yantravedh-hardware-hackathon-marathwada-mitra-mandals-college-of-engineering-mmcoe-pune-1773178",
+        "shareUrl":  "https://brabble.ai/s/unstop-1773178",
+        "deadline":  "2026-10-27T19:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Pune",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  7
+    },
+    {
+        "id":  "unstop-1765597",
+        "title":  "PromptWars Hyderabad 2026 - AI \u0026 Prompt Engineering Competition",
+        "organiser":  "St. Peter\u0027s Engineering College (SPEC), Hyderabad, Telangana",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/promptwars-hyderabad-2026-ai-prompt-engineering-competition-st-peters-engineering-college-spec-hyderabad-tela-1765597",
+        "shareUrl":  "https://brabble.ai/s/unstop-1765597",
+        "deadline":  "2026-10-28T06:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Hyderabad",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  15
+    },
+    {
+        "id":  "unstop-1762774",
+        "title":  "Deepfake ML Hackathon",
+        "organiser":  "International Institute of Information Technology (IIIT), Bangalore",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/deepfake-ml-hackathon-synergy-26-international-institute-of-information-technology-iiit-bangalore-1762774",
+        "shareUrl":  "https://brabble.ai/s/unstop-1762774",
+        "deadline":  "2026-10-28T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Experienced Professionals",
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate"
+                        ],
+        "registered":  324
+    },
+    {
+        "id":  "unstop-1769664",
+        "title":  "Hybrid Micro Mouse Challenge",
+        "organiser":  "Alliance University (AU)",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/hybrid-micro-mouse-challenge-alliance-university-au-1769664",
+        "shareUrl":  "https://brabble.ai/s/unstop-1769664",
+        "deadline":  "2026-10-28T18:29:13.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Anekal",
+        "prize":  {
+                      "label":  "â¹55K",
+                      "inr":  55000
+                  },
+        "team":  "1 to 5",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  9
+    },
+    {
+        "id":  "unstop-1773221",
+        "title":  "Bid and Code: Design \u0026 Frontend Competition by ACM",
+        "organiser":  "University School of Information, Communication and Technology (USICT), GGS Indraprastha University (GGSIPU), New Delhi",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/bid-and-code-design-frontend-competition-by-acm-university-school-of-information-communication-and-technology-1773221",
+        "shareUrl":  "https://brabble.ai/s/unstop-1773221",
+        "deadline":  "2026-10-28T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹6K",
+                      "inr":  6000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  109
+    },
+    {
+        "id":  "unstop-1770690",
+        "title":  "Code Sprint",
+        "organiser":  "University of Petroleum \u0026 Energy Studies (UPES), Dehradun",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/code-sprint-university-of-petroleum-energy-studies-upes-dehradun-1770690",
+        "shareUrl":  "https://brabble.ai/s/unstop-1770690",
+        "deadline":  "2026-10-28T18:30:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Dehradun",
+        "prize":  {
+                      "label":  "â¹30K",
+                      "inr":  30000
+                  },
+        "team":  "1 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  469
+    },
+    {
+        "id":  "unstop-1756040",
+        "title":  "WCC Forge 48",
+        "organiser":  "WeCodeCoders",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/wcc-forge-48-wecodecoders-1756040",
+        "shareUrl":  "https://brabble.ai/s/unstop-1756040",
+        "deadline":  "2026-10-28T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹25K",
+                      "inr":  25000
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  1847
+    },
+    {
+        "id":  "unstop-1763003",
+        "title":  "CodeVerse India - National Level Hackathon",
+        "organiser":  "WeCodeCoders",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codeverse-india-national-level-hackathon-wecodecoders-1763003",
+        "shareUrl":  "https://brabble.ai/s/unstop-1763003",
+        "deadline":  "2026-10-29T02:00:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  3172
+    },
+    {
+        "id":  "unstop-1774353",
+        "title":  "Hack-to-Ween 2026 | Halloween Hackathon",
+        "organiser":  "Indian Institute of Technology (IIT), Jodhpur",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/hack-to-ween-2026-halloween-hackathon-indian-institute-of-technology-iit-jodhpur-1774353",
+        "shareUrl":  "https://brabble.ai/s/unstop-1774353",
+        "deadline":  "2026-10-29T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  50
+    },
+    {
+        "id":  "unstop-1774722",
+        "title":  "Prompts to Profit Hackathon",
+        "organiser":  "Indian Institute of Technology (IIT), Gandhinagar",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/prompts-to-profit-hackathon-amalthea-2026-iit-gandhinagar-1774722",
+        "shareUrl":  "https://brabble.ai/s/unstop-1774722",
+        "deadline":  "2026-10-29T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Gandhinagar",
+        "prize":  {
+                      "label":  "â¹3L",
+                      "inr":  300000
+                  },
+        "team":  "1 to 3",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  8
+    },
+    {
+        "id":  "unstop-1742777",
+        "title":  "Math-O-Stellar",
+        "organiser":  "Indian Institute Of Technology Bhubaneswar",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/math-o-stellar-tech-zephyr-40-indian-institute-of-technology-bhubaneswar-1742777",
+        "shareUrl":  "https://brabble.ai/s/unstop-1742777",
+        "deadline":  "2026-10-29T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹13K",
+                      "inr":  13000
+                  },
+        "team":  "1 to 2",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  1692
+    },
+    {
+        "id":  "unstop-1768767",
+        "title":  "Echelon Young Innovators Hackathon 2026",
+        "organiser":  "ECHELON INSTITUTE OF TECHNOLOGY",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/echelon-young-innovators-hackathon-2026-echelon-institute-of-technology-1768767",
+        "shareUrl":  "https://brabble.ai/s/unstop-1768767",
+        "deadline":  "2026-10-29T18:30:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Faridabad",
+        "prize":  {
+                      "label":  "â¹37K",
+                      "inr":  37000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "School Students"
+                        ],
+        "registered":  13
+    },
+    {
+        "id":  "unstop-1763976",
+        "title":  "Pinaka CTF",
+        "organiser":  "National Forensic Sciences University, Chennai",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/pinaka-ctf-national-forensic-sciences-university-chennai-1763976",
+        "shareUrl":  "https://brabble.ai/s/unstop-1763976",
+        "deadline":  "2026-10-29T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹1L",
+                      "inr":  100000
+                  },
+        "team":  "1 to 3",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Experienced Professionals",
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate"
+                        ],
+        "registered":  223
+    },
+    {
+        "id":  "unstop-1757802",
+        "title":  "Koolage Cybersecurity Challenge â Can You Spot the Vulnerability?",
+        "organiser":  "koolage",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/koolage-cybersecurity-challenge-can-you-spot-the-vulnerability-koolage-cybersecurity-challeng-koolage-1757802",
+        "shareUrl":  "https://brabble.ai/s/unstop-1757802",
+        "deadline":  "2026-10-29T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  531
+    },
+    {
+        "id":  "unstop-1769081",
+        "title":  "CodewithChat AI Dev Challenge: Build, Launch \u0026 Monetize with Vibe Coding",
+        "organiser":  "CodewithChat",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codewithchat-ai-dev-challenge-build-launch-monetize-with-vibe-coding-codewithchat-1769081",
+        "shareUrl":  "https://brabble.ai/s/unstop-1769081",
+        "deadline":  "2026-10-29T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 3",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  44
+    },
+    {
+        "id":  "unstop-1772925",
+        "title":  "Vibeathon â Build with AI",
+        "organiser":  "Gateway Institute Of Engineering \u0026 Technology(GIET),Haryana",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/vibeathon-build-with-ai-genesis-20-the-annual-tech-fest-gateway-institute-of-engineering-technologygietharyan-1772925",
+        "shareUrl":  "https://brabble.ai/s/unstop-1772925",
+        "deadline":  "2026-10-29T18:31:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Sonipat",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  8
+    },
+    {
+        "id":  "unstop-1662965",
+        "title":  "Reverse Coding Challenge 2026",
+        "organiser":  "InfoTechiezz",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/reverse-coding-challenge-2026-infotechiezz-1662965",
+        "shareUrl":  "https://brabble.ai/s/unstop-1662965",
+        "deadline":  "2026-10-30T16:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  278
+    },
+    {
+        "id":  "unstop-1770904",
+        "title":  "Speed Demon | 72-Hour Hackathon",
+        "organiser":  "Hackathon Raptors",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/speed-demon-72-hour-hackathon-hackathon-raptors-1770904",
+        "shareUrl":  "https://brabble.ai/s/unstop-1770904",
+        "deadline":  "2026-10-30T17:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹1.8L",
+                      "inr":  180000
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  578
+    },
+    {
+        "id":  "unstop-1771528",
+        "title":  "Securathon - Cybersecurity Hackathon",
+        "organiser":  "Indian Institute of Information Technology (IIIT), Bhagalpur",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/securathon-cybersecurity-hackathon-protofos-indian-institute-of-information-technology-iiit-bhagalpur-1771528",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771528",
+        "deadline":  "2026-10-30T17:40:26.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Bhagalpur",
+        "prize":  {
+                      "label":  "â¹22K",
+                      "inr":  22000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  77
+    },
+    {
+        "id":  "unstop-1742751",
+        "title":  "CP Contest",
+        "organiser":  "Indian Institute Of Technology Bhubaneswar",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/cp-contest-indian-institute-of-technology-bhubaneswar-1742751",
+        "shareUrl":  "https://brabble.ai/s/unstop-1742751",
+        "deadline":  "2026-10-30T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹13K",
+                      "inr":  13000
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  2395
+    },
+    {
+        "id":  "unstop-1766843",
+        "title":  "Startupathon Founders League",
+        "organiser":  "Persist Ventures",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/startupathon-founders-league-persist-ventures-1766843",
+        "shareUrl":  "https://brabble.ai/s/unstop-1766843",
+        "deadline":  "2026-10-30T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹25K",
+                      "inr":  25000
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  66
+    },
+    {
+        "id":  "unstop-1770609",
+        "title":  "WH Versehack",
+        "organiser":  "Writers Haven",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/wh-versehack-writers-haven-1770609",
+        "shareUrl":  "https://brabble.ai/s/unstop-1770609",
+        "deadline":  "2026-10-30T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 3",
+        "fee":  "Free",
+        "eligibility":  [
+                            "School Students",
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate"
+                        ],
+        "registered":  9
+    },
+    {
+        "id":  "unstop-1773307",
+        "title":  "RootAccess",
+        "organiser":  "Thapar Institute of Engineering and Technology (TIET), Patiala",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/rootaccess-thapar-institute-of-engineering-and-technology-tiet-patiala-1773307",
+        "shareUrl":  "https://brabble.ai/s/unstop-1773307",
+        "deadline":  "2026-10-30T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Patiala",
+        "prize":  {
+                      "label":  "â¹20K",
+                      "inr":  20000
+                  },
+        "team":  "3 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  41
+    },
+    {
+        "id":  "unstop-1770219",
+        "title":  "Obsidian Labs CTF 2026- Jeopardy-Style Cybersecurity Challenge",
+        "organiser":  "Obsidian Labs",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/obsidian-labs-ctf-2026-jeopardy-style-cybersecurity-challenge-obsidian-labs-1770219",
+        "shareUrl":  "https://brabble.ai/s/unstop-1770219",
+        "deadline":  "2026-10-30T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  454
+    },
+    {
+        "id":  "unstop-1761893",
+        "title":  "Bits2Wave",
+        "organiser":  "BMS Institute of Technology and Management (BMSITM), Bangalore",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/bits2wave-bms-institute-of-technology-and-management-bmsitm-bangalore-1761893",
+        "shareUrl":  "https://brabble.ai/s/unstop-1761893",
+        "deadline":  "2026-10-30T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Bangalore",
+        "prize":  {
+                      "label":  "â¹60K",
+                      "inr":  60000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  989
+    },
+    {
+        "id":  "unstop-1772753",
+        "title":  "Innovasia 2026",
+        "organiser":  "Vasavi College of Engineering (VCE), Hyderabad",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/innovasia-2026-vasavi-college-of-engineering-vce-hyderabad-1772753",
+        "shareUrl":  "https://brabble.ai/s/unstop-1772753",
+        "deadline":  "2026-10-30T18:29:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Hyderabad",
+        "prize":  {
+                      "label":  "â¹54K",
+                      "inr":  54000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate"
+                        ],
+        "registered":  0
+    },
+    {
+        "id":  "unstop-1764913",
+        "title":  "Sea of Secrets CTF",
+        "organiser":  "HackitUp",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/sea-of-secrets-ctf-hackitup-1764913",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764913",
+        "deadline":  "2026-10-30T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹1.9L",
+                      "inr":  190000
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  1577
+    },
+    {
+        "id":  "unstop-1757858",
+        "title":  "Q Hackathon",
+        "organiser":  "Quantum University, Roorkee",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/q-hackathon-quantum-university-roorkee-1757858",
+        "shareUrl":  "https://brabble.ai/s/unstop-1757858",
+        "deadline":  "2026-10-30T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹23K",
+                      "inr":  23000
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "School Students"
+                        ],
+        "registered":  134
+    },
+    {
+        "id":  "unstop-1761190",
+        "title":  "Codesprint 2026",
+        "organiser":  "Elite Coders",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codesprint-2026-elite-coders-1761190",
+        "shareUrl":  "https://brabble.ai/s/unstop-1761190",
+        "deadline":  "2026-10-30T18:30:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Dehradun",
+        "prize":  {
+                      "label":  "â¹30K",
+                      "inr":  30000
+                  },
+        "team":  "1 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  5571
+    },
+    {
+        "id":  "unstop-1766434",
+        "title":  "Threws Odyssey 2026",
+        "organiser":  "Threws - The Research World",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/threws-odyssey-2026-threws-the-research-world-1766434",
+        "shareUrl":  "https://brabble.ai/s/unstop-1766434",
+        "deadline":  "2026-10-30T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹1.5L",
+                      "inr":  150000
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  299
+    },
+    {
+        "id":  "unstop-1764222",
+        "title":  "CodeBreaker",
+        "organiser":  "Inderprastha Engineering College (IPEC), Ghaziabad",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codebreaker-inderprastha-engineering-college-ipec-ghaziabad-1764222",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764222",
+        "deadline":  "2026-10-30T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹15K",
+                      "inr":  15000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  101
+    },
+    {
+        "id":  "unstop-1769252",
+        "title":  "Mergetober",
+        "organiser":  "Hackers Unity",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/mergetober-hackers-unity-1769252",
+        "shareUrl":  "https://brabble.ai/s/unstop-1769252",
+        "deadline":  "2026-10-30T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 2",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  627
+    },
+    {
+        "id":  "unstop-1765533",
+        "title":  "The Urban Autonomous Mobility Challenge by Fedex Alfa IIT Bombay",
+        "organiser":  "Indian Institute of Technology (IIT), Bombay",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/the-urban-autonomous-mobility-challenge-by-fedex-alfa-iit-bombay-iit-bombay-1765533",
+        "shareUrl":  "https://brabble.ai/s/unstop-1765533",
+        "deadline":  "2026-10-30T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Powai",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "3 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  345
+    },
+    {
+        "id":  "unstop-1771801",
+        "title":  "CodeQuest \u0026 TechBytes",
+        "organiser":  "Buddha Degree College",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codequest-techbytes-buddha-degree-college-1771801",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771801",
+        "deadline":  "2026-10-30T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Gorakhpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  105
+    },
+    {
+        "id":  "unstop-1769712",
+        "title":  "AI Sansad | Technical MUN on AI \u0026 Innovation",
+        "organiser":  "Bharati Vidyapeeth\u0027s College of Engineering",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/ai-sansad-technical-mun-on-ai-innovation-bharati-vidyapeeths-college-of-engineering-1769712",
+        "shareUrl":  "https://brabble.ai/s/unstop-1769712",
+        "deadline":  "2026-10-30T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "West Delhi",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "3 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  81
+    },
+    {
+        "id":  "unstop-1771573",
+        "title":  "Tiny Hacks",
+        "organiser":  "Vishveshwarya Group of Institutions (VGI), Greater Noida, Uttar Pradesh",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/tiny-hacks-vishveshwarya-group-of-institutions-vgi-greater-noida-uttar-pradesh-1771573",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771573",
+        "deadline":  "2026-10-30T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹10K",
+                      "inr":  10000
+                  },
+        "team":  "1 to 2",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  71
+    },
+    {
+        "id":  "unstop-1768093",
+        "title":  "Haxlr8 3.0 â National Level Hackathon",
+        "organiser":  "Maharaja Institute of Technology (MIT), Mysore",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/haxlr8-30-national-level-hackathon-maharaja-institute-of-technology-mit-mysore-1768093",
+        "shareUrl":  "https://brabble.ai/s/unstop-1768093",
+        "deadline":  "2026-10-30T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Mysuru",
+        "prize":  {
+                      "label":  "â¹40K",
+                      "inr":  40000
+                  },
+        "team":  "3 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  23
+    },
+    {
+        "id":  "unstop-1771078",
+        "title":  "Agentic AI Hackathon",
+        "organiser":  "Product Space",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/agentic-ai-hackathon-product-space-1771078",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771078",
+        "deadline":  "2026-10-31T05:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹90K",
+                      "inr":  90000
+                  },
+        "team":  "1 to 2",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  983
+    },
+    {
+        "id":  "unstop-1771427",
+        "title":  "AI Product Hackathon",
+        "organiser":  "Product Space",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/ai-product-hackathon-product-space-1771427",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771427",
+        "deadline":  "2026-10-31T05:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹90K",
+                      "inr":  90000
+                  },
+        "team":  "1 to 2",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  976
+    },
+    {
+        "id":  "unstop-1774085",
+        "title":  "Gen-AI Product Hackathon",
+        "organiser":  "Product Space",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/gen-ai-product-hackathon-product-space-1774085",
+        "shareUrl":  "https://brabble.ai/s/unstop-1774085",
+        "deadline":  "2026-10-31T05:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹1L",
+                      "inr":  100000
+                  },
+        "team":  "1 to 2",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  194
+    },
+    {
+        "id":  "unstop-1765656",
+        "title":  "National Machine Coding, LLD and Production Debugging Contest",
+        "organiser":  "Gronex",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/national-machine-coding-lld-and-production-debugging-contest-gronex-1765656",
+        "shareUrl":  "https://brabble.ai/s/unstop-1765656",
+        "deadline":  "2026-10-31T12:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹5K",
+                      "inr":  5000
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  801
+    },
+    {
+        "id":  "unstop-1771441",
+        "title":  "CodeQuest: National Tech Hackathon 2026",
+        "organiser":  "DotRepo",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codequest-national-tech-hackathon-2026-dotrepo-1771441",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771441",
+        "deadline":  "2026-10-31T12:59:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹50K",
+                      "inr":  50000
+                  },
+        "team":  "1 to 3",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  264
+    },
+    {
+        "id":  "unstop-1766440",
+        "title":  "Hacktoberfest Ã BFIT HACKATHON 2026",
+        "organiser":  "BFIT Group of Institutions",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/hacktoberfest-bfit-2026-bfit-group-of-institutions-1766440",
+        "shareUrl":  "https://brabble.ai/s/unstop-1766440",
+        "deadline":  "2026-10-31T15:59:15.000Z",
+        "mode":  "HYBRID",
+        "city":  "Dehradun",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  137
+    },
+    {
+        "id":  "unstop-1773725",
+        "title":  "DEADLOCK \u002726",
+        "organiser":  "Maharaja Agrasen Institute of Technology ",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/deadlock-26-maharaja-agrasen-institute-of-technology-1773725",
+        "shareUrl":  "https://brabble.ai/s/unstop-1773725",
+        "deadline":  "2026-10-31T18:29:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Delhi",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 3",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  67
+    },
+    {
+        "id":  "unstop-1762891",
+        "title":  "StackSense",
+        "organiser":  "International Institute of Information Technology (IIIT), Bangalore",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/stacksense-challenge-synergy-26-international-institute-of-information-technology-iiit-bangalore-1762891",
+        "shareUrl":  "https://brabble.ai/s/unstop-1762891",
+        "deadline":  "2026-10-31T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹20K",
+                      "inr":  20000
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  69
+    },
+    {
+        "id":  "unstop-1652247",
+        "title":  "\"National Research \u0026 Innovation Challenge Season 3 by 3SVK â 4.7K+  Registrations\"",
+        "organiser":  "Jawaharlal Nehru Technological University (JNTUH), Hyderabad",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/cloud-innovation-challenge-jawaharlal-nehru-technological-university-jntuh-hyderabad-1652247",
+        "shareUrl":  "https://brabble.ai/s/unstop-1652247",
+        "deadline":  "2026-10-31T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 3",
+        "fee":  "Free",
+        "eligibility":  [
+
+                        ],
+        "registered":  4762
+    },
+    {
+        "id":  "unstop-1762841",
+        "title":  "Nexus InnovateX 2026",
+        "organiser":  "Nexus",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/nexus-innovatex-2026-nexus-1762841",
+        "shareUrl":  "https://brabble.ai/s/unstop-1762841",
+        "deadline":  "2026-10-31T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 3",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  1156
+    },
+    {
+        "id":  "unstop-1762887",
+        "title":  "Game Dev",
+        "organiser":  "International Institute of Information Technology (IIIT), Bangalore",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/game-dev-synergy-26-international-institute-of-information-technology-iiit-bangalore-1762887",
+        "shareUrl":  "https://brabble.ai/s/unstop-1762887",
+        "deadline":  "2026-10-31T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  127
+    },
+    {
+        "id":  "unstop-1771905",
+        "title":  "Hack The Circle",
+        "organiser":  "Maharaja Agrasen Institute Of Technology (MAIT)",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/hack-the-circle-maharaja-agrasen-institute-of-technology-mait-1771905",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771905",
+        "deadline":  "2026-10-31T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Rohini",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  165
+    },
+    {
+        "id":  "unstop-1770159",
+        "title":  "Build With Bharat 5.0",
+        "organiser":  "Codeverse",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/build-with-bharat-50-codeverse-1770159",
+        "shareUrl":  "https://brabble.ai/s/unstop-1770159",
+        "deadline":  "2026-10-31T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Gurgaon",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  1237
+    },
+    {
+        "id":  "unstop-1769112",
+        "title":  "Bazaar: Beat the Markets",
+        "organiser":  "Punjab Engineering College (PEC), Chandigarh",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/beat-the-markets-punjab-engineering-college-pec-chandigarh-1769112",
+        "shareUrl":  "https://brabble.ai/s/unstop-1769112",
+        "deadline":  "2026-10-31T18:30:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Chandigarh",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  55
+    },
+    {
+        "id":  "unstop-1772846",
+        "title":  "FirstCommit \u002726 â National Online Hackathon",
+        "organiser":  "Campus Code",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/firstcommit-26-national-online-hackathon-by-campuscode-campus-code-1772846",
+        "shareUrl":  "https://brabble.ai/s/unstop-1772846",
+        "deadline":  "2026-10-31T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹3K",
+                      "inr":  3000
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  390
+    },
+    {
+        "id":  "unstop-1763829",
+        "title":  "Stem for Impact 24hrs Hackathon",
+        "organiser":  "Presidency University (PU), Bangalore",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/stem-for-impact-24hrs-hackathon-presidency-university-pu-bangalore-1763829",
+        "shareUrl":  "https://brabble.ai/s/unstop-1763829",
+        "deadline":  "2026-10-31T18:30:44.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Bangalore",
+        "prize":  {
+                      "label":  "â¹45K",
+                      "inr":  45000
+                  },
+        "team":  "3 to 5",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate"
+                        ],
+        "registered":  153
+    },
+    {
+        "id":  "unstop-1765313",
+        "title":  "DataOps Innovation Hackathon",
+        "organiser":  "HackTheCore",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/dataops-innovation-hackathon-hackthecore-1765313",
+        "shareUrl":  "https://brabble.ai/s/unstop-1765313",
+        "deadline":  "2026-11-01T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹30K",
+                      "inr":  30000
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  672
+    },
+    {
+        "id":  "unstop-1772671",
+        "title":  "Foodoscope Fork It Challenge 2026",
+        "organiser":  "Indraprastha Institute of Information Technology (IIIT), Delhi",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/foodoscope-fork-it-challenge-2026-esya26-indraprastha-institute-of-information-technology-iiit-delhi-1772671",
+        "shareUrl":  "https://brabble.ai/s/unstop-1772671",
+        "deadline":  "2026-11-01T18:29:40.000Z",
+        "mode":  "OFFLINE",
+        "city":  "New Delhi",
+        "prize":  {
+                      "label":  "â¹70K",
+                      "inr":  70000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  531
+    },
+    {
+        "id":  "unstop-1764747",
+        "title":  "CodeNexus India 2026 - National Hackathon",
+        "organiser":  "WeCodeCoders",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codenexus-india-2026-national-hackathon-wecodecoders-1764747",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764747",
+        "deadline":  "2026-11-01T20:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  4062
+    },
+    {
+        "id":  "unstop-1769404",
+        "title":  "Neural Storm",
+        "organiser":  "Jawaharlal Nehru Technological University (JNTUH), Hyderabad",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/neural-storm-jawaharlal-nehru-technological-university-jntuh-hyderabad-1769404",
+        "shareUrl":  "https://brabble.ai/s/unstop-1769404",
+        "deadline":  "2026-11-02T14:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹20K",
+                      "inr":  20000
+                  },
+        "team":  "1 to 3",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  84
+    },
+    {
+        "id":  "unstop-1762305",
+        "title":  "From Prompt to Performance",
+        "organiser":  "Mozark",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/from-prompt-to-performance-mozark-1762305",
+        "shareUrl":  "https://brabble.ai/s/unstop-1762305",
+        "deadline":  "2026-11-03T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  108
+    },
+    {
+        "id":  "unstop-1772904",
+        "title":  "Prasunex Innovathon 2026",
+        "organiser":  "PRASUNEX",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/prasunex-innovathon-2026-prasunex-1772904",
+        "shareUrl":  "https://brabble.ai/s/unstop-1772904",
+        "deadline":  "2026-11-03T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹83K",
+                      "inr":  83000
+                  },
+        "team":  "1 to 6",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  492
+    },
+    {
+        "id":  "unstop-1766190",
+        "title":  "CodeTitans India 2026 - National Hackathon",
+        "organiser":  "WeCodeCoders",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codetitans-india-2026-national-hackathon-wecodecoders-1766190",
+        "shareUrl":  "https://brabble.ai/s/unstop-1766190",
+        "deadline":  "2026-11-04T15:00:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  1865
+    },
+    {
+        "id":  "unstop-1755763",
+        "title":  "Tech Eximius 2.0",
+        "organiser":  "Tech Circle",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/tech-eximius-20-tech-circle-1755763",
+        "shareUrl":  "https://brabble.ai/s/unstop-1755763",
+        "deadline":  "2026-11-04T18:29:59.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Delhi",
+        "prize":  {
+                      "label":  "â¹1.3L",
+                      "inr":  130000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+
+                        ],
+        "registered":  1744
+    },
+    {
+        "id":  "unstop-1774573",
+        "title":  "ReBuild \u002726 â The Dashboard Recreation Hackathon by CampusCode",
+        "organiser":  "Campus Code",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/rebuild-26-the-dashboard-recreation-hackathon-by-campuscode-campus-code-1774573",
+        "shareUrl":  "https://brabble.ai/s/unstop-1774573",
+        "deadline":  "2026-11-04T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹18K",
+                      "inr":  18000
+                  },
+        "team":  "1",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  6
+    },
+    {
+        "id":  "unstop-1768758",
+        "title":  "CodersInPune Hackathon - HackWIthPune",
+        "organiser":  "HackWithPune",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codersinpune-hackathon-hackwithpune-1768758",
+        "shareUrl":  "https://brabble.ai/s/unstop-1768758",
+        "deadline":  "2026-11-04T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  1698
+    },
+    {
+        "id":  "unstop-1766739",
+        "title":  "hackosquadCTF 2026: DOOMSDAY",
+        "organiser":  "Hackosquad",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/hackosquad-ctf-2026-hackosquad-1766739",
+        "shareUrl":  "https://brabble.ai/s/unstop-1766739",
+        "deadline":  "2026-11-04T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  800
+    },
+    {
+        "id":  "unstop-1764453",
+        "title":  "RunUp Coders Hackathon 2026",
+        "organiser":  "CodeVerse Community",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codeverse-2026-open-innovation-hackathon-codeverse-community-1764453",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764453",
+        "deadline":  "2026-11-04T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹1K",
+                      "inr":  1000
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  166
+    },
+    {
+        "id":  "unstop-1767181",
+        "title":  "CodeFrontier Hackathon - Hack With Pune",
+        "organiser":  "HackWithPune",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codefrontier-hackathon-hackwithpune-1767181",
+        "shareUrl":  "https://brabble.ai/s/unstop-1767181",
+        "deadline":  "2026-11-04T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  1290
+    },
+    {
+        "id":  "unstop-1771244",
+        "title":  "SustainX 2026: The Sustainability Hackathon",
+        "organiser":  "Great Lakes Institute of Management (GLIM), Gurgaon",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/competitions/sustainx-2026-the-sustainability-hackathon-great-lakes-institute-of-management-glim-gurgaon-1771244",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771244",
+        "deadline":  "2026-11-05T18:29:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Gurgaon",
+        "prize":  {
+                      "label":  "â¹50K",
+                      "inr":  50000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  47
+    },
+    {
+        "id":  "unstop-1773842",
+        "title":  "Next Horizon 2026",
+        "organiser":  "The Institution of Engineers and Scientists",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/next-horizon-2026-the-institution-of-engineers-and-scientists-1773842",
+        "shareUrl":  "https://brabble.ai/s/unstop-1773842",
+        "deadline":  "2026-11-05T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹1.5L",
+                      "inr":  150000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Experienced Professionals",
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate"
+                        ],
+        "registered":  36
+    },
+    {
+        "id":  "unstop-1766381",
+        "title":  "The Outpost",
+        "organiser":  "Frontend Arena",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/the-outpost-frontend-arena-1766381",
+        "shareUrl":  "https://brabble.ai/s/unstop-1766381",
+        "deadline":  "2026-11-06T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  697
+    },
+    {
+        "id":  "unstop-1774071",
+        "title":  "ChaosCore Hackathon 2026",
+        "organiser":  "Invoqe",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/chaoscore-hackathon-2026-invoqe-1774071",
+        "shareUrl":  "https://brabble.ai/s/unstop-1774071",
+        "deadline":  "2026-11-06T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  111
+    },
+    {
+        "id":  "unstop-1766977",
+        "title":  "Procon Jr.",
+        "organiser":  "Indraprastha Institute of Information Technology (IIIT), Delhi",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/procon-jr-indraprastha-institute-of-information-technology-iiit-delhi-1766977",
+        "shareUrl":  "https://brabble.ai/s/unstop-1766977",
+        "deadline":  "2026-11-06T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "New Delhi",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "School Students"
+                        ],
+        "registered":  38
+    },
+    {
+        "id":  "unstop-1761263",
+        "title":  "IPL (IIITD Programming League) 2026",
+        "organiser":  "Indraprastha Institute of Information Technology (IIIT), Delhi",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/ipl-iiitd-programming-league-2026-esya26-indraprastha-institute-of-information-technology-iiit-delhi-1761263",
+        "shareUrl":  "https://brabble.ai/s/unstop-1761263",
+        "deadline":  "2026-11-06T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "South Delhi",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  761
+    },
+    {
+        "id":  "unstop-1766232",
+        "title":  "VibeX codes 26",
+        "organiser":  "globalyogacourse",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/vibex-codes-26-globalyogacourse-1766232",
+        "shareUrl":  "https://brabble.ai/s/unstop-1766232",
+        "deadline":  "2026-11-07T03:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹33.4L",
+                      "inr":  3340000
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  843
+    },
+    {
+        "id":  "unstop-1770422",
+        "title":  "BuildLab 2026",
+        "organiser":  "Frontend Arena",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/buildlab-2026-frontend-arena-1770422",
+        "shareUrl":  "https://brabble.ai/s/unstop-1770422",
+        "deadline":  "2026-11-07T04:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  367
+    },
+    {
+        "id":  "unstop-1767731",
+        "title":  "CodeQuest Quiz India 2026",
+        "organiser":  "WeCodeCoders",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codequest-quiz-india-2026-wecodecoders-1767731",
+        "shareUrl":  "https://brabble.ai/s/unstop-1767731",
+        "deadline":  "2026-11-07T09:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  824
+    },
+    {
+        "id":  "unstop-1750320",
+        "title":  "AVISHKAAR Season 4 Hackathon: A National-Level Innovation Challenge",
+        "organiser":  "Aditya Institute of Technology and Management (AITAM), Tekkai, Andhra Pradesh",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/avishkaar-season-4-hackathon-a-national-level-innovation-challenge-aditya-institute-of-technology-and-managem-1750320",
+        "shareUrl":  "https://brabble.ai/s/unstop-1750320",
+        "deadline":  "2026-11-07T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Tekkali",
+        "prize":  {
+                      "label":  "â¹3L",
+                      "inr":  300000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Fresher"
+                        ],
+        "registered":  652
+    },
+    {
+        "id":  "unstop-1761844",
+        "title":  "Vihaan X: Hardware Track",
+        "organiser":  "Delhi Technological University (DTU), New Delhi",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/vihaan-x-hardware-track-vihaan-x-ieee-dtu-dtu-new-delhi-1761844",
+        "shareUrl":  "https://brabble.ai/s/unstop-1761844",
+        "deadline":  "2026-11-07T18:29:42.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Delhi",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  67
+    },
+    {
+        "id":  "unstop-1761841",
+        "title":  "Vihaan X: Software Track",
+        "organiser":  "Delhi Technological University (DTU), New Delhi",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/vihaan-x-software-track-dtu-new-delhi-1761841",
+        "shareUrl":  "https://brabble.ai/s/unstop-1761841",
+        "deadline":  "2026-11-07T18:29:46.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Delhi",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  1049
+    },
+    {
+        "id":  "unstop-1770621",
+        "title":  "Build Your Bharat Hackathon (BYB)",
+        "organiser":  "Next Bharat Ventures",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/build-your-bharat-hackathon-byb-build-your-bharatbyb-hackathon-next-bharat-ventures-1770621",
+        "shareUrl":  "https://brabble.ai/s/unstop-1770621",
+        "deadline":  "2026-11-07T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Hyderabad",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "3 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  4
+    },
+    {
+        "id":  "unstop-1767661",
+        "title":  "CodePuneThinkers Hackathon - Hack With Pune",
+        "organiser":  "HackWithPune",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codepunethinkers-hackathon-hack-with-pune-hackwithpune-1767661",
+        "shareUrl":  "https://brabble.ai/s/unstop-1767661",
+        "deadline":  "2026-11-08T13:00:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  1151
+    },
+    {
+        "id":  "unstop-1762854",
+        "title":  "Low-Level Hackathon",
+        "organiser":  "International Institute of Information Technology (IIIT), Bangalore",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/low-level-hackathon-synergy-26-international-institute-of-information-technology-iiit-bangalore-1762854",
+        "shareUrl":  "https://brabble.ai/s/unstop-1762854",
+        "deadline":  "2026-11-08T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 3",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  129
+    },
+    {
+        "id":  "unstop-1767590",
+        "title":  "HerHack",
+        "organiser":  "ECHELON INSTITUTE OF TECHNOLOGY",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/herhack-echelon-institute-of-technology-1767590",
+        "shareUrl":  "https://brabble.ai/s/unstop-1767590",
+        "deadline":  "2026-11-09T18:30:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Faridabad",
+        "prize":  {
+                      "label":  "â¹2L",
+                      "inr":  200000
+                  },
+        "team":  "2 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  222
+    },
+    {
+        "id":  "unstop-1769646",
+        "title":  "Datanova 2026 Global Data-Thon",
+        "organiser":  "Swiss School of Management, Rome, Italy",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/datanova-2026-global-data-thon-swiss-school-of-management-rome-italy-1769646",
+        "shareUrl":  "https://brabble.ai/s/unstop-1769646",
+        "deadline":  "2026-11-09T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹2K",
+                      "inr":  2000
+                  },
+        "team":  "1 to 5",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  33
+    },
+    {
+        "id":  "unstop-1771966",
+        "title":  "Ideathon",
+        "organiser":  "Acharya Institute of Technology",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/ideathon-acharya-institute-of-technology-1771966",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771966",
+        "deadline":  "2026-11-09T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Bangalore",
+        "prize":  {
+                      "label":  "â¹6K",
+                      "inr":  6000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  37
+    },
+    {
+        "id":  "unstop-1758745",
+        "title":  "BUiLDX",
+        "organiser":  "Code-A-Nova",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/buildx-36-hours-online-hackathon-code-a-nova-1758745",
+        "shareUrl":  "https://brabble.ai/s/unstop-1758745",
+        "deadline":  "2026-11-09T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  395
+    },
+    {
+        "id":  "unstop-1760074",
+        "title":  "BUiLDX Hackathon",
+        "organiser":  "Code-A-Nova",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/buildx-hackathon-code-a-nova-1760074",
+        "shareUrl":  "https://brabble.ai/s/unstop-1760074",
+        "deadline":  "2026-11-10T02:55:55.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  387
+    },
+    {
+        "id":  "unstop-1771496",
+        "title":  "The Big Hack 2.0",
+        "organiser":  "Acharya Institute of Technology",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/the-big-hack-20-acharya-institute-of-technology-1771496",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771496",
+        "deadline":  "2026-11-10T03:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Bangalore",
+        "prize":  {
+                      "label":  "â¹50K",
+                      "inr":  50000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  50
+    },
+    {
+        "id":  "unstop-1746976",
+        "title":  "AgentX | Agentic AI Showcase",
+        "organiser":  "Sahyadri College of Engineering \u0026 Management (SCEM), Mangaluru",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/agentic-ai-hackathon-aerophilia-sahyadri-college-of-engineering-management-scem-mangaluru-1746976",
+        "shareUrl":  "https://brabble.ai/s/unstop-1746976",
+        "deadline":  "2026-11-10T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Mangaluru",
+        "prize":  {
+                      "label":  "â¹15K",
+                      "inr":  15000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  203
+    },
+    {
+        "id":  "unstop-1746171",
+        "title":  "Prompt Battle",
+        "organiser":  "Sahyadri College of Engineering \u0026 Management (SCEM), Mangaluru",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/prompt-battle-aerophilia-sahyadri-college-of-engineering-management-scem-mangaluru-1746171",
+        "shareUrl":  "https://brabble.ai/s/unstop-1746171",
+        "deadline":  "2026-11-10T18:29:16.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Mangaluru",
+        "prize":  {
+                      "label":  "â¹15K",
+                      "inr":  15000
+                  },
+        "team":  "1 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  61
+    },
+    {
+        "id":  "unstop-1745935",
+        "title":  "Craft N Code West Bengal",
+        "organiser":  "International Institute of Information Technology (IIIT), Bhubaneswar",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/craft-n-code-west-bengal-international-institute-of-information-technology-iiit-bhubaneswar-1745935",
+        "shareUrl":  "https://brabble.ai/s/unstop-1745935",
+        "deadline":  "2026-11-10T18:29:39.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kolkata",
+        "prize":  {
+                      "label":  "â¹50K",
+                      "inr":  50000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  20
+    },
+    {
+        "id":  "unstop-1762863",
+        "title":  "Pokerbots",
+        "organiser":  "International Institute of Information Technology (IIIT), Bangalore",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/pokerbots-synergy-26-international-institute-of-information-technology-iiit-bangalore-1762863",
+        "shareUrl":  "https://brabble.ai/s/unstop-1762863",
+        "deadline":  "2026-11-12T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  115
+    },
+    {
+        "id":  "unstop-1762783",
+        "title":  "The Liar\u0027s Chatroom",
+        "organiser":  "International Institute of Information Technology (IIIT), Bangalore",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/the-liars-chatroom-international-institute-of-information-technology-iiit-bangalore-1762783",
+        "shareUrl":  "https://brabble.ai/s/unstop-1762783",
+        "deadline":  "2026-11-12T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  75
+    },
+    {
+        "id":  "unstop-1763268",
+        "title":  "Cipher Chase â Capture the Flag",
+        "organiser":  "International Institute of Information Technology (IIIT), Bangalore",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/cipher-chase-capture-the-flag-synergy-26-international-institute-of-information-technology-iiit-bangalore-1763268",
+        "shareUrl":  "https://brabble.ai/s/unstop-1763268",
+        "deadline":  "2026-11-12T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 2",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  161
+    },
+    {
+        "id":  "unstop-1765465",
+        "title":  "The DevForge - Hackathon",
+        "organiser":  "Scaler School of Technology, Bengaluru, Karnataka",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/the-devforge-hackathon-scaler-school-of-technology-bengaluru-karnataka-1765465",
+        "shareUrl":  "https://brabble.ai/s/unstop-1765465",
+        "deadline":  "2026-11-12T18:29:56.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Bangalore Urban",
+        "prize":  {
+                      "label":  "â¹50K",
+                      "inr":  50000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  476
+    },
+    {
+        "id":  "unstop-1771084",
+        "title":  "The Last Daemon",
+        "organiser":  "Beunwrapd",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/the-last-daemon-beunwrapd-1771084",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771084",
+        "deadline":  "2026-11-12T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  34
+    },
+    {
+        "id":  "unstop-1769964",
+        "title":  "Haven Ahmedabad",
+        "organiser":  "Hackclub",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/haven-ahmedabad-hackclub-1769964",
+        "shareUrl":  "https://brabble.ai/s/unstop-1769964",
+        "deadline":  "2026-11-12T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Ahmedabad",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "School Students"
+                        ],
+        "registered":  2
+    },
+    {
+        "id":  "unstop-1774877",
+        "title":  "NASA Space Apps Challenge 2026",
+        "organiser":  "Rishihood University",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/nasa-space-apps-challenge-2026-rishihood-university-1774877",
+        "shareUrl":  "https://brabble.ai/s/unstop-1774877",
+        "deadline":  "2026-11-13T17:30:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Sonipat",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 6",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  27
+    },
+    {
+        "id":  "unstop-1771798",
+        "title":  "Catalyst - Solo AI Hackathon",
+        "organiser":  "Makers Need More (MnM)",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/catalyst-solo-ai-hackathon-makers-need-more-mnm-1771798",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771798",
+        "deadline":  "2026-11-13T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹15K",
+                      "inr":  15000
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  964
+    },
+    {
+        "id":  "unstop-1763117",
+        "title":  "InIt CTF",
+        "organiser":  "HIII (Hackers In India)",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/init-ctf-init-ctf-hiii-hackers-in-india-1763117",
+        "shareUrl":  "https://brabble.ai/s/unstop-1763117",
+        "deadline":  "2026-11-13T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  327
+    },
+    {
+        "id":  "unstop-1764445",
+        "title":  "Robo Race | TECHKRITI | IIT KANPUR",
+        "organiser":  "Techkriti",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/robo-race-techkriti27-techkriti-1764445",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764445",
+        "deadline":  "2026-11-14T07:44:39.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kalyanpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 6",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  112
+    },
+    {
+        "id":  "unstop-1764446",
+        "title":  "Drone Soccer | TECHKRITI | IIT KANPUR",
+        "organiser":  "Techkriti",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/drone-soccer-techkriti27-techkriti-1764446",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764446",
+        "deadline":  "2026-11-14T07:45:28.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kalyanpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  9
+    },
+    {
+        "id":  "unstop-1764454",
+        "title":  "Pitch Premier | Techkriti | IIT KANPUR",
+        "organiser":  "Techkriti",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/pitch-premier-techkriti27-techkriti-1764454",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764454",
+        "deadline":  "2026-11-14T08:02:26.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kalyanpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Experienced Professionals",
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate"
+                        ],
+        "registered":  42
+    },
+    {
+        "id":  "unstop-1764450",
+        "title":  "Beat The Market | TECHKRITI | IIT KANPUR",
+        "organiser":  "Techkriti",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/beat-the-market-techkriti27-techkriti-1764450",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764450",
+        "deadline":  "2026-11-14T08:02:41.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kalyanpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  46
+    },
+    {
+        "id":  "unstop-1764463",
+        "title":  "Multirotor | TECHKRITI | IIT KANPUR",
+        "organiser":  "Techkriti",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/multirotor-techkriti27-techkriti-1764463",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764463",
+        "deadline":  "2026-11-14T08:14:28.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kalyanpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 6",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  17
+    },
+    {
+        "id":  "unstop-1764471",
+        "title":  "Speed Quant | TECHKRITI | IIT KANPUR",
+        "organiser":  "Techkriti",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/speed-quant-techkriti27-techkriti-1764471",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764471",
+        "deadline":  "2026-11-14T08:18:23.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kalyanpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  280
+    },
+    {
+        "id":  "unstop-1764460",
+        "title":  "Hovermania | TECHKRITI | IIT KANPUR",
+        "organiser":  "Techkriti",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/hovermania-techkriti27-techkriti-1764460",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764460",
+        "deadline":  "2026-11-14T08:18:46.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kalyanpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 6",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  71
+    },
+    {
+        "id":  "unstop-1764472",
+        "title":  "Capture The Flag | TECHKRITI | IIT KANPUR",
+        "organiser":  "Techkriti",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/capture-the-flag-techkriti27-techkriti-1764472",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764472",
+        "deadline":  "2026-11-14T08:19:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kalyanpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 2",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Experienced Professionals",
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate"
+                        ],
+        "registered":  70
+    },
+    {
+        "id":  "unstop-1764474",
+        "title":  "Code N Compete | TECHKRITI | IIT KANPUR",
+        "organiser":  "Techkriti",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/code-n-compete-techkriti27-techkriti-1764474",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764474",
+        "deadline":  "2026-11-14T08:19:46.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kalyanpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 3",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Experienced Professionals",
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate"
+                        ],
+        "registered":  82
+    },
+    {
+        "id":  "unstop-1764461",
+        "title":  "Skysparks - Boeing National Aeromodelling Competition | TECHKRITI | IIT KANPUR",
+        "organiser":  "Techkriti",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/skysparks-boeing-national-aeromodelling-competition-techkriti27-techkriti-1764461",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764461",
+        "deadline":  "2026-11-14T08:20:28.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kalyanpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  85
+    },
+    {
+        "id":  "unstop-1764465",
+        "title":  "Techkriti Grand Prix | TECHKRITI | IIT KANPUR",
+        "organiser":  "Techkriti",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/techkriti-grand-prix-techkriti27-techkriti-1764465",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764465",
+        "deadline":  "2026-11-14T08:21:45.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kalyanpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 6",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  2
+    },
+    {
+        "id":  "unstop-1764468",
+        "title":  "IARC | TECHKRITI | IIT KANPUR",
+        "organiser":  "Techkriti",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/iarc-techkriti27-techkriti-1764468",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764468",
+        "deadline":  "2026-11-14T08:22:38.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kalyanpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 6",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  1
+    },
+    {
+        "id":  "unstop-1764469",
+        "title":  "Manoeuvre | TECHKRITI | IIT KANPUR",
+        "organiser":  "Techkriti",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/manoeuvre-techkriti27-techkriti-1764469",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764469",
+        "deadline":  "2026-11-14T08:23:24.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kalyanpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 6",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  66
+    },
+    {
+        "id":  "unstop-1764470",
+        "title":  "Robowars | TECHKRITI | IIT KANPUR",
+        "organiser":  "Techkriti",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/robowars-techkriti27-techkriti-1764470",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764470",
+        "deadline":  "2026-11-14T08:24:17.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kalyanpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 6",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  120
+    },
+    {
+        "id":  "unstop-1765493",
+        "title":  "AlgoSSTrike",
+        "organiser":  "Scaler School of Technology, Bengaluru, Karnataka",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/algosstrike-scaler-school-of-technology-bengaluru-karnataka-1765493",
+        "shareUrl":  "https://brabble.ai/s/unstop-1765493",
+        "deadline":  "2026-11-14T10:30:40.000Z",
+        "mode":  "HYBRID",
+        "city":  "Bangalore Urban",
+        "prize":  {
+                      "label":  "â¹20K",
+                      "inr":  20000
+                  },
+        "team":  "3",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  63
+    },
+    {
+        "id":  "unstop-1764188",
+        "title":  "Strategy Sprint | TECHKRITI | IIT KANPUR",
+        "organiser":  "Techkriti",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/strategy-sprint-techkriti27-techkriti-1764188",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764188",
+        "deadline":  "2026-11-14T13:47:49.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kalyanpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  458
+    },
+    {
+        "id":  "unstop-1764167",
+        "title":  "Product Challenge | TECHKRITI | IIT KANPUR",
+        "organiser":  "Techkriti",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/product-challenge-techkriti27-techkriti-1764167",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764167",
+        "deadline":  "2026-11-14T13:47:51.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kalyanpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  510
+    },
+    {
+        "id":  "unstop-1764452",
+        "title":  "Trade Quest | TECHKRITI | IIT KANPUR",
+        "organiser":  "Techkriti",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/trade-quest-techkriti27-techkriti-1764452",
+        "shareUrl":  "https://brabble.ai/s/unstop-1764452",
+        "deadline":  "2026-11-14T14:08:11.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kalyanpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  132
+    },
+    {
+        "id":  "unstop-1756262",
+        "title":  "Avishkaar Season 4 (Virtual) Hackathon: A National-Level Innovation Challenge",
+        "organiser":  "Aditya Institute of technology and management,tekkali",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/avishkaar-season-4-virtual-hackathon-a-national-level-innovation-challenge-aditya-institute-of-technology-and-1756262",
+        "shareUrl":  "https://brabble.ai/s/unstop-1756262",
+        "deadline":  "2026-11-14T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹50K",
+                      "inr":  50000
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  541
+    },
+    {
+        "id":  "unstop-1770284",
+        "title":  "InnovaThon - Faculty of Engineering and Technology Agra College X Nimblux",
+        "organiser":  "NIMBLUX",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/innovathon-faculty-of-engineering-and-technology-agra-college-x-nimblux-nimblux-1770284",
+        "shareUrl":  "https://brabble.ai/s/unstop-1770284",
+        "deadline":  "2026-11-14T18:30:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Agra",
+        "prize":  {
+                      "label":  "â¹50K",
+                      "inr":  50000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  762
+    },
+    {
+        "id":  "unstop-1751032",
+        "title":  "Students of Global Impact",
+        "organiser":  "International Foundation for Sustainable Peace and Development",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/students-of-global-impact-international-foundation-for-sustainable-peace-and-development-1751032",
+        "shareUrl":  "https://brabble.ai/s/unstop-1751032",
+        "deadline":  "2026-11-14T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "School Students",
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate"
+                        ],
+        "registered":  74
+    },
+    {
+        "id":  "unstop-1771951",
+        "title":  "Competitive Programming",
+        "organiser":  "Acharya Institute of Technology",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/competitive-programming-acharya-institute-of-technology-1771951",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771951",
+        "deadline":  "2026-11-15T13:00:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Bangalore",
+        "prize":  {
+                      "label":  "â¹2K",
+                      "inr":  2000
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  6
+    },
+    {
+        "id":  "unstop-1768041",
+        "title":  "Srujan 2026 - 1.5 Lakh Mega Hackathon In association with L\u0026T Edutech - Online Round is Free, No Rs 1200 Charged in it",
+        "organiser":  "Bk birla College",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/srujan-2026-15-lakh-mega-hackathon-in-association-with-lt-bk-birla-college-1768041",
+        "shareUrl":  "https://brabble.ai/s/unstop-1768041",
+        "deadline":  "2026-11-15T18:29:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Kalyan",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  11
+    },
+    {
+        "id":  "unstop-1769121",
+        "title":  "Homingo Hack Days: Online AI Hackathon",
+        "organiser":  "Homingo",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/homingo-hack-days-online-ai-hackathon-homingo-1769121",
+        "shareUrl":  "https://brabble.ai/s/unstop-1769121",
+        "deadline":  "2026-11-15T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹5K",
+                      "inr":  5000
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  740
+    },
+    {
+        "id":  "unstop-1773211",
+        "title":  "Build with Agora - BLR",
+        "organiser":  "KNOTiC",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/build-with-agora-blr-knotic-1773211",
+        "shareUrl":  "https://brabble.ai/s/unstop-1773211",
+        "deadline":  "2026-11-15T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Bangalore",
+        "prize":  {
+                      "label":  "â¹2K",
+                      "inr":  2000
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  81
+    },
+    {
+        "id":  "unstop-1771958",
+        "title":  "Capture The Flag",
+        "organiser":  "Acharya Institute of Technology",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/capture-the-flag-acharya-institute-of-technology-1771958",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771958",
+        "deadline":  "2026-11-15T22:00:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Bangalore",
+        "prize":  {
+                      "label":  "â¹6K",
+                      "inr":  6000
+                  },
+        "team":  "2 to 3",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  19
+    },
+    {
+        "id":  "unstop-1771961",
+        "title":  "Prompt to Product",
+        "organiser":  "Acharya Institute of Technology",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/prompt-to-product-acharya-institute-of-technology-1771961",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771961",
+        "deadline":  "2026-11-15T22:00:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Bangalore",
+        "prize":  {
+                      "label":  "â¹6K",
+                      "inr":  6000
+                  },
+        "team":  "2 to 3",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  16
+    },
+    {
+        "id":  "unstop-1771537",
+        "title":  "DataNyx\u002726",
+        "organiser":  "Muffakham Jah College of Engineering and Technology (MJCET), Hyderabad",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/datanyx26-muffakham-jah-college-of-engineering-and-technology-mjcet-hyderabad-1771537",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771537",
+        "deadline":  "2026-11-19T18:29:08.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Hyderabad",
+        "prize":  {
+                      "label":  "â¹1L",
+                      "inr":  100000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Undergraduate"
+                        ],
+        "registered":  153
+    },
+    {
+        "id":  "unstop-1755564",
+        "title":  "Singularity 2.0",
+        "organiser":  "KC College of Engineering and Management Studies and Research",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/singularity-20-kc-college-of-engineering-and-management-studies-and-research-1755564",
+        "shareUrl":  "https://brabble.ai/s/unstop-1755564",
+        "deadline":  "2026-11-19T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Thane",
+        "prize":  {
+                      "label":  "â¹40K",
+                      "inr":  40000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Undergraduate"
+                        ],
+        "registered":  120
+    },
+    {
+        "id":  "unstop-1772647",
+        "title":  "CodeOdyssey \u002726",
+        "organiser":  "JECRC University (JECRCU), Vidhani, Jaipur, Rajasthan",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codeodyssey-26-jecrc-university-jecrcu-vidhani-jaipur-rajasthan-1772647",
+        "shareUrl":  "https://brabble.ai/s/unstop-1772647",
+        "deadline":  "2026-11-19T20:10:38.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹9K",
+                      "inr":  9000
+                  },
+        "team":  "1 to 3",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  31
+    },
+    {
+        "id":  "unstop-1773675",
+        "title":  "StarForge : 24-Hour National Level Hackathon",
+        "organiser":  "BMS Institute of Technology and Management (BMSITM), Bangalore",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/starforge-24-hour-hackathon-bms-institute-of-technology-and-management-bmsitm-bangalore-1773675",
+        "shareUrl":  "https://brabble.ai/s/unstop-1773675",
+        "deadline":  "2026-11-20T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Bangalore",
+        "prize":  {
+                      "label":  "â¹65K",
+                      "inr":  65000
+                  },
+        "team":  "3 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  10
+    },
+    {
+        "id":  "unstop-1772235",
+        "title":  "Hacknova\u002727 2.0",
+        "organiser":  "Bharati Vidyapeeth (Deemed to be University)",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/hacknova27-20-bharati-vidyapeeth-deemed-to-be-university-1772235",
+        "shareUrl":  "https://brabble.ai/s/unstop-1772235",
+        "deadline":  "2026-11-20T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Kharghar",
+        "prize":  {
+                      "label":  "â¹1.4L",
+                      "inr":  140000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  9
+    },
+    {
+        "id":  "unstop-1775207",
+        "title":  "CodeClash: The November Nexus 2026",
+        "organiser":  "Lets Code Community",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codeclash-the-november-nexus-2026-lets-code-community-1775207",
+        "shareUrl":  "https://brabble.ai/s/unstop-1775207",
+        "deadline":  "2026-11-21T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹11K",
+                      "inr":  11000
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  25
+    },
+    {
+        "id":  "unstop-1735451",
+        "title":  "Craft N Code (Chattisgarh)",
+        "organiser":  "International Institute of Information Technology (IIIT), Bhubaneswar",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/craft-n-code-chattisgarh-international-institute-of-information-technology-iiit-bhubaneswar-1735451",
+        "shareUrl":  "https://brabble.ai/s/unstop-1735451",
+        "deadline":  "2026-11-22T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Bhilai",
+        "prize":  {
+                      "label":  "â¹50K",
+                      "inr":  50000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  72
+    },
+    {
+        "id":  "unstop-1760462",
+        "title":  "Trivora",
+        "organiser":  "Hackhere",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/trivora-hackhere-1760462",
+        "shareUrl":  "https://brabble.ai/s/unstop-1760462",
+        "deadline":  "2026-11-22T18:30:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Coimbatore",
+        "prize":  {
+                      "label":  "â¹50K",
+                      "inr":  50000
+                  },
+        "team":  "1 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  14
+    },
+    {
+        "id":  "unstop-1768100",
+        "title":  "Ooty Hacks",
+        "organiser":  "Hackhere",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/ooty-hacks-hackhere-1768100",
+        "shareUrl":  "https://brabble.ai/s/unstop-1768100",
+        "deadline":  "2026-11-24T18:30:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Ooty",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  38
+    },
+    {
+        "id":  "unstop-1746232",
+        "title":  "Craft N Code Telangana",
+        "organiser":  "International Institute of Information Technology (IIIT), Bhubaneswar",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/craft-n-code-telangana-d3-2026-tech-fest-iiit-bhubaneswar-international-institute-of-information-technology-i-1746232",
+        "shareUrl":  "https://brabble.ai/s/unstop-1746232",
+        "deadline":  "2026-11-29T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Bhilai",
+        "prize":  {
+                      "label":  "â¹50K",
+                      "inr":  50000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  4
+    },
+    {
+        "id":  "unstop-1746234",
+        "title":  "Craft N Code Tamil Nadu",
+        "organiser":  "International Institute of Information Technology (IIIT), Bhubaneswar",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/craft-n-code-tamil-nadu-d3-2026-tech-fest-iiit-bhubaneswar-international-institute-of-information-technology--1746234",
+        "shareUrl":  "https://brabble.ai/s/unstop-1746234",
+        "deadline":  "2026-11-29T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Bhilai",
+        "prize":  {
+                      "label":  "â¹50K",
+                      "inr":  50000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  4
+    },
+    {
+        "id":  "unstop-1743206",
+        "title":  "Slay CTF",
+        "organiser":  "Jalpaiguri Government Engineering College (JGEC), West Bengal",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/slay-ctf-jalpaiguri-government-engineering-college-jgec-west-bengal-1743206",
+        "shareUrl":  "https://brabble.ai/s/unstop-1743206",
+        "deadline":  "2026-11-29T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 3",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  870
+    },
+    {
+        "id":  "unstop-1746142",
+        "title":  "Craft N Code Haryana",
+        "organiser":  "International Institute of Information Technology (IIIT), Bhubaneswar",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/craft-n-code-haryana-d3-2026-tech-fest-iiit-bhubaneswar-international-institute-of-information-technology-iii-1746142",
+        "shareUrl":  "https://brabble.ai/s/unstop-1746142",
+        "deadline":  "2026-11-29T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Bhilai",
+        "prize":  {
+                      "label":  "â¹50K",
+                      "inr":  50000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  1
+    },
+    {
+        "id":  "unstop-1746846",
+        "title":  "Hacknexus",
+        "organiser":  "Mastermind Research Technologies",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/hacknexus-mastermind-research-technologies-1746846",
+        "shareUrl":  "https://brabble.ai/s/unstop-1746846",
+        "deadline":  "2026-11-29T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 2",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  212
+    },
+    {
+        "id":  "unstop-1746233",
+        "title":  "Craft N Code Delhi",
+        "organiser":  "International Institute of Information Technology (IIIT), Bhubaneswar",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/craft-n-code-delhi-d3-2026-tech-fest-iiit-bhubaneswar-international-institute-of-information-technology-iiit--1746233",
+        "shareUrl":  "https://brabble.ai/s/unstop-1746233",
+        "deadline":  "2026-11-29T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Bhilai",
+        "prize":  {
+                      "label":  "â¹50K",
+                      "inr":  50000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  4
+    },
+    {
+        "id":  "unstop-1762519",
+        "title":  "Anna AI OS Founding Builder Challenge 2026",
+        "organiser":  "Talentsec Technology (Hong Kong) Limited",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/anna-ai-os-founding-builder-challenge-2026-talentsec-technology-hong-kong-limited-1762519",
+        "shareUrl":  "https://brabble.ai/s/unstop-1762519",
+        "deadline":  "2026-11-30T04:59:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹80K",
+                      "inr":  80000
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  2301
+    },
+    {
+        "id":  "unstop-1763561",
+        "title":  "NewYear X Thon 2K27",
+        "organiser":  "Brainwaves",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/newyear-x-thon-2k27-brainwaves-1763561",
+        "shareUrl":  "https://brabble.ai/s/unstop-1763561",
+        "deadline":  "2026-11-30T18:31:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹5K",
+                      "inr":  5000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  291
+    },
+    {
+        "id":  "unstop-1771785",
+        "title":  "Hack Era 2.0",
+        "organiser":  "Erazone",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/hack-era-20-erazone-1771785",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771785",
+        "deadline":  "2026-11-30T18:31:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹10K",
+                      "inr":  10000
+                  },
+        "team":  "2 to 6",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  85
+    },
+    {
+        "id":  "unstop-1770730",
+        "title":  "Oblivion - The Ultimate Capture The Flag (CTF) Competition",
+        "organiser":  "Indian Institute of Technology (IIT), Ropar",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/oblivion-the-ultimate-capture-the-flag-ctf-competition-indian-institute-of-technology-iit-ropar-1770730",
+        "shareUrl":  "https://brabble.ai/s/unstop-1770730",
+        "deadline":  "2026-12-04T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  522
+    },
+    {
+        "id":  "unstop-1774876",
+        "title":  "Hacktopia Pune 2026",
+        "organiser":  "JSPM Rajarshi Shahu College of Engineering, Tathawade, Pimpri-Chinchwad, Maharashtra",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/hacktopia-pune-2026-jspm-rajarshi-shahu-college-of-engineering-tathawade-pimpri-chinchwad-maharashtra-1774876",
+        "shareUrl":  "https://brabble.ai/s/unstop-1774876",
+        "deadline":  "2026-12-05T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Pimpri-Chinchwad",
+        "prize":  {
+                      "label":  "â¹1L",
+                      "inr":  100000
+                  },
+        "team":  "2 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  32
+    },
+    {
+        "id":  "unstop-1774417",
+        "title":  "AI BuildFest 2026",
+        "organiser":  "Frontend Arena",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/ai-buildfest-2026-frontend-arena-1774417",
+        "shareUrl":  "https://brabble.ai/s/unstop-1774417",
+        "deadline":  "2026-12-08T18:29:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹29K",
+                      "inr":  29000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  112
+    },
+    {
+        "id":  "unstop-1771511",
+        "title":  "Tech Expo 2027",
+        "organiser":  "Parul University (PU), Vadodara",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/tech-expo-2027-parul-university-pu-vadodara-1771511",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771511",
+        "deadline":  "2026-12-09T18:30:04.000Z",
+        "mode":  "HYBRID",
+        "city":  "Vadodara",
+        "prize":  {
+                      "label":  "â¹2.0L",
+                      "inr":  200000
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  46
+    },
+    {
+        "id":  "unstop-1745778",
+        "title":  "The Black-Box Protocol: Stage 03 - System Convergence",
+        "organiser":  "TECHhelp4U",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/the-black-box-protocol-stage-03-system-convergence-techhelp4u-1745778",
+        "shareUrl":  "https://brabble.ai/s/unstop-1745778",
+        "deadline":  "2026-12-10T18:29:58.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Delhi",
+        "prize":  {
+                      "label":  "â¹2L",
+                      "inr":  200000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  1180
+    },
+    {
+        "id":  "unstop-1773120",
+        "title":  "Hackday 2.0",
+        "organiser":  "Decodep Community",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/hackday-20-decodep-community-1773120",
+        "shareUrl":  "https://brabble.ai/s/unstop-1773120",
+        "deadline":  "2026-12-11T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Erode",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 2",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  215
+    },
+    {
+        "id":  "unstop-1742226",
+        "title":  "CTF Arena",
+        "organiser":  "International Institute of Information Technology (IIIT), Bhubaneswar",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/ctf-arena-international-institute-of-information-technology-iiit-bhubaneswar-1742226",
+        "shareUrl":  "https://brabble.ai/s/unstop-1742226",
+        "deadline":  "2026-12-20T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Bhubaneswar",
+        "prize":  {
+                      "label":  "â¹15K",
+                      "inr":  15000
+                  },
+        "team":  "2 to 3",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  95
+    },
+    {
+        "id":  "unstop-1771949",
+        "title":  "RedStone Rush 12 Hour Open Innovation Hackathon",
+        "organiser":  "Madan Mohan Malaviya University of Technology (MMMUT), Gorakhpur",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/redstone-rush-12-hour-open-innovation-hackathon-continuum-mmmut-gorakhpur-1771949",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771949",
+        "deadline":  "2026-12-24T18:30:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Gorakhpur",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "3 to 5",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate"
+                        ],
+        "registered":  65
+    },
+    {
+        "id":  "unstop-1763620",
+        "title":  "TCU Hack Day",
+        "organiser":  "Technical Community Universe",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/tcu-hack-day-technical-community-universe-1763620",
+        "shareUrl":  "https://brabble.ai/s/unstop-1763620",
+        "deadline":  "2026-12-30T18:30:00.000Z",
+        "mode":  "HYBRID",
+        "city":  "Delhi",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "Experienced Professionals",
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate"
+                        ],
+        "registered":  108
+    },
+    {
+        "id":  "unstop-1772406",
+        "title":  "Quasar 5.0: 36-Hour International Hackathon",
+        "organiser":  "Vasantdada Patil Pratishthan\u0027s College of Engineering and Visual Arts, Mumbai, Maharashtra",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/quasar-50-36-hour-international-hackathon-vasantdada-patil-pratishthans-college-of-engineering-and-visual-art-1772406",
+        "shareUrl":  "https://brabble.ai/s/unstop-1772406",
+        "deadline":  "2026-12-30T18:30:31.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Mumbai",
+        "prize":  {
+                      "label":  "â¹1.5L",
+                      "inr":  150000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  185
+    },
+    {
+        "id":  "unstop-1772164",
+        "title":  "CodeBuild 2.0",
+        "organiser":  "Cobuild",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/codebuild-20-cobuild-1772164",
+        "shareUrl":  "https://brabble.ai/s/unstop-1772164",
+        "deadline":  "2027-01-03T18:29:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Delhi",
+        "prize":  {
+                      "label":  "â¹6L",
+                      "inr":  600000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  1004
+    },
+    {
+        "id":  "unstop-1730263",
+        "title":  "AETHOS - Day Zero",
+        "organiser":  "Together We Solve",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/aethos-day-zero-together-we-solve-1730263",
+        "shareUrl":  "https://brabble.ai/s/unstop-1730263",
+        "deadline":  "2027-01-07T18:30:03.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "1 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  1451
+    },
+    {
+        "id":  "unstop-1773246",
+        "title":  "Craft N Code Odisha",
+        "organiser":  "International Institute of Information Technology (IIIT), Bhubaneswar",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/craft-n-code-odisha-d3-2026-tech-fest-iiit-bhubaneswar-international-institute-of-information-technology-iiit-1773246",
+        "shareUrl":  "https://brabble.ai/s/unstop-1773246",
+        "deadline":  "2027-01-08T18:29:32.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Bhubaneswar",
+        "prize":  {
+                      "label":  "â¹50K",
+                      "inr":  50000
+                  },
+        "team":  "2 to 4",
+        "fee":  "Paid entry",
+        "eligibility":  [
+                            "Engineering Students",
+                            "Postgraduate",
+                            "Undergraduate",
+                            "Management"
+                        ],
+        "registered":  4
+    },
+    {
+        "id":  "unstop-1771992",
+        "title":  "INDIA GOT SPOT 1.0",
+        "organiser":  "Swastik Community",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/india-got-spot-10-swastik-community-1771992",
+        "shareUrl":  "https://brabble.ai/s/unstop-1771992",
+        "deadline":  "2027-01-08T18:30:00.000Z",
+        "mode":  "OFFLINE",
+        "city":  "Noida",
+        "prize":  {
+                      "label":  "See listing",
+                      "inr":  null
+                  },
+        "team":  "2 to 4",
+        "fee":  "Free",
+        "eligibility":  [
+                            "All"
+                        ],
+        "registered":  121
+    },
+    {
+        "id":  "unstop-1759619",
+        "title":  "The Arcticathon",
+        "organiser":  "Bidaya",
+        "type":  "HACKATHON",
+        "kind":  "competition",
+        "platform":  "Unstop",
+        "url":  "https://unstop.com/hackathons/the-arcticathon-bidaya-1759619",
+        "shareUrl":  "https://brabble.ai/s/unstop-1759619",
+        "deadline":  "2027-01-30T18:30:00.000Z",
+        "mode":  "ONLINE",
+        "city":  "Remote",
+        "prize":  {
+                      "label":  "â¹1L",
+                      "inr":  100000
+                  },
+        "team":  "1",
+        "fee":  "Free",
+        "eligibility":  [
+                            "School Students"
+                        ],
+        "registered":  34
+    }
+]

@@ -1,0 +1,63 @@
+/** Optional contract smoke test. Run only against the disposable seeded review backend. */
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { createApiClient } from '../src/services/apiClient.js';
+import { disposableUrl } from './disposable-url.mjs';
+
+const base = process.env.FRONTEND_DISPOSABLE_API;
+test('frontend client against disposable backend: pages, filters, auth, safe admin and revocation', { skip: !base }, async () => {
+  disposableUrl(base, '/api');
+  const marker = await fetch(`${base}/__disposable_fixture`).then(response => response.json());
+  assert.equal(marker.database, 'temporary-sqlite-frontend-tests', 'Never write to a non-fixture backend');
+  let adminToken;
+  const client = createApiClient(base, async (url, options) => {
+    const response = await fetch(url, options);
+    if (url.endsWith('/auth/login') && response.ok) adminToken = (await response.clone().json()).access_token;
+    return response;
+  });
+  assert.equal((await client.events()).total, 25);
+  const first = await client.events({ page: 1, pageSize: 12 });
+  const second = await client.events({ page: 2, pageSize: 12 });
+  assert.equal(first.data.length, 12);
+  assert.equal(second.data.length, 12);
+  assert.equal(new Set([...first.data, ...second.data].map(row => row.id)).size, 24);
+  const filtered = await client.events({ location: 'delhi', mode: 'online' });
+  assert.equal(filtered.total, 10);
+  assert.equal((await client.events({ location: '%' })).total, 0);
+  assert.equal((await client.events({ q: 'Disposable Event 25' })).total, 1);
+  const orgs = await client.organizations();
+  assert.equal((await client.events({ organizationId: orgs[0].id })).total, 25);
+  assert.equal((await client.event(first.data[0].id)).title, first.data[0].title);
+  await assert.rejects(client.event(2147483647), error => error.status === 404 && typeof error.requestId === 'string');
+  await assert.rejects(client.admin(), error => error.status === 403 || error.status === 401);
+  const registered = await client.register({ name: 'Disposable Signup', email: `signup-${Date.now()}@example.com`, password: 'DisposablePassword123!' });
+  assert.equal(registered.user.role, 'user');
+  assert.equal((await client.preferences()).email_reminders, false);
+  assert.deepEqual(await client.saved(), []);
+  const eventId = first.data[0].id;
+  await client.save(eventId, false);
+  assert.equal((await client.saved())[0].id, eventId);
+  const originalPreferences = await client.preferences();
+  const preferences = { email_reminders: true, email_registration_reminders: true, email_upcoming_reminders: false };
+  assert.deepEqual(await client.updatePreferences(preferences), preferences);
+  assert.deepEqual(await client.preferences(), preferences);
+  await client.updatePreferences(originalPreferences);
+  await client.save(eventId, true);
+  assert.deepEqual(await client.saved(), []);
+  const predictions = await client.predictions();
+  assert.equal(predictions.length, 0); // no calibrated/promoted model in disposable fixture
+  await assert.rejects(client.admin(), error => error.status === 403);
+  await client.logout();
+  const result = await client.login('admin@example.com', 'DisposablePassword123!');
+  assert.equal(result.user.role, 'administrator');
+  assert.deepEqual(await client.saved(), []);
+  const admin = await client.admin();
+  assert.equal(admin.stats.total_events, 25);
+  for (const user of admin.users) assert.deepEqual(Object.keys(user).sort(), ['created_at', 'email', 'id', 'name', 'roles', 'status']);
+  assert.doesNotMatch(JSON.stringify(admin), /password_hash|access_token|SMTP_PASSWORD/);
+  await client.logout();
+  const revoked = await fetch(`${base}/auth/me`, { headers: { Authorization: `Bearer ${adminToken}` } });
+  assert.equal(revoked.status, 401);
+  const error = await revoked.json();
+  assert.equal(error.message, 'Session has been revoked');
+});

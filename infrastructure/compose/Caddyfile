@@ -1,0 +1,4 @@
+{$DOMAIN} {
+    reverse_proxy frontend:8080
+    log
+}

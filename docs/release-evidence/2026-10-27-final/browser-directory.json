@@ -1,0 +1,12 @@
+{
+  "checks": [
+    "Directory pagination uses distinct stored pages",
+    "State and full university-name search use stored directory records",
+    "Empty state and reset restore directory results",
+    "Directory has no mobile overflow or accessibility violations"
+  ],
+  "errors": [],
+  "total": 1362,
+  "state_count": 117,
+  "all_requests_read_only": true
+}

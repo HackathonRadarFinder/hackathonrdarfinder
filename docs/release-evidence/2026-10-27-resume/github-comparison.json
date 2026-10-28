@@ -1,0 +1,17 @@
+{
+  "pr95": {
+    "url": "https://github.com/HackathonRadarFinder/hackathonrdarfinder/pull/95",
+    "merged": true,
+    "merge_commit": "6c7c686d29e189d736897d2d864330b6ab6f5a1b",
+    "head_commit": "6da1317eaa0ada4e5312eaed77ce959aff690fd6",
+    "result": "Both changed files already integrated; release contains stricter input validation and additional identity regressions. No missing source change to cherry-pick."
+  },
+  "pr92": {
+    "url": "https://github.com/HackathonRadarFinder/hackathonrdarfinder/pull/92",
+    "draft": true,
+    "merged": false,
+    "result": "Left untouched. Release already installs module dependencies and gates image builds on Module2.4 tests."
+  },
+  "release_remote_branch_present": false,
+  "remote_push_performed": false
+}

@@ -1,0 +1,11 @@
+# Remaining blockers
+
+28 October sprint: see `docs/reviews/FACTUAL_REVIEW_20261028.md`. Two factual drafts await human consideration; 23 candidates retain factual blockers. No new persistent records were published. PR #97 is now externally merged; this sprint uses a fresh fix branch and separate PR. The local generated research packet remains ignored.
+
+
+1. **Real event publication:** the supplied Brabble pilot has one AI-reviewed row and no value-bound human approval. A real reviewer must confirm the facts and add dated approval while preserving provider evidence/credit. Existing API-row reuse documentation does not substitute for human approval and does not authorize upstream scraping. The pending template is in `docs/release-evidence/2026-10-27-resume/`; generic CSV projection must not strip attribution to bypass the reviewed import contract.
+2. **Validated prediction claims:** only five reviewed editions and one recurring series are available, with zero valid held-out editions. Supply verified historical occurrence labels and observation timestamps for leakage-free evaluation. Calibration requires at least30 evaluation errors; coverage reporting requires at least20 evaluated windows. Public forecasts remain disabled. Independent genuine labeled pairs are also needed before claiming real-world deduplication accuracy from the illustrative examples.
+3. **External email:** provide explicitly authorized SMTP/test-recipient configuration before live transport testing. Current tests use mocks/dry-run; acceptance by SMTP is not proof of inbox delivery. No real email was sent.
+4. **Owner release/deployment decision:** PR96 was already merged by the owner/external actor before this work. New completion changes require separate review. No new protected-branch merge or public deployment is authorized. Production host/domain/TLS/secrets and operational ownership must be configured before public deployment.
+
+These do not block local fixture demonstrations, ordinary development, safe staging/review tests, account features, university browsing or deterministic recommendations. No percentage or unsupported performance/ML claim is used.
