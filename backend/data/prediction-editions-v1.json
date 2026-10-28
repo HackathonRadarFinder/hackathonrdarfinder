@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "source_manifest": "backend/data/curated-mvp-20261013.json",
+  "source_manifest_canonical_sha256": "084390942b73b0b703c158e33b5e189e862b61db8e4b5c3d29435d2bb2bc0524",
+  "observation_ceiling": "2026-10-13T00:00:00Z",
+  "historical_editions": [
+    {
+      "title": "Megathon X: Singularity 2026",
+      "organization": "E-Cell IIIT Hyderabad",
+      "source": "Official organizer (manual)",
+      "url": "https://megathon.in/",
+      "location": "Hyderabad, India",
+      "mode": "In-Person",
+      "start_date": "2026-10-10T00:00:00Z",
+      "end_date": "2026-10-11T00:00:00Z",
+      "description": "Date precision: day; UTC midnight represents the published calendar dates, not event times. Organizer site lists October 10–11, 2026. Historical event; not open for new registration.",
+      "scraped_at": "2026-10-13T00:00:00Z",
+      "family": "megathon-iiit-hyderabad",
+      "edition": "2026",
+      "observed_at": "2026-10-13T00:00:00Z",
+      "label_kind": "source_announced_start_date",
+      "actual_occurrence_confirmed": false
+    },
+    {
+      "title": "Megathon 2025: The Deccan Edition",
+      "organization": "E-Cell IIIT Hyderabad",
+      "source": "Official organizer (manual)",
+      "url": "https://www.iiit.ac.in/megathon-2025-11-and-12-october-2025-3/",
+      "location": "Hyderabad, India",
+      "mode": "In-Person",
+      "start_date": "2025-10-11T00:00:00Z",
+      "end_date": "2025-10-12T00:00:00Z",
+      "description": "Date precision: day; UTC midnight represents published calendar dates only. IIIT Hyderabad announcement lists October 11–12, 2025. Historical organizer record.",
+      "scraped_at": "2026-10-13T00:00:00Z",
+      "family": "megathon-iiit-hyderabad",
+      "edition": "2025",
+      "observed_at": "2026-10-13T00:00:00Z",
+      "label_kind": "source_announced_start_date",
+      "actual_occurrence_confirmed": false
+    },
+    {
+      "title": "Megathon 2022",
+      "organization": "E-Cell IIIT Hyderabad",
+      "source": "Official organizer (manual)",
+      "url": "https://ecell.iiit.ac.in/events/hackathons/megathon-22.html",
+      "location": "Hyderabad, India",
+      "mode": "In-Person",
+      "start_date": "2022-10-22T00:00:00Z",
+      "end_date": "2022-10-23T00:00:00Z",
+      "description": "Date precision: day; UTC midnight represents published calendar dates only. E-Cell retrospective confirms October 22–23, 2022. Historical record. Missing years must not be inferred as events.",
+      "scraped_at": "2026-10-13T00:00:00Z",
+      "family": "megathon-iiit-hyderabad",
+      "edition": "2022",
+      "observed_at": "2026-10-13T00:00:00Z",
+      "label_kind": "source_announced_start_date",
+      "actual_occurrence_confirmed": false
+    }
+  ],
+  "limitations": [
+    "Only three historical editions; 2023 and 2024 are not present and must not be inferred.",
+    "All evidence was observed in October 2026; it does not support earlier-time evaluation.",
+    "Source-announced dates are not confirmed actual-occurrence outcomes."
+  ]
+}

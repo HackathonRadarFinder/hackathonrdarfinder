@@ -1,0 +1,37 @@
+name: Build and Publish
+on:
+  push:
+    branches: [develop, main]
+permissions:
+  contents: read
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  validate:
+    uses: ./.github/workflows/ci.yml
+  publish:
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      IMAGE_TAG: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Set image prefix
+        run: echo "IMAGE_PREFIX=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push validated images
+        run: |
+          docker build -t "${IMAGE_PREFIX}/backend:${IMAGE_TAG}" ./backend
+          docker build -t "${IMAGE_PREFIX}/frontend:${IMAGE_TAG}" ./frontend
+          docker push "${IMAGE_PREFIX}/backend:${IMAGE_TAG}"
+          docker push "${IMAGE_PREFIX}/frontend:${IMAGE_TAG}"

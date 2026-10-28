@@ -1,0 +1,110 @@
+# Separate production stack. Never point this at the existing development volume.
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB}
+    volumes: [production_postgres:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  migrate:
+    image: ${BACKEND_IMAGE:-hackathonradarfinder-backend:local}
+    env_file: ["${PRODUCTION_ENV_FILE:-.env.production}"]
+    environment: &application
+      ENVIRONMENT: production
+      DEBUG: "false"
+      EMAIL_MODE: disabled
+    command: [alembic, upgrade, head]
+    depends_on:
+      db: {condition: service_healthy}
+    security_opt: [no-new-privileges:true]
+    restart: "no"
+  backend:
+    image: ${BACKEND_IMAGE:-hackathonradarfinder-backend:local}
+    restart: unless-stopped
+    env_file: ["${PRODUCTION_ENV_FILE:-.env.production}"]
+    environment: *application
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+    security_opt: [no-new-privileges:true]
+  frontend:
+    image: ${FRONTEND_IMAGE:-hackathonradarfinder-frontend}
+    restart: unless-stopped
+    ports: ["127.0.0.1:${HTTP_PORT:-8080}:8080"]
+    depends_on:
+      backend: {condition: service_healthy}
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: [CMD, wget, -qO-, http://127.0.0.1:8080/health]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+  collector:
+    image: ${BACKEND_IMAGE:-hackathonradarfinder-backend:local}
+    restart: unless-stopped
+    env_file: ["${PRODUCTION_ENV_FILE:-.env.production}"]
+    environment:
+      <<: *application
+      DISCOVERY_ENABLED: "true"
+      COLLECTOR_SNAPSHOT_DIR: /app/collector-data
+      COLLECTOR_RAW_DATA_DIR: /app/collector-data/raw
+    command: [python, -m, workers.discovery, --watch, --allow-live]
+    volumes: [production_snapshots:/app/collector-data]
+    depends_on:
+      backend: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import pathlib,time; assert time.time()-float(pathlib.Path('/tmp/collector-heartbeat').read_text())<900"]
+      interval: 30s
+      timeout: 5s
+      retries: 4
+      start_period: 60s
+    security_opt: [no-new-privileges:true]
+  in-app-reminders:
+    profiles: [workers]
+    image: ${BACKEND_IMAGE:-hackathonradarfinder-backend:local}
+    restart: unless-stopped
+    env_file: ["${PRODUCTION_ENV_FILE:-.env.production}"]
+    environment: *application
+    command: [python, -m, workers.in_app_reminders, --watch]
+    depends_on:
+      backend: {condition: service_healthy}
+    healthcheck: {disable: true}
+    security_opt: [no-new-privileges:true]
+  https:
+    image: caddy:2-alpine
+    profiles: [https]
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ./infrastructure/compose/Caddyfile:/etc/caddy/Caddyfile:ro
+      - production_tls:/data
+      - production_tls_config:/config
+    depends_on:
+      frontend: {condition: service_healthy}
+  backup:
+    image: postgres:16-alpine
+    profiles: [tools]
+    env_file: ["${PRODUCTION_ENV_FILE:-.env.production}"]
+    environment:
+      PGHOST: db
+      PGUSER: ${POSTGRES_USER:?Set POSTGRES_USER}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB:?Set POSTGRES_DB}
+    volumes: [production_backups:/backups]
+    command: [sh, -c, 'umask 077; pg_dump --format=custom --file=/backups/radar-$$(date -u +%Y%m%dT%H%M%SZ).dump']
+    depends_on:
+      db: {condition: service_healthy}
+volumes:
+  production_postgres:
+  production_snapshots:
+  production_backups:
+  production_tls:
+  production_tls_config:

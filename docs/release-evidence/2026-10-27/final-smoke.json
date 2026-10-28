@@ -1,0 +1,17 @@
+{
+  "/api/ready": {
+    "status": 200
+  },
+  "/api/events/?page=1&page_size=5": {
+    "status": 200,
+    "total": 5
+  },
+  "/api/institutions?page_size=1": {
+    "status": 200,
+    "total": 1362
+  },
+  "/api/predictions/readiness": {
+    "status": 200
+  },
+  "backend_image": "sha256:6fbcf5758fa39ef8f786b039b65b90a592928a89f90fa1ce6e11c46ddfb4d3f5"
+}

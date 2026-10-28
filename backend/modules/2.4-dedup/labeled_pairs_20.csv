@@ -1,0 +1,21 @@
+registration_link_1,title_1,organizer_1,start_date_1,location_1,registration_link_2,title_2,organizer_2,start_date_2,location_2,is_duplicate
+https://example.com/event1,AI Hackathon,ABC College,2026-11-10,Vijayawada,https://example.com/event1,AI Hackathon,ABC College,2026-11-10,Vijayawada,1
+https://example.com/a,Web Hackathon,XYZ College,2026-11-12,Hyderabad,https://example.com/b,Web Hackathon,XYZ College,2026-11-12,Hyderabad,1
+https://example.com/c,Coding Contest,ABC College,2026-11-15,Vijayawada,https://example.com/d,Robotics Workshop,DEF College,2026-11-20,Chennai,0
+https://example.com/e,ML Workshop,Tech Club,2026-11-18,Hyderabad,https://example.com/f,Machine Learning Workshop,Tech Club,2026-11-19,Hyderabad,1
+https://example.com/g,Cloud Summit,Cloud Org,2026-11-22,Chennai,https://example.com/h,Design Contest,Design Org,2026-11-25,Vijayawada,0
+https://example.com/i,Python Bootcamp,ABC College,2026-11-26,Vijayawada,https://example.com/j,Python Bootcamp,ABC College,2026-11-26,Vijayawada,1
+https://example.com/k,Data Science Meet,DS Club,2026-11-28,Hyderabad,https://example.com/l,Cybersecurity Talk,Security Club,2026-12-01,Chennai,0
+https://example.com/m,AI Expo,Tech Club,2026-12-02,Chennai,https://example.com/n,AI Exhibition,Tech Club,2026-12-03,Chennai,1
+https://example.com/o,Java Workshop,ABC College,2026-12-05,Vijayawada,https://example.com/p,Cloud Workshop,XYZ College,2026-12-08,Hyderabad,0
+https://example.com/q,Hackathon 2026,College Club,2026-12-10,Hyderabad,https://example.com/q,Hackathon 2026,College Club,2026-12-10,Hyderabad,1
+https://example.com/r,Python Challenge,Code Club,2026-12-12,Chennai,https://example.com/s,Python Challenge,Code Club,2026-12-12,Chennai,1
+https://example.com/t,UI UX Workshop,Design Club,2026-12-14,Vijayawada,https://example.com/u,Database Seminar,DB Club,2026-12-16,Hyderabad,0
+https://example.com/v,Robotics Hackathon,Tech Club,2026-12-18,Chennai,https://example.com/w,Robotics Hackathon,Tech Club,2026-12-19,Chennai,1
+https://example.com/x,Security Summit,Security Org,2026-12-20,Hyderabad,https://example.com/y,AI Seminar,AI Club,2026-12-22,Vijayawada,0
+https://example.com/z,Web Development Bootcamp,Web Club,2026-12-24,Vijayawada,https://example.com/aa,Web Development Bootcamp,Web Club,2026-12-24,Vijayawada,1
+https://example.com/ab,Mobile App Contest,App Club,2026-12-26,Chennai,https://example.com/ac,Cloud Computing Talk,Cloud Org,2026-12-28,Hyderabad,0
+https://example.com/ad,Deep Learning Workshop,AI Club,2026-12-30,Hyderabad,https://example.com/ae,Deep Learning Workshop,AI Club,2026-12-31,Hyderabad,1
+https://example.com/af,Game Jam,Game Club,2027-01-02,Vijayawada,https://example.com/ag,Photography Contest,Photo Club,2027-01-04,Chennai,0
+https://example.com/ah,Data Analytics Meet,Data Club,2027-01-06,Hyderabad,https://example.com/ai,Data Analytics Meet,Data Club,2027-01-06,Hyderabad,1
+https://example.com/aj,Startup Pitch,Startup Club,2027-01-08,Chennai,https://example.com/ak,Music Festival,Music Club,2027-01-10,Vijayawada,0

@@ -1,0 +1,14 @@
+{
+  "Devfolio": {
+    "approved": false,
+    "basis": "",
+    "reviewed_by": "",
+    "notes": "Document the site's terms and written permission, where required, before changing approved to true."
+  },
+  "Unstop": {
+    "approved": false,
+    "basis": "",
+    "reviewed_by": "",
+    "notes": "The main listing is JavaScript/cookie gated. Do not bypass robots or anti-bot measures."
+  }
+}

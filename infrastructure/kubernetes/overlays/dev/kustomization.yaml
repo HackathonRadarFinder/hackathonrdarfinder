@@ -1,0 +1,40 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: hackathon-dev
+resources:
+- ../../base
+images:
+- name: ghcr.io/hackathonradarfinder/hackathonrdarfinder/backend
+  newName: ghcr.io/hackathonradarfinder/hackathonrdarfinder/backend
+  newTag: PLACEHOLDER_SHA
+- name: ghcr.io/hackathonradarfinder/hackathonrdarfinder/frontend
+  newName: ghcr.io/hackathonradarfinder/hackathonrdarfinder/frontend
+  newTag: PLACEHOLDER_SHA
+patches:
+- target:
+    kind: Deployment
+    name: backend
+  patch: "- op: replace\n  path: /spec/replicas\n  value: 1"
+- target:
+    kind: Deployment
+    name: frontend
+  patch: "- op: replace\n  path: /spec/replicas\n  value: 1"
+- target:
+    kind: HorizontalPodAutoscaler
+    name: backend-hpa
+  patch: "- op: replace\n  path: /spec/minReplicas\n  value: 1\n- op: replace\n  path:\
+    \ /spec/maxReplicas\n  value: 2"
+- target:
+    kind: ConfigMap
+    name: hackathon-app-config
+  patch: "- op: replace\n  path: /data/ENVIRONMENT\n  value: development"
+- target:
+    kind: HorizontalPodAutoscaler
+    name: frontend-hpa
+  patch: "- op: replace\n  path: /spec/minReplicas\n  value: 1\n- op: replace\n  path:\
+    \ /spec/maxReplicas\n  value: 2"
+- target:
+    kind: Ingress
+    name: hackathon-radar
+  patch: "- op: replace\n  path: /spec/rules/0/host\n  value: dev.hackathon.example.invalid\n\
+    - op: replace\n  path: /spec/tls/0/hosts/0\n  value: dev.hackathon.example.invalid"

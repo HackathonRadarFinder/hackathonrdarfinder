@@ -1,0 +1,26 @@
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+.env
+.env.*
+**/.env
+**/.env.*
+.git/
+*.log
+**/node_modules/
+**/*.db
+**/*.sqlite*
+modules/*
+!modules/2.2-collector/
+**/tests/
+radar_collector/output/
+**/.pytest_cache/
+backend/
+frontend/
+tests/
+# Trained models are required for inference: do not exclude ai/models.

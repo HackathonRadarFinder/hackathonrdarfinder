@@ -1,0 +1,120 @@
+# Local stack. Existing backend/.env and PostgreSQL volume are preserved.
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: hackathon-radar-db
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - radar_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+  migrate:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: hackathonradarfinder-backend:local
+    env_file:
+      - ./backend/.env
+    environment:
+      EMAIL_MODE: disabled
+      ENVIRONMENT: development
+      DEBUG: "false"
+    command: ["alembic", "upgrade", "head"]
+    depends_on:
+      db:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+    restart: "no"
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: hackathonradarfinder-backend:local
+    container_name: hackathon-radar-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      EMAIL_MODE: disabled
+      ENVIRONMENT: development
+      DEBUG: "false"
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    security_opt:
+      - no-new-privileges:true
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${FRONTEND_PORT:-5173}:8080"
+    depends_on:
+      backend:
+        condition: service_healthy
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+  in-app-reminders:
+    image: hackathonradarfinder-backend:local
+    profiles: [workers]
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      EMAIL_MODE: disabled
+      DEBUG: "false"
+    command: ["python", "-m", "workers.in_app_reminders", "--watch"]
+    depends_on:
+      backend:
+        condition: service_healthy
+    healthcheck:
+      disable: true
+    security_opt:
+      - no-new-privileges:true
+
+  collector:
+    image: hackathonradarfinder-backend:local
+    profiles: [workers]
+    restart: unless-stopped
+    env_file: [./backend/.env]
+    environment:
+      DISCOVERY_ENABLED: "true"
+      EMAIL_MODE: disabled
+      DEBUG: "false"
+      COLLECTOR_SNAPSHOT_DIR: /app/collector-data
+      COLLECTOR_RAW_DATA_DIR: /app/collector-data/raw
+    command: [python, -m, workers.discovery, --watch, --allow-live]
+    volumes: [collector_snapshots:/app/collector-data]
+    depends_on:
+      backend: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import pathlib,time; assert time.time()-float(pathlib.Path('/tmp/collector-heartbeat').read_text())<900"]
+      interval: 30s
+      timeout: 5s
+      retries: 4
+      start_period: 60s
+    security_opt: [no-new-privileges:true]
+
+volumes:
+  collector_snapshots:
+  radar_postgres_data:

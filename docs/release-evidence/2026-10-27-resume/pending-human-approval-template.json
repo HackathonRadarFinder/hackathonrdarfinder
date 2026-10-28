@@ -1,0 +1,15 @@
+{
+  "status": "TEMPLATE ONLY ? not approval; do not apply until a real reviewer completes it",
+  "event_title": "Hacknauts 2.0",
+  "event_url": "https://hacknauts26.devfolio.co/",
+  "provider_reuse_reference": "https://brabble.ai/docs",
+  "human_approval": {
+    "decision": "pending",
+    "reviewer_type": null,
+    "reviewer": "",
+    "approved_at": null,
+    "event_sha256": "3fcfd59cfd0e307e1d25e330568ef0253c755c702771b8a85c04eb1ea60ee06e",
+    "date_precision": "day",
+    "note": ""
+  }
+}

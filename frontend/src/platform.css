@@ -1,0 +1,52 @@
+.platform { --bg-primary:#f8fafc; --bg-card:#fff; --bg-card-border:#e2e8f0; --bg-input:#fff; --bg-input-border:#cbd5e1; --text-main:#0f172a; --text-muted:#475569; --text-subtle:#64748b; --surface:#fff; --border:#e2e8f0; --accent:#4f46e5; color:var(--text-main); background:var(--bg-primary); min-height:100vh; font-family:Inter,system-ui,sans-serif; line-height:1.6; }
+.platform-dark { --bg-primary:#0d111c; --bg-card:#151b2b; --bg-card-border:#394256; --bg-input:#151b2b; --bg-input-border:#64748b; --text-main:#f1f5f9; --text-muted:#cbd5e1; --text-subtle:#b5c0d0; --surface:#151b2b; --border:#394256; --accent:#a5b4fc; }
+.platform * { box-sizing:border-box; }
+.platform a { color:var(--accent); }
+.platform button,.platform input,.platform select { font:inherit; padding:9px 12px; color:var(--text-main); background:var(--surface); border:1px solid var(--border); border-radius:9px; }
+.platform button { cursor:pointer; } .platform button:disabled { opacity:.55; cursor:default; }
+.platform :focus-visible { outline:3px solid #818cf8; outline-offset:4px; }
+.platform-header { position:sticky; top:0; z-index:20; background:var(--surface); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; gap:20px; padding:18px 4%; }
+.platform-brand { display:flex; gap:8px; align-items:center; font-size:20px; text-decoration:none; white-space:nowrap; }
+.platform-header nav { display:flex; gap:20px; } .platform-header nav a { text-decoration:none; font-size:14px; color:var(--text-muted); } .platform-header nav a.active { color:var(--accent); text-decoration:underline; text-underline-offset:8px; }
+.platform-session { display:flex; align-items:center; gap:12px; } .platform-menu { display:none; }
+.platform-container { max-width:1400px; margin:auto; padding:36px 4% 80px; }
+.platform h1 { font-size:clamp(32px,5vw,58px); line-height:1.15; letter-spacing:-.035em; margin:20px 0; }
+.platform h2 { line-height:1.4; font-size:22px; margin:16px 0; }
+.platform-hero { background:radial-gradient(ellipse at 85% 20%,#6366f125,transparent 60%); padding:35px 0 70px; }
+.platform-hero em { color:var(--accent); font-style:normal; } .platform-hero p { color:var(--text-muted); max-width:600px; font-size:18px; margin:24px 0; }
+.platform-eyebrow { display:block; color:var(--accent); letter-spacing:.15em; font-size:12px; font-weight:700; margin-top:24px; }
+.platform-explore { display:grid; grid-template-columns:250px minmax(0,1fr); gap:36px; }
+.platform-filter { align-self:start; position:sticky; top:100px; background:var(--surface); padding:24px; border:1px solid var(--border); border-radius:16px; }
+.platform-filter form { display:grid; gap:16px; } .platform-filter label { font-size:14px; font-weight:600; display:grid; gap:6px; } .platform-filter input,.platform-filter select { width:100%; min-width:0; }
+.platform button.platform-primary { background:#4f46e5; color:#fff; }
+.platform-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; margin:20px 0; }
+.platform-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:24px; min-width:0; transition:transform .2s,box-shadow .2s; }
+.platform-card:hover { transform:translateY(-3px); box-shadow:0 14px 32px #0f172a0b; } .platform-card h2 a { text-decoration:none; color:var(--text-main); } .platform-card p { color:var(--text-muted); display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+.platform-card-top { display:flex; justify-content:space-between; gap:12px; align-items:center; } .platform-org { display:flex; gap:8px; align-items:center; font-size:13px; color:var(--text-muted); }
+.platform dl { margin:20px 0; display:grid; gap:12px; grid-template-columns:repeat(2,minmax(0,1fr)); } .platform dt { font-size:12px; color:var(--text-muted); } .platform dd { margin:0; overflow-wrap:anywhere; font-size:14px; }
+.platform-action { display:inline-flex; align-items:center; gap:8px; margin:16px 0 0; text-decoration:none; font-weight:600; }
+.platform-pagination { display:flex; align-items:center; justify-content:center; gap:16px; flex-wrap:wrap; margin:35px 0; }
+.platform-empty,.platform-error { padding:32px; background:var(--surface); border:1px solid var(--border); border-radius:16px; margin:20px 0; } .platform-error { border-color:#ef4444; } .platform-error button { margin:12px; }
+.platform-muted { font-size:13px; color:var(--text-muted); margin-top:20px; } .platform-detail { max-width:900px; margin:auto; } .platform-description { white-space:pre-wrap; font-size:18px; margin:24px 0; } .platform-detail button { margin-right:20px; }
+.platform-table { overflow:auto; } .platform table { border-collapse:collapse; width:100%; margin:20px 0; } .platform td,.platform th { border-bottom:1px solid var(--border); padding:12px; text-align:left; }
+.platform-footer { padding:30px 4%; border-top:1px solid var(--border); font-size:14px; color:var(--text-muted); }
+.platform-skip { position:fixed; top:-100px; left:10px; z-index:99; padding:12px; background:var(--surface); } .platform-skip:focus { top:10px; }
+.platform .auth-page-container { min-height:unset; } .platform .auth-card { box-shadow:0 12px 32px #0f172a12; }
+/* Auth components share the live theme; focused fields and feedback retain AA contrast. */
+.platform { --color-error:#b91c1c; --color-error-bg:#fef2f2; --color-error-border:#fca5a5; --color-success:#166534; --color-success-bg:#f0fdf4; --color-success-border:#86efac; }
+.platform-dark { --color-error:#fca5a5; --color-error-bg:#451a1a; --color-error-border:#b91c1c; --color-success:#86efac; --color-success-bg:#123021; --color-success-border:#166534; }
+.platform .auth-brand-text { color:var(--accent); }
+.platform .auth-input:focus { background:var(--bg-input); }
+.platform .auth-alert-error { color:var(--color-error); }
+.platform .auth-alert-success { color:var(--color-success); }
+.platform button.auth-submit-btn { background:#4f46e5; color:#fff; border-color:#4f46e5; }
+.platform button.auth-submit-btn:hover:not(:disabled) { background:#4338ca; }
+.platform .auth-input-wrapper input[type="password"],.platform .auth-input-wrapper input:has(+ .auth-password-toggle-btn) { padding-right:64px; }
+.platform button.auth-password-toggle-btn { border:0; background:transparent; min-height:44px; min-width:44px; padding:8px; right:4px; }
+.platform h1,.platform h2,.platform p,.platform-org { overflow-wrap:anywhere; }
+.platform-session { min-width:0; max-width:100%; }
+.platform-session span { max-width:240px; overflow-wrap:anywhere; }
+.platform-org { min-width:0; }
+@media (max-width:1050px) { .platform-header { flex-wrap:wrap; } .platform-header nav { order:3; width:100%; justify-content:center; } }
+@media (max-width:700px) { .platform-header { padding:12px 4%; gap:12px; } .platform-brand { font-size:17px; } .platform-session { font-size:13px; } .platform-session span { display:none; } .platform-menu { display:block; } .platform-header nav { display:none; } .platform-header nav.open { display:flex; flex-wrap:wrap; gap:18px; } .platform-explore { grid-template-columns:1fr; gap:24px; } .platform-filter { position:static; } .platform-grid { grid-template-columns:1fr; } .platform-hero { padding:12px 0 36px; } .platform-container { padding-top:20px; } }
+@media (prefers-reduced-motion:reduce) { .platform * { transition:none!important; animation:none!important; scroll-behavior:auto!important; } }

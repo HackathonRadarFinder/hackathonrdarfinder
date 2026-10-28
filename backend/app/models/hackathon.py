@@ -1,0 +1,38 @@
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
+from app.core.database import Base
+
+
+class Hackathon(Base):
+    __tablename__ = "hackathons"
+
+    id = Column(Integer, primary_key=True, index=True)
+
+    title = Column(String(255), nullable=False, index=True)
+
+    organization_id = Column(
+        Integer,
+        ForeignKey("organizations.id"),
+        nullable=True
+    )
+
+    start_date = Column(DateTime, nullable=True)
+    end_date = Column(DateTime, nullable=True)
+    registration_deadline = Column(DateTime, nullable=True)
+
+    location = Column(String(255), nullable=True)
+    mode = Column(String(50), nullable=True)
+
+    prize = Column(String(255), nullable=True)
+    description = Column(Text, nullable=True)
+
+    url = Column(String(500), nullable=True)
+    source = Column(String(100), nullable=True)
+    scraped_at = Column(DateTime, nullable=True)
+
+    state = Column(String(100), index=True)
+    institution_id = Column(Integer, ForeignKey("institutions.id"), index=True)
+    registration_url = Column(String(500))
+    eligibility = Column(Text)
+
+    organization = relationship("Organization")
