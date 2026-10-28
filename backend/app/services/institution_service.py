@@ -88,3 +88,16 @@ def coverage(db):
         last_successful_collection=last,
         institutions_by_state=dict(db.execute(select(Institution.state, func.count()).group_by(Institution.state)).all()),
         note='Institution coverage and source checks do not imply hackathon coverage; discoveries count announcement revisions.')
+
+
+def verified_event_coverage(db):
+    """Only explicit, human-reviewed publication links count as verified coverage."""
+    from app.models.hackathon import Hackathon
+    from datetime import datetime, timezone
+    linked = select(Hackathon.institution_id).join(Announcement,
+        (Announcement.hackathon_id == Hackathon.id) & (Announcement.institution_id == Hackathon.institution_id)
+    ).where(Announcement.status == 'approved', Hackathon.institution_id.is_not(None))
+    upcoming = linked.where(func.coalesce(Hackathon.end_date, Hackathon.start_date) >= datetime.now(timezone.utc).replace(tzinfo=None))
+    return dict(total_universities=db.scalar(select(func.count()).select_from(Institution)),
+        universities_with_verified_hackathons=db.scalar(select(func.count()).select_from(linked.distinct().subquery())),
+        universities_with_upcoming_verified_hackathons=db.scalar(select(func.count()).select_from(upcoming.distinct().subquery())))

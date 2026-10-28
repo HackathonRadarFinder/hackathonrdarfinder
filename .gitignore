@@ -27,3 +27,5 @@ backend/.pytest-*.json
 # Preserve accidental root terminal/npm output without including it in release commits.
 /package-lock.json
 /t *Latest develop included*
+
+.env.production

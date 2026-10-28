@@ -53,13 +53,14 @@ export function EventCard({ event, saved, toggle, organization }) {
     <dl><div><dt>Mode</dt><dd>{event.mode || 'Not provided'}</dd></div><div><dt>Location</dt><dd>{event.location || 'Not provided'}</dd></div>
       <div><dt>Registration deadline</dt><dd>{date(event.registration_deadline)}</dd></div>
       <div><dt>Starts</dt><dd>{date(event.start_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div></dl>
+    <small>Last source update: {date(event.scraped_at)}</small>
     <ProviderCredit acquisition={event.acquisition} />
     <Link className="platform-action" to={`/event/${event.id}`}>View details →</Link>
   </article>;
 }
 
 function Explore({ saved, toggle }) {
-  const [filters, setFilters] = useState({ q: '', location: '', mode: '', organizationId: '', state: '', institutionId: '', startFrom: '', startTo: '', deadlineFrom: '', deadlineTo: '', period: '', sort: 'id', pageSize: 12 });
+  const [filters, setFilters] = useState({ q: '', location: '', mode: '', organizationId: '', state: '', institutionId: new URLSearchParams(window.location.search).get('institutionId') || '', startFrom: '', startTo: '', deadlineFrom: '', deadlineTo: '', period: '', sort: 'id', pageSize: 12 });
   const [draft, setDraft] = useState(filters);
   const [collegeSearch, setCollegeSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -105,7 +106,7 @@ function InstitutionDirectory() {
   const result = resource.data;
   return <section aria-label="University directory"><h1>University directory</h1><p>Browse the stored institution directory. Directory entries do not imply permission to collect from their websites.</p>
     <form onSubmit={event => {event.preventDefault();setFilters({...draft});setPage(1);}}><label>University name search<input maxLength={255} value={draft.q} onChange={event => setDraft({...draft,q:event.target.value})} /></label><label>Directory state<input maxLength={100} value={draft.state} placeholder="Exact state or union territory" onChange={event => setDraft({...draft,state:event.target.value})} /></label><button type="submit">Search universities</button><button type="button" onClick={() => {const empty={state:'',q:''};setDraft(empty);setFilters(empty);setPage(1);}}>Reset directory</button></form>
-    <Feedback resource={resource} />{result && <><p role="status">{result.total} institutions | page {page}</p>{!result.data.length && <p>No institutions match these filters.</p>}<div className="platform-grid">{result.data.map(row => <article className="platform-card" key={row.id}><h2>{row.name}</h2><p>{row.state}{row.city ? ` | ${row.city}` : ''}</p><p>{row.category} | {row.identifier}</p>{safeEventUrl(row.website) && <a href={safeEventUrl(row.website)} target="_blank" rel="noopener noreferrer">Institution website</a>}{safeEventUrl(row.source_url) && <p><a href={safeEventUrl(row.source_url)} target="_blank" rel="noopener noreferrer">Directory source</a></p>}<small>Directory verified: {date(row.last_verified_at, true)}</small></article>)}</div><nav aria-label="Directory pages" className="platform-pagination"><button disabled={page<=1 || resource.loading} onClick={() => setPage(value => value-1)}>Previous institutions</button><span>Page {page} of {Math.max(1,Math.ceil(result.total/25))}</span><button disabled={page*25>=result.total || resource.loading} onClick={() => setPage(value => value+1)}>Next institutions</button></nav></>}
+    <Feedback resource={resource} />{result && <><p role="status">{result.total} institutions | page {page}</p>{!result.data.length && <p>No institutions match these filters.</p>}<div className="platform-grid">{result.data.map(row => <article className="platform-card" key={row.id}><h2>{row.name}</h2><p>{row.state}{row.city ? ` | ${row.city}` : ''}</p><p>{row.category} | {row.identifier}</p>{safeEventUrl(row.website) && <a href={safeEventUrl(row.website)} target="_blank" rel="noopener noreferrer">Institution website</a>}{safeEventUrl(row.source_url) && <p><a href={safeEventUrl(row.source_url)} target="_blank" rel="noopener noreferrer">Directory source</a></p>}<Link to={`/?institutionId=${row.id}`}>View college hackathons</Link><small>Directory verified: {date(row.last_verified_at, true)}</small></article>)}</div><nav aria-label="Directory pages" className="platform-pagination"><button disabled={page<=1 || resource.loading} onClick={() => setPage(value => value-1)}>Previous institutions</button><span>Page {page} of {Math.max(1,Math.ceil(result.total/25))}</span><button disabled={page*25>=result.total || resource.loading} onClick={() => setPage(value => value+1)}>Next institutions</button></nav></>}
   </section>;
 }
 
@@ -119,6 +120,7 @@ function EventDetails({ saved, toggle }) {
   return <section className="platform-detail"><Link to="/explore">← Back to events</Link><Feedback resource={resource} />{event && <>
     <span className="platform-eyebrow">EVENT DETAILS</span><h1>{event.title}</h1><p className="platform-description">{event.description || 'No description provided.'}</p>
     <dl><div><dt>Starts</dt><dd>{date(event.start_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Ends</dt><dd>{date(event.end_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Registration deadline</dt><dd>{date(event.registration_deadline)}</dd></div><div><dt>Location / mode</dt><dd>{event.location || 'Not provided'} / {event.mode || 'Not provided'}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div><div><dt>Source</dt><dd>{event.source || 'Not provided'}</dd></div><div><dt>State</dt><dd>{event.state || 'Not provided'}</dd></div><div><dt>Eligibility</dt><dd>{event.eligibility || 'Not provided'}</dd></div></dl>
+    <small>Last source update: {date(event.scraped_at)}</small>
     <ProviderCredit acquisition={event.acquisition} />
     <button onClick={() => toggle(event.id)} aria-pressed={saved.includes(event.id)}>{saved.includes(event.id) ? 'Remove saved event' : 'Save to account'}</button>
     {link ? <a className="platform-action" href={link} target="_blank" rel="noopener noreferrer">Visit organizer website <ExternalLink size={16} /></a> : <p>No valid organizer link is available.</p>}
@@ -222,29 +224,17 @@ function Personalization() {
 
 function Preferences() {
   const { user } = useAuth();
-  const resource = useResource(useCallback(signal => user ? api.preferences(signal) : Promise.resolve(null), [user]));
-  const [draft, setDraft] = useState(null);
   const [message, setMessage] = useState(null);
-  const [busy, setBusy] = useState(false);
   const notifications = useResource(useCallback(signal => user ? api.notifications(signal) : Promise.resolve([]), [user]));
   async function markRead(id) {
     try { await api.readNotification(id); notifications.retry(); }
     catch (error) { setMessage(error.message); }
   }
-  const values = draft?.userId === user?.id ? draft.values : resource.data;
-  async function submit(event) {
-    event.preventDefault(); setBusy(true); setMessage(null);
-    try { await api.updatePreferences(values); setMessage('Preferences saved. Reminders require a saved event and an enabled email worker.'); }
-    catch (error) { setMessage(error.message); }
-    finally { setBusy(false); }
-  }
-  return <section><h1>Email reminder preferences</h1><p>Opt in to reminders for your saved events within 24 hours of the event or registration deadline. Email delivery depends on server configuration.</p>
-    {!user && <Link to="/login">Sign in to configure reminders</Link>}<Feedback resource={resource} />
-    {user && values && <form onSubmit={submit}>{Object.entries({email_reminders: 'I consent to email reminders', email_registration_reminders: 'Registration deadlines', email_upcoming_reminders: 'Upcoming events'}).map(([key, label]) =>
-      <label key={key}><input type="checkbox" checked={values[key]} onChange={event => setDraft({userId: user.id, values: {...values, [key]: event.target.checked}})} />{label}</label>)}
-      <button disabled={busy} type="submit">Save preferences</button></form>}{message && <p role="status">{message}</p>}
+  return <section><h1>Preferences and notifications</h1><p>Manage your interests and in-app notifications.</p>
+    {!user && <Link to="/login">Sign in to manage preferences</Link>}
     {user && <Personalization key={user.id} />}
-    {user && <><h2>Account notifications</h2><p>Latest 100 stored notices. Email delivery records are separate.</p><Feedback resource={notifications} />
+    {message && <p role="status">{message}</p>}
+    {user && <><h2>Account notifications</h2><Feedback resource={notifications} />
       {notifications.data?.length === 0 && <p>No account notifications yet.</p>}
       {notifications.data?.map(row => <article className="platform-card" key={row.id}><h3>{row.title}</h3><p>{row.message}</p>
         {row.is_read ? <small>Read</small> : <button onClick={() => markRead(row.id)}>Mark as read</button>}</article>)}</>}

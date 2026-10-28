@@ -24,6 +24,7 @@ services:
     env_file:
       - ./backend/.env
     environment:
+      EMAIL_MODE: disabled
       ENVIRONMENT: development
       DEBUG: "false"
     command: ["alembic", "upgrade", "head"]
@@ -43,6 +44,7 @@ services:
     env_file:
       - ./backend/.env
     environment:
+      EMAIL_MODE: disabled
       ENVIRONMENT: development
       DEBUG: "false"
     ports:
@@ -90,5 +92,29 @@ services:
     security_opt:
       - no-new-privileges:true
 
+  collector:
+    image: hackathonradarfinder-backend:local
+    profiles: [workers]
+    restart: unless-stopped
+    env_file: [./backend/.env]
+    environment:
+      DISCOVERY_ENABLED: "true"
+      EMAIL_MODE: disabled
+      DEBUG: "false"
+      COLLECTOR_SNAPSHOT_DIR: /app/collector-data
+      RAW_DATA_DIR: /app/collector-data/raw
+    command: [python, -m, workers.discovery, --watch, --allow-live]
+    volumes: [collector_snapshots:/app/collector-data]
+    depends_on:
+      backend: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import pathlib,time; assert time.time()-float(pathlib.Path('/tmp/collector-heartbeat').read_text())<900"]
+      interval: 30s
+      timeout: 5s
+      retries: 4
+      start_period: 60s
+    security_opt: [no-new-privileges:true]
+
 volumes:
+  collector_snapshots:
   radar_postgres_data:

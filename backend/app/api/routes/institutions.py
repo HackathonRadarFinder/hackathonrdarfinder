@@ -14,10 +14,16 @@ from app.models.institution import Institution, Announcement
 from app.schemas.event import EventCreate
 from app.schemas.institution import DirectoryImport
 from app.services.database import database_operation
-from app.services.institution_service import import_directory, coverage
+from app.services.institution_service import import_directory, coverage, verified_event_coverage
 from app.services.announcement_review import review
 
 router = APIRouter(tags=['Institution discovery'])
+
+
+@router.get('/institutions/coverage')
+def public_event_coverage(db: Session = Depends(get_db)):
+    with database_operation(db):
+        return verified_event_coverage(db)
 
 
 @router.get('/institutions')

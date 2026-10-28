@@ -156,9 +156,16 @@ jobs:
           npx playwright-core install --with-deps chromium
       - name: Verify built images and complete PostgreSQL release journeys
         run: python scripts/postgres_acceptance.py --backend-image hackathon-radar-backend:test --frontend-image hackathon-radar-frontend:test --out .test-support/ci-acceptance
+      - name: Verify production Compose scheduler restart and recovery
+        env:
+          ACCEPTANCE_BACKEND_IMAGE: hackathon-radar-backend:test
+          ACCEPTANCE_FRONTEND_IMAGE: hackathon-radar-frontend:test
+        run: python scripts/verify_production_compose.py
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
         with:
           name: release-acceptance-evidence
-          path: .test-support/ci-acceptance
+          path: |
+            .test-support/ci-acceptance
+            .test-support/production-compose-report.json
           retention-days: 7

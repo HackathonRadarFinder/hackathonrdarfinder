@@ -146,6 +146,9 @@ def test_reviewed_publication_idempotence_filters_history_and_auth(db):
     try:
         with TestClient(app) as client:
             assert client.get('/admin/discovery/coverage').status_code == 401
+            initial = client.get('/institutions/coverage').json()
+            assert initial['total_universities'] == 4
+            assert initial['universities_with_verified_hackathons'] == 0
             assert client.get('/admin/discovery/announcements', headers=ordinary).status_code == 403
             body = dict(decision='approved', note='Verified all event facts against the offline fixture.', event={
                 **candidate.payload, 'state':inst.state, 'start_date':'2026-11-10T09:00:00+05:30'})
@@ -161,6 +164,9 @@ def test_reviewed_publication_idempotence_filters_history_and_auth(db):
             assert len(client.get(f'/events/{event_id}/discovery').json()['data']['versions']) == 1
             assert client.get('/institutions?state=Telangana').json()['total'] == 1
             assert client.get('/admin/discovery/coverage', headers=headers).json()['validated_events'] == 1
+            verified = client.get('/institutions/coverage').json()
+            assert verified['universities_with_verified_hackathons'] == 1
+            assert verified['universities_with_upcoming_verified_hackathons'] == int(datetime(2026,11,11,12,30) >= datetime.now(timezone.utc).replace(tzinfo=None))
     finally:
         app.dependency_overrides.clear()
     assert db.scalar(select(func.count()).select_from(DiscoveryLock)) == 0
