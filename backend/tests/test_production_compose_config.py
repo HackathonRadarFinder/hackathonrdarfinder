@@ -37,3 +37,21 @@ def test_invalid_production_targets_and_placeholders_refused(config, change):
     config.write_text(content)
     with pytest.raises(ValueError):
         validate(config, https=change == 'placeholder_domain')
+
+
+def test_organizer_raw_snapshots_use_the_persistent_collector_directory():
+    import yaml
+    from unittest.mock import patch
+    import os
+    collector_path = Path(__file__).resolve().parents[1] / 'modules/2.2-collector/src'
+    sys.path.insert(0, str(collector_path))
+    from collector_engine.config.loader import Settings
+    root = Path(__file__).resolve().parents[2]
+    for filename in ('docker-compose.yml', 'docker-compose.production.yml'):
+        collector = yaml.safe_load((root / filename).read_text(encoding='utf-8'))['services']['collector']
+        environment = collector['environment']
+        assert 'RAW_DATA_DIR' not in environment
+        with patch.dict(os.environ, environment, clear=True):
+            directory = Settings.from_env().raw_data_dir
+        assert directory == Path('/app/collector-data/raw')
+        assert any(volume.split(':')[1] == '/app/collector-data' for volume in collector['volumes'])
