@@ -49,7 +49,7 @@ def pg():
     # No migration or test writes occur until all identity checks above pass.
     environment = dict(os.environ, DATABASE_URL=value, DEBUG='false', ENVIRONMENT='development',
                        SECRET_KEY='disposable-postgres-migration-test-key-123456', EMAIL_MODE='disabled')
-    result = subprocess.run([sys.executable, '-m', 'alembic', 'upgrade', 'head'], cwd=BACKEND,
+    result = subprocess.run([sys.executable, '-m', 'workers.migrate'], cwd=BACKEND,
                             env=environment, capture_output=True, text=True)
     assert result.returncode == 0, 'Alembic migration failed: ' + result.stderr
     heads = ScriptDirectory.from_config(Config(str(BACKEND / 'alembic.ini'))).get_heads()

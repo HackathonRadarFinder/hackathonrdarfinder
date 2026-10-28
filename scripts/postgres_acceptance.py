@@ -55,6 +55,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out', type=Path, default=ROOT / '.test-support/readiness')
     parser.add_argument('--postgres-only', action='store_true', help='Skip built-image/browser checks')
+    parser.add_argument('--container-tests', action='store_true', help='Run PostgreSQL tests in the backend image instead of the host Python environment')
     parser.add_argument('--backend-image', default='radar-backend-acceptance:readiness-20261025')
     parser.add_argument('--frontend-image', default='radar-frontend-acceptance:readiness-20261025')
     args = parser.parse_args()
@@ -106,9 +107,32 @@ def main():
                               host='127.0.0.1', port=port, database=database).render_as_string(hide_password=False)
         test_environment = dict(os.environ, RADAR_POSTGRES_ACCEPTANCE_URL=host_url,
                                 RADAR_POSTGRES_ACCEPTANCE_MANIFEST=str(manifest_path), DEBUG='false')
-        tests = subprocess.run([sys.executable, '-m', 'pytest', 'tests/test_postgres_acceptance.py', '-q',
-                                '--junitxml', str(output / 'postgres-tests.xml')],
-                               cwd=ROOT / 'backend', env=test_environment, capture_output=True, text=True)
+        if args.container_tests:
+            test_environment['RADAR_POSTGRES_ACCEPTANCE_URL'] = URL.create(
+                'postgresql+psycopg', username='radar_acceptance', password=password,
+                host='db', port=5432, database=database).render_as_string(hide_password=False)
+            test_environment['RADAR_POSTGRES_ACCEPTANCE_MANIFEST'] = '/evidence/postgres_manifest.json'
+            test_container = 'radar-tests-acceptance-' + run_id
+            test_command = ['docker', 'run', '--rm', '--name', test_container, '--label', 'radar.acceptance.id=' + run_id,
+                '--network', network, '--security-opt', 'no-new-privileges:true', '--cap-drop', 'ALL',
+                '--mount', f'type=bind,source={ROOT},target=/workspace,readonly',
+                '--mount', f'type=bind,source={output},target=/evidence',
+                '--workdir', '/workspace/backend', '--env', 'RADAR_POSTGRES_ACCEPTANCE_URL',
+                '--env', 'RADAR_POSTGRES_ACCEPTANCE_MANIFEST', '--env', 'DEBUG=false',
+                args.backend_image, 'python', '-m', 'pytest', 'tests/test_postgres_acceptance.py',
+                '-q', '-p', 'no:cacheprovider', '--basetemp=/tmp/radar-pytest',
+                '--junitxml=/evidence/postgres-tests.xml']
+        else:
+            test_command = [sys.executable, '-m', 'pytest', 'tests/test_postgres_acceptance.py', '-q',
+                            '--junitxml', str(output / 'postgres-tests.xml')]
+        try:
+            tests = subprocess.run(test_command, cwd=ROOT / 'backend', env=test_environment,
+                                   capture_output=True, text=True, timeout=300)
+        except subprocess.TimeoutExpired:
+            if args.container_tests:
+                inspect_container(test_container, run_id)
+                docker('stop', '--time', '5', test_container)
+            raise RuntimeError('Acceptance tests exceeded 300 seconds') from None
         log = (tests.stdout + '\n' + tests.stderr).replace(password, '[REDACTED]')
         (output / 'postgres-tests.log').write_text(log, encoding='utf-8')
         print(log, flush=True)
@@ -133,7 +157,7 @@ def main():
             for key in ('DATABASE_URL', 'SECRET_KEY', 'ENVIRONMENT', 'DEBUG', 'EMAIL_MODE', 'DISCOVERY_ENABLED', 'LOG_LEVEL'):
                 options += ['--env', key]
             docker('run', '--detach', '--name', backend, '--label', 'radar.acceptance.id=' + run_id,
-                   '--network', network, '--network-alias', 'backend', '--publish', '127.0.0.1::8000',
+                   '--network', network, '--network-alias', 'acceptance-api', '--publish', '127.0.0.1::8000',
                    '--security-opt', 'no-new-privileges:true', '--cap-drop', 'ALL',
                    *options, args.backend_image, env=service_environment)
             owned.append(backend)
@@ -144,12 +168,25 @@ def main():
             assert result['total'] == 1 and result['data'][0]['title'] == 'Hacknauts 2.0'
             docker('run', '--detach', '--name', frontend, '--label', 'radar.acceptance.id=' + run_id,
                    '--network', network, '--publish', '127.0.0.1::8080',
+                   '--env', 'BACKEND_HOST=acceptance-api',
                    '--security-opt', 'no-new-privileges:true', '--cap-drop', 'ALL', args.frontend_image)
             owned.append(frontend)
             frontend_info = inspect_container(frontend, run_id)
             ui_base = f'http://127.0.0.1:{port_for(frontend_info, 8080)}'
             assert wait_http(ui_base + '/api/health')['status'] == 'healthy'
             assert wait_http(ui_base + '/api/events/?page=1&page_size=1')['total'] == 1
+            with urlopen(ui_base + '/api/health', timeout=5) as response:
+                assert response.headers['Cache-Control'] == 'no-store'
+            collector_result = docker('run', '--rm', '--label', 'radar.acceptance.id=' + run_id,
+                   '--user', '0', '--tmpfs', '/app/collector-data:rw,nosuid,noexec',
+                   '--security-opt', 'no-new-privileges:true', '--cap-drop', 'ALL',
+                   '--cap-add', 'CHOWN', '--cap-add', 'SETUID', '--cap-add', 'SETGID',
+                   '--env', 'DISCOVERY_ENABLED=false',
+                   '--env', 'COLLECTOR_SNAPSHOT_DIR=/app/collector-data',
+                   '--env', 'COLLECTOR_RAW_DATA_DIR=/app/collector-data/raw',
+                   args.backend_image, 'python', '-m', 'workers.railway_collector')
+            assert json.loads(collector_result) == {'enabled': False, 'executed': False}
+            report['collector_mount_init_privilege_drop_disabled_collection'] = 'passed'
             browser = subprocess.run(['node', 'tests/postgres.browser.mjs'], cwd=ROOT / 'frontend',
                 env=dict(os.environ, RADAR_ACCEPTANCE_UI=ui_base, RADAR_ACCEPTANCE_RUN_ID=run_id,
                          RADAR_ACCEPTANCE_ARTIFACT=str(output / 'container-browser')),
