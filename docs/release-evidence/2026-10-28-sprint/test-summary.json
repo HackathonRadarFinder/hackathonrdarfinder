@@ -1,0 +1,22 @@
+{
+  "targeted_backend": [
+    {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "174",
+      "time": "62.863",
+      "timestamp": "2026-10-28T17:16:00.985571+05:30",
+      "hostname": "Nakul"
+    }
+  ],
+  "frontend": {
+    "passed": 23,
+    "skipped": 1,
+    "failed": 0
+  },
+  "lint": "passed",
+  "source_inputs_unchanged": 6,
+  "persistent_snapshot_matches_previous": true
+}

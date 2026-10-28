@@ -1,34 +1,14 @@
-# Release checkpoint
+# Sprint checkpoint: 28 October 2026
 
-27 October 2026; `.release-local`; `release/2026-10-28-integration`.
+Current branch `fix/2026-10-28-factual-review`, based on latest `origin/develop` after externally merged PR #97 (`c996f16e9d5f737d8b3a7fcd99fb11e38ac6c9ae`). PR #96/#97 must not be recreated. Use `git log -3` for the final sprint SHA and the new PR for current CI.
 
-## Verified state
+- New offline review packet builder and timestamp/approval chronology safeguards are implemented. Updated disposable pilot acceptance verifies catalog search/filter behavior.
+- Final targeted suite 174 passed, frontend 23 passed/1 opt-in skipped, lint passed. Current read-only database hashes match previous evidence exactly: 5 events, 3 users, 3 saved items, 1362 institutions (1362 unique identifiers, 33 states/UTs); migration e0f1a2b3c4d5. Docker services healthy.
+- All six original review files are unchanged. Full review packet is local and ignored: `backend/radar_collector/output/factual-review-20261028/packet/`. Research observations and their timestamps are in its parent directory. Keep them; generated datasets are deliberately not committed.
+- 25 candidate records/225 fields reviewed, 48 fields primary-supported; BID AND CODE and Hacknauts factual drafts await human consideration, 23 candidates blocked. Zero human approvals, new persistent staging or publications. The existing AI-reviewed record passed only temporary SQLite import/idempotency/API/React acceptance.
+- Current default ML evidence still has five editions/one recurring series/zero folds. Separate three-edition Megathon research acquired today also has zero folds. No public predictions or live email enabled.
+- Unrelated untracked `hackathon_radar_scraper/` is preserved, never staged. No protected merge/deployment, DB reset/reimport, SMTP send or permission fabrication occurred.
 
-- Merge-conflict reconciliation: `8d9ac82d3751857fdc46e66a884ee4229d2a16e2`, pushed. PR #96 is already merged externally, merge SHA `4592c030782c75ba73bcde0c040f27c63d697533`. Do not reopen/remerge it or repeat its audit.
-- Completion commits: `146bda7`, `2fd2dc9`, subsequent URL repair and evidence handoff. Check `git log -5` and the follow-up draft PR for final HEAD/CI status.
-- PostgreSQL migration `e0f1a2b3c4d5`; unchanged IDs/selected values for 5 events, 3 users, 3 saved items and 1362 universities (1362 identifiers, 33 states/UTs). No reimport/reset is needed.
-- Profile editing, directory pagination/search/state filtering, batched imports and normalized review URLs are implemented. Complete publication/duplicate workflow passed against owned synthetic fixtures.
-- Final evidence is in `docs/release-evidence/2026-10-27-final/`; local raw outputs are ignored under `.test-support/final-handoff/`.
-- Unrelated `hackathon_radar_scraper/` remains untracked and preserved. Do not stage it or generated caches/dumps.
+Next action: human reviewer checks `docs/reviews/FACTUAL_REVIEW_20261028.md` and local worksheet, resolves the listed schedule/prize/identity/scope conflicts, and supplies real dated approval bound to final normalized facts/precision. Do not upload the non-importable worksheet or interpret AI review as human signoff. Source permission and provider attribution must remain intact.
 
-## Next real-data action
-
-A human must inspect the exact Brabble pilot facts and add an explicit dated, fact-bound approval preserving acquisition evidence and provider credit. The supplied row is AI-reviewed, not human-approved. Validate first without `--apply`; use `--check-target` before authorized application to the exact database. Do not project away provider evidence through generic CSV to bypass this gate. API-row reuse permission does not authorize direct upstream scraping.
-
-Other external inputs are verified historical outcomes for temporal validation/calibration, authorized SMTP/test recipients, and an owner deployment decision/infrastructure. Keep integrations disabled until their requirements are met. See `REMAINING_BLOCKERS.md`.
-
-## Reproduce only affected checks
-
-From `.release-local`:
-
-```powershell
-backend/.venv/Scripts/python.exe scripts/read_only_release_smoke.py
-# Only when another restart/persistence check is necessary:
-backend/.venv/Scripts/python.exe scripts/verify_local_release.py
-# Owned disposable PostgreSQL and built-image acceptance:
-backend/.venv/Scripts/python.exe scripts/postgres_acceptance.py --backend-image hackathonradarfinder-backend:local --frontend-image hackathonradarfinder-frontend --out .test-support/new-acceptance
-```
-
-For full backend checks, run `.venv/Scripts/python.exe -m pytest tests -q` from `backend`. The normal suite intentionally skips gated PostgreSQL cases; the owned runner executes all 13. See `DEMO_CHECKLIST.md` for fixture-only admin credentials, synthetic CSV, startup, safe shutdown and limitations.
-
-Do not repeat the completed audit/build/import. Never reset persistent volumes, invent approvals/metrics/delivery, merge a protected branch or deploy publicly without the owner's explicit instruction. The final remote workflow result belongs to the exact pushed HEAD and must be checked separately from local tests.
+Safe reproduction commands, initial environment/test-fixture failures and exact evidence are in `FINAL_RELEASE_REPORT.md`. Use new temporary output paths; do not repeat broad unaffected suites, rebuild healthy components or reimport universities. Preserve the final merge/deployment decision for the owner.

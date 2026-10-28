@@ -69,3 +69,7 @@ The restart verifier checks events, saved items, users and institutions without 
 - Fixture missing: check ports 8020/5180 and `API_PROXY_TARGET`. Never remove a real database volume to repair a fixture.
 
 See `FINAL_RELEASE_REPORT.md` for actual results and `REMAINING_BLOCKERS.md` for genuine external dependencies.
+
+## Factual-review sprint
+
+The current non-importable worksheet, two-candidate factual shortlist and 23-candidate blocked list are in `backend/radar_collector/output/factual-review-20261028/packet/`. Use them for human review only; no human signoff exists. See `docs/reviews/FACTUAL_REVIEW_20261028.md`. Do not upload this worksheet or publish pending records.

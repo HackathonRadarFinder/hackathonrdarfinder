@@ -1,7 +1,7 @@
 """Review attestations bind reviewed facts to a specific normalized event."""
 import hashlib
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 
 from radar_collector.radar_scraper import clean_url
 
@@ -23,6 +23,15 @@ def event_digest(event):
                                     separators=(',', ':')).encode('utf-8')).hexdigest()
 
 
+def review_timestamp(value):
+    observed = datetime.fromisoformat(str(value).replace('Z', '+00:00'))
+    if observed.tzinfo is None:
+        raise ValueError('Review timestamp requires a timezone')
+    if observed > datetime.now(timezone.utc):
+        raise ValueError('Review timestamp cannot be in the future')
+    return observed
+
+
 def validate_review(event, evidence, date_precision):
     review = evidence.get('review')
     if not isinstance(review, dict) or review.get('decision') != 'approved':
@@ -31,9 +40,7 @@ def validate_review(event, evidence, date_precision):
             or len(review['reviewer']) > 100
             or review.get('reviewer_type') not in {'human', 'ai_assistant', 'test_fixture'}):
         raise ValueError('A truthful reviewer identity/type is required')
-    observed = datetime.fromisoformat(str(review.get('reviewed_at', '')).replace('Z', '+00:00'))
-    if observed.tzinfo is None:
-        raise ValueError('Review timestamp requires a timezone')
+    review_timestamp(review.get('reviewed_at', ''))
     if review.get('event_sha256') != event_digest(event):
         raise ValueError('Reviewed facts changed; repeat factual review')
     if review.get('date_precision') != date_precision:
@@ -64,7 +71,7 @@ def require_human_approval(record):
     evidence = record.acquisition_evidence
     if record.collection_mode != 'brabble_api':
         return  # Existing manually reviewed HTML contract is unchanged.
-    review = evidence['review']
+    review = validate_review(record.event, evidence, record.date_precision)
     if review['reviewer_type'] == 'human':
         return
     approval = evidence.get('human_approval', {})
@@ -72,8 +79,10 @@ def require_human_approval(record):
             or not isinstance(approval.get('reviewer'), str) or not approval['reviewer'].strip()
             or len(approval['reviewer']) > 100 or not approval.get('note')):
         raise ValueError('Human approval is required; AI verification is not human approval')
-    checked = datetime.fromisoformat(str(approval.get('approved_at', '')).replace('Z', '+00:00'))
-    if checked.tzinfo is None or approval.get('event_sha256') != event_digest(record.event):
+    checked = review_timestamp(approval.get('approved_at', ''))
+    if checked < review_timestamp(review['reviewed_at']):
+        raise ValueError('Human approval cannot precede the factual review')
+    if approval.get('event_sha256') != event_digest(record.event):
         raise ValueError('Human approval must be dated and bound to the reviewed facts')
     if approval.get('date_precision') != record.date_precision:
         raise ValueError('Human approval must cover date precision')
