@@ -10,6 +10,15 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str
 
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def normalize_database_driver(cls, value):
+        if isinstance(value, str):
+            for prefix in ("postgres://", "postgresql://"):
+                if value.startswith(prefix):
+                    return "postgresql+psycopg://" + value[len(prefix):]
+        return value
+
     # Authentication
     SECRET_KEY: str = Field(min_length=32)
     ALGORITHM: Literal["HS256"] = "HS256"
