@@ -82,6 +82,7 @@ def test_real_reviewed_pilot_acceptance(tmp_path):
     assert report['imported'] == {'inserted': 1, 'duplicate_urls': 0}
     assert report['repeat'] == {'inserted': 0, 'duplicate_urls': 1}
     assert report['pagination'] == report['detail_endpoints'] == 'passed'
+    assert report['catalog_search_and_filters'] == 'passed'
     assert report['disposable_database_removed']
     assert not report['configured_database_connected']
 
@@ -139,3 +140,37 @@ def test_review_attestation_survives_absent_optional_fields_but_binds_new_facts(
     assert event_digest(changed) != event_digest(row.event)
     with pytest.raises(ValueError, match='Reviewed facts changed'):
         validate_approved(row._replace(event=changed))
+
+@pytest.mark.parametrize('reviewed_at', ['2999-01-01T00:00:00+00:00', '2026-10-25T18:02:28'])
+def test_review_rejects_future_or_timezone_less_attestation(reviewed_at):
+    row = load_approved(PILOT / 'reviewed.csv')[0][0]
+    evidence = copy.deepcopy(row.acquisition_evidence)
+    evidence['review']['reviewed_at'] = reviewed_at
+    with pytest.raises(ValueError, match='timestamp'):
+        validate_approved(row._replace(acquisition_evidence=evidence))
+
+
+@pytest.mark.parametrize('approved_at, message', [
+    ('2999-01-01T00:00:00+00:00', 'future'),
+    ('2026-10-25T18:02:28', 'timezone'),
+    ('2026-10-24T18:02:28+00:00', 'precede'),
+])
+def test_human_approval_requires_possible_chronology(approved_at, message):
+    from app.services.review_evidence import require_human_approval, event_digest
+    row = load_approved(PILOT / 'reviewed.csv')[0][0]
+    evidence = copy.deepcopy(row.acquisition_evidence)
+    evidence['human_approval'] = {'reviewer_type': 'human', 'decision': 'approved',
+        'reviewer': 'Synthetic unit-test attestation only', 'note': 'Never persisted',
+        'approved_at': approved_at, 'date_precision': row.date_precision,
+        'event_sha256': event_digest(row.event)}
+    with pytest.raises(ValueError, match=message):
+        require_human_approval(row._replace(acquisition_evidence=evidence))
+
+
+def test_direct_human_review_still_requires_valid_facts_and_timestamp():
+    from app.services.review_evidence import require_human_approval
+    row = load_approved(PILOT / 'reviewed.csv')[0][0]
+    evidence = copy.deepcopy(row.acquisition_evidence)
+    evidence['review'].update(reviewer_type='human', reviewed_at='2999-01-01T00:00:00+00:00')
+    with pytest.raises(ValueError, match='future'):
+        require_human_approval(row._replace(acquisition_evidence=evidence))

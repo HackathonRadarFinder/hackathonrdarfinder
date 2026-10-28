@@ -5,7 +5,7 @@ import uuid
 from fastapi import HTTPException
 from sqlalchemy import delete, select
 from sqlalchemy.exc import IntegrityError
-from app.models.core import AuditLog
+from app.models.core import AuditLog, EventVersion
 from app.models.discovery import DiscoveryRun, DiscoveryLock, DiscoverySource, DiscoveryEvent
 from app.models.institution import Announcement, Institution
 from app.schemas.event import EventCreate
@@ -68,6 +68,15 @@ def review(db, candidate_id, body, actor):
             raise HTTPException(409, 'Event identity or observation conflicts with existing history')
         candidate.hackathon_id = db.scalar(select(DiscoveryEvent.hackathon_id).where(
             DiscoveryEvent.source_id == source.source_id, DiscoveryEvent.canonical_url == str(item.url)))
+        if candidate.evidence.get('acquisition'):
+            version = db.scalar(select(EventVersion).where(EventVersion.hackathon_id == candidate.hackathon_id).order_by(EventVersion.version_number.desc()).limit(1))
+            if version.changes.get('run_id') == str(run.id):
+                version.changes = {**version.changes, 'acquisition': candidate.evidence['acquisition']}
+            else:
+                db.add(EventVersion(hackathon_id=candidate.hackathon_id, version_number=version.version_number + 1,
+                    title=version.title, description=version.description, snapshot=version.snapshot,
+                    changes={'fields': [], 'acquisition': candidate.evidence['acquisition'], 'run_id': str(run.id)},
+                    created_at=now.replace(tzinfo=None)))
         db.execute(delete(DiscoveryLock).where(DiscoveryLock.id == 1, DiscoveryLock.run_id == run.id))
     candidate.status = body.decision
     candidate.reviewer_id = uuid.UUID(actor.sub)

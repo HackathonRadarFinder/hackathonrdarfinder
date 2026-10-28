@@ -4,6 +4,8 @@ from datetime import datetime, timezone
 import json
 import os
 import time
+import tempfile
+from pathlib import Path
 
 
 def main():
@@ -16,11 +18,17 @@ def main():
     if os.environ.get('DISCOVERY_ENABLED', '').lower() != 'true':
         print(json.dumps({'enabled': False, 'executed': False})); return 0
     from app.core.database import SessionLocal
-    from app.services.discovery_service import run_due
+    from app.services.discovery_service import run_due, run_source
     try:
         while True:
-            with SessionLocal() as db:
-                results = run_due(db, datetime.now(timezone.utc), allow_live=args.allow_live, limit=args.batch_size)
+            try:
+                with SessionLocal() as db:
+                    now = datetime.now(timezone.utc)
+                    run_source(db, None, now)  # Recover abandoned PostgreSQL runs before selecting due sources.
+                    results = run_due(db, now, allow_live=args.allow_live, limit=args.batch_size)
+                Path(os.environ.get('COLLECTOR_HEARTBEAT', str(Path(tempfile.gettempdir()) / 'collector-heartbeat'))).write_text(str(time.time()))
+            except Exception:
+                results = {'worker': {'status': 'failed', 'error_code': 'database_or_worker_unavailable'}}
             print(json.dumps(results), flush=True)
             if not args.watch:
                 return 1 if any(row['status'] == 'failed' for row in results.values()) else 0

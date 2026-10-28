@@ -1,3 +1,60 @@
+# Final execution sprint: 28 October 2026
+
+Fresh branch: `fix/2026-10-28-factual-review`, based on `origin/develop` after PR #97 was confirmed merged externally (`c996f16e9d5f737d8b3a7fcd99fb11e38ac6c9ae`). No duplicate PR #96/#97 was created, protected branch merged or production deployment performed by this sprint. The earlier release report below remains historical evidence.
+
+| Component | Status | Current evidence | Remaining blocker |
+|---|---|---|---|
+| Backend | Targeted regressions pass | 174 passed, 0 failed/skipped; importer/approval/notifications/ML | None for scoped code changes |
+| Frontend | Existing integration passes | 23 passed, 1 opt-in backend smoke skipped; lint passed; real reviewed pilot reaches React cards | Full browser/build not repeated locally; CI checks current commit |
+| PostgreSQL | Preserved | Read-only IDs/selected-value hashes match previous snapshot; 5 events, 3 users, 3 saved items, 1362 institutions; migration e0f1a2b3c4d5 | No data reimport needed |
+| Data collection | Existing acquisition retained | Six immutable pilot/review input hashes unchanged; original provenance and Brabble credit retained | New API acquisition requires an authorized key; no live source scraping enabled |
+| Factual review | Complete 25-candidate worksheet | 225 fields: 48 primary-supported, 9 conflicts, 10 indexed leads, 3 unknown, 155 unverified | 23 candidates still need factual resolution; human decisions listed in review report |
+| Data publication | Correctly gated | Two factual drafts await human consideration; zero human approvals/new persistent staging/publication | Real dated fact-bound human approval; worksheet is deliberately non-importable |
+| ML predictions | Suppressed | Current baseline evaluation: 5 editions/1 recurring series/0 folds; separate 3-edition retrospective research also 0 folds | Sufficient genuinely earlier observations and outcome labels; no invented availability times |
+| Notifications | Mock/dry-run ready | Consent, retries, deduplication, failure/read-state regressions included in 174 | Authorized SMTP configuration and recipients; no real email sent |
+| Docker | Existing app healthy | Backend, PostgreSQL, frontend healthy; ready/current migrations | Current source affects offline review workers; local runtime was not rebuilt/restarted unnecessarily |
+| Release readiness | Locally demo-ready; scoped review candidate | Focused fixes/tests, reports and selective commits; final remote status is linked in the new PR | Human review and owner production decision; not production-ready |
+
+## Work completed
+
+- Added a reproducible, database-free field-review packet builder. It validates original provider evidence, requires one observation per candidate, separates verified proposals from conflicting/unverified claims, preserves attribution, hashes inputs and emits the five requested review deliverables. Generated CSV/JSON datasets remain ignored locally.
+- Fixed acceptance of future-dated factual reviews/human approvals, approvals predating factual review, and a direct-human approval path that previously returned before revalidating facts. Added six chronology regressions.
+- Extended disposable real-pilot acceptance to check search, mode, location, organization filters and empty search using the React catalog query contract. No pending records were applied.
+- Reviewed all 25 candidates. BID AND CODE and Hacknauts are the two factual drafts awaiting human consideration. No new bound review ledger/approved CSV or invented human identity was created. The existing one AI-reviewed row remains the only importable pilot row for disposable acceptance.
+- Built an isolated historical research dataset for Megathon 2022, 2023 and 2025 from institutional retrospectives. Observation timestamps are today, not historical publication dates. Baseline evaluation correctly yields zero valid folds. Production trust manifests/models and public prediction settings are unchanged.
+
+Read [the factual findings and human decisions](docs/reviews/FACTUAL_REVIEW_20261028.md). The full 225-field report, corrected CSV, shortlist, blocked list and retained acquisition evidence are local at `backend/radar_collector/output/factual-review-20261028/packet/`. Generated datasets, caches, dumps, credentials and the unrelated `hackathon_radar_scraper/` are excluded from commits.
+
+## Actual validation and initial failures
+
+- Final affected suite: **174 passed, 0 failed, 0 skipped** (one upstream Starlette/httpx deprecation warning). Includes import, pilot/worksheet, approval, notifications and temporal evaluation. Counts overlap earlier tests and must not be summed.
+- Frontend: **23 passed, 1 skipped, 0 failed**; the skipped opt-in fixture test requires its separately running server. The default suite did execute the existing genuine reviewed-pilot import/API/React-card test. Lint passed.
+- Initial sandbox runs failed to create/read pytest temporary directories and spawn Node workers. Rerunning the isolated tests with appropriate execution permissions resolved those environmental failures.
+- The new packet tests initially failed because their fixture CSV was not checked in. The test now generates it from existing immutable fixtures with `prepare_pilot`; all eight packet cases passed afterward.
+- An initial standalone pilot command inherited invalid `DEBUG=release`. Re-execution with explicit isolated settings passed; no environment file was edited. The final regression suite executes the updated pilot search/filter acceptance.
+- ML baseline CLI ran: all MAE/calibration/coverage metrics null, no valid folds. No accuracy/delivery claim.
+- Python compile, whitespace and conflict-marker checks passed. Current run evidence summaries are in `docs/release-evidence/2026-10-28-sprint/`. Full unaffected backend/browser suites and local image builds were not repeated.
+
+## Commands and safe continuation
+
+From `backend`, with test-only configuration for standalone acceptance:
+
+```powershell
+$env:DEBUG='false'
+$env:DATABASE_URL='sqlite+pysqlite://'
+$env:SECRET_KEY='isolated-sprint-test-secret-key-20261028'
+.venv/Scripts/python.exe -m workers.build_factual_review_packet --candidates radar_collector/output/brabble-pilot/pilot_candidates.csv --observations radar_collector/output/factual-review-20261028/research_observations.json --out radar_collector/output/factual-review-20261028/packet
+.venv/Scripts/python.exe -m workers.accept_brabble_pilot --csv radar_collector/output/brabble-pilot/reviewed.csv --out ../.test-support/new-pilot-acceptance
+.venv/Scripts/python.exe -m pytest tests/test_factual_review_packet.py tests/test_brabble_pilot.py tests/test_reviewed_public_import.py tests/test_brabble_ingestion.py tests/test_brabble_refresh.py tests/test_email_notifications.py tests/test_notifications.py tests/test_temporal_prediction.py tests/test_prediction_policy.py -q --basetemp ../.test-support/new-sprint-tests
+.venv/Scripts/python.exe -m workers.evaluate_predictions --output ../.test-support/new-ml-evaluation.json
+```
+
+Other commands executed: `git fetch origin develop`; create fresh feature branch; `npm test`; `npm run lint`; GET-only release smoke; read-only database snapshot; `docker compose ... ps`; compile and selective Git checks. Do not reuse temporary output paths that the evaluator refuses to overwrite. No `--apply` is authorized by a shortlist. Preserve `.env`, existing databases, untracked datasets and scraper directory.
+
+Final commit/PR links and exact remote check outcomes are reported after push in the new PR/final handoff; earlier CI is not substituted for current-source verification.
+
+---
+
 # Final release report
 
 Updated 27 October 2026. Worktree `.release-local`, branch `release/2026-10-28-integration`.

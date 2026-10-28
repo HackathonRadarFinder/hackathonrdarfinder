@@ -66,6 +66,7 @@ def stage_announcements(db, source, rows, metadata, observed):
         item = dict(extracted)
         issues = list(item.pop('_issues', []))
         dates = item.pop('_raw_dates', {})
+        acquisition = item.pop('_acquisition', None)
         item.update(source=source.key, scraped_at=observed.isoformat())
         if institution:
             # Directory identity is operator-verified. Conflicting page geography is reviewed explicitly.
@@ -78,8 +79,8 @@ def stage_announcements(db, source, rows, metadata, observed):
             if not item.get('organization'):
                 item['organization'] = institution.name
         stable = {key: value for key, value in item.items() if key != 'scraped_at'}
-        fingerprint = hashlib.sha256(json.dumps(dict(payload=stable, dates=dates, issues=issues), sort_keys=True).encode()).hexdigest()
-        prepared.append((fingerprint, item, issues, dates))
+        fingerprint = hashlib.sha256(json.dumps(dict(payload=stable, dates=dates, issues=issues, **({'api_record_sha256': acquisition['api_record_sha256']} if acquisition else {})), sort_keys=True).encode()).hexdigest()
+        prepared.append((fingerprint, item, issues, dates, acquisition))
     # Fetch identities in bounded batches before adding rows. Avoid one SELECT
     # (and an autoflush) per uploaded record while respecting parameter limits.
     fingerprints = list(dict.fromkeys(row[0] for row in prepared))
@@ -88,7 +89,7 @@ def stage_announcements(db, source, rows, metadata, observed):
         found = db.scalars(select(Announcement).where(Announcement.source_id == source.source_id,
             Announcement.fingerprint.in_(fingerprints[offset:offset + 500]))).all()
         existing_items.update({candidate.fingerprint: candidate for candidate in found})
-    for fingerprint, item, issues, dates in prepared:
+    for fingerprint, item, issues, dates, acquisition in prepared:
         existing = existing_items.get(fingerprint)
         if existing is not None:
             existing.last_seen_at = observed
@@ -98,7 +99,7 @@ def stage_announcements(db, source, rows, metadata, observed):
             fingerprint=fingerprint, payload=item, observed_at=observed, last_seen_at=observed,
             status='pending', evidence=dict(checksum=metadata['checksum'], document_url=metadata['document_url'],
                 adapter_version=metadata['adapter_version'], fetched_at=metadata.get('fetched_at'),
-                issues=issues, raw_dates=dates))
+                issues=issues, raw_dates=dates, **({'acquisition': acquisition} if acquisition else {})))
         db.add(candidate)
         existing_items[fingerprint] = candidate
         counts['candidates_inserted'] += 1

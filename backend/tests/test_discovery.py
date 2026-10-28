@@ -103,12 +103,15 @@ def test_unstop_adapter_handoff_without_network(db, monkeypatch, tmp_path):
     monkeypatch.setattr(CollectorManager, 'collect', lambda self, source: result)
     register_source(db, policy, NOW)
     outcome = run_source(db, policy.key, NOW, allow_live=True)
-    assert outcome['status'] == 'success' and outcome['inserted'] == 1
-    assert db.scalar(select(Hackathon)).source == 'Unstop'
+    assert outcome['status'] == 'success' and outcome['inserted'] == 0
+    assert outcome['candidates_inserted'] == 1
+    assert count(db, Hackathon) == 0  # Live records always require a separate review.
+    from app.models.institution import Announcement
+    assert db.scalar(select(Announcement)).status == 'pending'
     assert outcome['transport'] == 'governed-http'
     result.robots_allowed = False
     assert run_source(db, policy.key, NOW + timedelta(hours=6), allow_live=True)['status'] == 'failed'
-    assert count(db, Hackathon) == 1
+    assert count(db, Hackathon) == 0
 
 def test_worker_disabled_and_enabled_disposable_schedule(db, monkeypatch, capsys):
     import json

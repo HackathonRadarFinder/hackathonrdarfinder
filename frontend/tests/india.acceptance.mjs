@@ -45,6 +45,12 @@ try {
   await page.getByText('1 events · page 1',{exact:true}).waitFor();
   await page.getByRole('heading',{name:event.title,exact:true}).waitFor();
   checks.push('State and searched college filters render the matching stored event');
+  await page.goto(`${base}/universities`);
+  await page.getByRole('heading',{name:institution.name,exact:true}).locator('..').getByRole('link',{name:'View college hackathons',exact:true}).click();
+  await page.getByText(/^1 events . page 1$/).waitFor();
+  assert.equal(new URL(page.url()).searchParams.get('institutionId'),String(institution.id));
+  checks.push('University directory links open the college-specific catalog');
+
   await page.getByRole('button',{name:'Reset',exact:true}).click();
   await page.getByText('25 events · page 1',{exact:true}).waitFor();
   assert.equal(await page.getByLabel('State or union territory').inputValue(),'');

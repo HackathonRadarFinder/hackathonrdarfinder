@@ -58,7 +58,17 @@ def accept(csv_file, output):
                         assert result.status_code == 200 and result.json()['data'] == item
                         assert item['acquisition']['provider'] == 'Brabble.ai'
                         assert item['acquisition']['method'] == 'brabble_api'
+                        # These are the same query parameters used by the React catalog.
+                        for params in ({'q': item['title']}, {'mode': item['mode']},
+                                       {'location': item['location']}, {'organization_id': item['organization_id']}):
+                            if not all(value is not None for value in params.values()):
+                                continue
+                            filtered = client.get('/events/', params={**params, 'page': 1, 'page_size': 100})
+                            assert filtered.status_code == 200
+                            assert item['id'] in {row['id'] for row in filtered.json()['data']}
                         details.append(result.json())
+                    empty = client.get('/events/', params={'q': 'no-match-pilot-acceptance-xyz', 'page': 1})
+                    assert empty.status_code == 200 and empty.json()['total'] == 0
                     full_response = client.get('/events/', params={'page': 1, 'page_size': 100}).json()
                     (output / 'events_response.json').write_text(json.dumps(full_response, ensure_ascii=False, indent=2), encoding='utf-8')
                     (output / 'detail_responses.json').write_text(json.dumps(details, ensure_ascii=False, indent=2), encoding='utf-8')
@@ -71,6 +81,7 @@ def accept(csv_file, output):
               'disposable_database_removed': True, 'reviewed_records': len(approved), 'not_approved': skipped,
               'dry_run': dry_run, 'dry_run_rollback_verified': True, 'imported': imported, 'repeat': repeated,
               'list_endpoint': 'passed', 'pagination': 'passed', 'detail_endpoints': 'passed',
+              'catalog_search_and_filters': 'passed',
               'brabble_attribution': 'passed', 'production_or_development_writes': False}
     (output / 'acceptance_report.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
     return report
