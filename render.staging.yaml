@@ -1,0 +1,60 @@
+# Opt-in staging Blueprint. Reviewing this file incurs no cost; creating its
+# resources on Render can incur charges. Do not use for production as-is.
+# Deliberately excludes the collector until an authorized source and persistent
+# evidence disk have been configured and tested.
+databases:
+  - name: hackathon-radar-staging-db
+    plan: basic-256mb
+    region: singapore
+    postgresMajorVersion: "16"
+    ipAllowList: []
+
+services:
+  - type: pserv
+    name: hackathon-radar-staging-api
+    runtime: docker
+    plan: 0.5c-512mb
+    region: singapore
+    branch: develop
+    autoDeployTrigger: off
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    preDeployCommand: python -m workers.migrate
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hackathon-radar-staging-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ENVIRONMENT
+        value: staging
+      - key: DEBUG
+        value: "false"
+      - key: EMAIL_MODE
+        value: disabled
+      - key: API_V1_PREFIX
+        value: /api/v1
+      - key: PORT
+        value: "8000"
+
+  - type: web
+    name: hackathon-radar-staging-web
+    runtime: docker
+    plan: free
+    region: singapore
+    branch: develop
+    autoDeployTrigger: off
+    dockerContext: ./frontend
+    dockerfilePath: ./frontend/Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: BACKEND_HOST
+        fromService:
+          type: pserv
+          name: hackathon-radar-staging-api
+          property: host
+      - key: BACKEND_PORT
+        value: "8000"
