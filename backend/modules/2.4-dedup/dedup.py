@@ -289,6 +289,17 @@ def compare(a, b):
         return "uncertain", f"title={score:.0f} date_ok={date_ok} loc_ok={loc_ok}", score
     return "not_duplicate", f"title={score:.0f} date_ok={date_ok} loc_ok={loc_ok}", score
 
+
+def are_duplicates(a, b):
+    """True if two raw event dicts are the same event (used by evaluate.py and master_db.py).
+
+    Records are passed through map_record() first so dates in other formats are
+    converted to YYYY-MM-DD and missing keys get safe defaults before compare() runs.
+    'uncertain' pairs are NOT counted as duplicates; they go to manual review.
+    """
+    ra, rb = map_record(a, 0), map_record(b, 1)
+    return compare(ra, rb)[0] == "duplicate"
+
 # ---------------- CLUSTERING (union-find) ----------------
 def _candidate_pairs(events):
     """Generate only pairs that can match under the rules, avoiding a full N² scan.
@@ -449,4 +460,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
+ 
