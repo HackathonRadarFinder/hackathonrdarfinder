@@ -1,3 +1,1 @@
-
-# No external packages required.
-# Uses only Python standard library modules.
+rapidfuzz>=3.0
