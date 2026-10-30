@@ -3,10 +3,11 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { chromium } from 'playwright-core';
 import AxeBuilder from '@axe-core/playwright';
+import { disposableUrl } from './disposable-url.mjs';
 
 // Browser writes are restricted to the marked temporary SQLite fixture.
 const base = process.env.FRONTEND_DISPOSABLE_BROWSER_BASE;
-assert.equal(base, 'http://127.0.0.1:5174', 'Set FRONTEND_DISPOSABLE_BROWSER_BASE=http://127.0.0.1:5174; never target a live database.');
+disposableUrl(base);
 const marker = await fetch(`${base}/api/__disposable_fixture`).then(response => response.json());
 assert.equal(marker.database, 'temporary-sqlite-frontend-tests');
 const executablePath = process.env.BROWSER_EXECUTABLE_PATH || [
@@ -108,16 +109,13 @@ try {
   assert.match(await organizer.getAttribute('rel'), /noopener/);
   passed('Keyword filtering, saving and safe organizer links');
   await navigate('Preferences');
-  const consent = page.getByLabel('I consent to email reminders');
-  assert.equal(await consent.isChecked(), false);
-  await consent.check();
-  await page.getByRole('button', { name: 'Save preferences', exact: true }).click();
-  await page.getByText(/Preferences saved\./).waitFor();
+  assert.equal(await page.getByLabel('I consent to email reminders').count(), 0);
   const read = page.getByRole('button', { name: 'Mark as read', exact: true });
+  await read.first().waitFor();
   assert.ok(await read.count() > 0, 'Saving an event generates a persisted account notification');
   await read.first().click();
   await page.getByText('Read', { exact: true }).first().waitFor();
-  passed('Explicit consent and persistent notification read state');
+  passed('Email controls absent; persistent in-app notification read state');
   await navigate('Admin');
   await page.getByRole('alert').waitFor();
   assert.equal(await page.getByRole('table').count(), 0, 'Ordinary account must never see admin data');
@@ -140,12 +138,9 @@ try {
   await navigate('Saved events');
   await page.getByRole('heading', { name: 'Disposable Event 25', exact: true }).waitFor();
   await navigate('Preferences');
-  assert.equal(await consent.isChecked(), true);
+  assert.equal(await page.getByLabel('I consent to email reminders').count(), 0);
   await page.getByText('Read', { exact: true }).first().waitFor();
-  passed('Saved event, consent and notification persist across login sessions');
-  await consent.uncheck();
-  await page.getByRole('button', { name: 'Save preferences', exact: true }).click();
-  await page.getByText(/Preferences saved\./).waitFor();
+  passed('Saved events and in-app notifications persist across login sessions');
   await page.setViewportSize({ width: 320, height: 900 });
   await navigate('Explore');
   assert.equal(await page.getByRole('button', { name: 'Menu', exact: true }).getAttribute('aria-expanded'), 'false');

@@ -10,7 +10,8 @@
     "test:browser": "node tests/browser.acceptance.mjs",
     "test:curated": "node tests/curated.acceptance.mjs",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:india": "node tests/india.acceptance.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.52.0",
@@ -25,6 +26,6 @@
     "@vitejs/plugin-react": "^6.1.1",
     "oxlint": "^1.81.0",
     "playwright-core": "^1.64.0",
-    "vite": "^8.3.0"
+    "vite": "^8.3.3"
   }
 }

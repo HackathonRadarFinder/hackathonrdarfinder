@@ -1,0 +1,29 @@
+{
+  "revision": "e0f1a2b3c4d5",
+  "tables": {
+    "hackathons": {
+      "count": 5,
+      "identity_sha256": "814a083f6c4fed6dee921c8266480f85b46ae37c65524ea3b0bc59526a246160",
+      "value_sha256": "57380462f2a9a2686bf8c31cf09ba309122f71d6a768cc3967a9fb5251f7c569"
+    },
+    "users": {
+      "count": 3,
+      "identity_sha256": "99f4c58d2e5093677b011f69974d0c954f2561889a5bb04cd79a61a8676b5cac",
+      "value_sha256": "42771df02d8d59ae6c4948470cd9323038e92bab8f1a79b9148e91c1ea6f2d3e"
+    },
+    "saved_items": {
+      "count": 3,
+      "identity_sha256": "cad806f5c8261fd47144f9accb151fbb54ae12504068df2813adc0de4cdac2f9",
+      "value_sha256": "b80e41c9ba1c1d66ceceaa45139027a78655ff65b4c709c95648a057886aafbf"
+    },
+    "institutions": {
+      "count": 1362,
+      "identity_sha256": "ea1afbddb92b93145ffc0c6ca08c31583a82cb0113afe5bf3eda1fd35dbd5a07",
+      "value_sha256": "72ec953bff61000fb693818228489b5e07728f742e758fe399ae6c3247814fe8"
+    }
+  },
+  "directory": {
+    "unique_identifiers": 1362,
+    "states": 33
+  }
+}

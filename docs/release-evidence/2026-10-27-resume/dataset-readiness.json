@@ -1,0 +1,108 @@
+{
+  "reviewed_on": "2026-10-27",
+  "configured_database_connected": false,
+  "network_collection_executed": false,
+  "provider_api_reuse": {
+    "reference": "https://brabble.ai/docs",
+    "terms_reference": "https://brabble.ai/terms",
+    "status": "provider documentation permits API-row reuse with visible attribution and organizer links",
+    "checked_by": "AI release assistant",
+    "direct_upstream_scraping_permission": false
+  },
+  "datasets": [
+    {
+      "path": "backend/radar_collector/output/candidates.csv",
+      "sha256": "8194be6bf84ba3cfcba7124c6924d26bcc54bc0532db63dfe50ee84e1521b140",
+      "rows": 0,
+      "review_status": {},
+      "collection_modes": {},
+      "persistent_publication_executed": false,
+      "schema_valid_approved": 0,
+      "not_approved": 0,
+      "human_gate_passed": 0
+    },
+    {
+      "path": "backend/radar_collector/output/verified-offline/candidates.csv",
+      "sha256": "a5d62231a19d1d8e187701ac4dc7c124ac384789ee7692ec87ca696970ccbff7",
+      "rows": 4,
+      "review_status": {
+        "needs_review": 4
+      },
+      "collection_modes": {
+        "offline_fixture": 4
+      },
+      "persistent_publication_executed": false,
+      "schema_valid_approved": 0,
+      "not_approved": 4,
+      "human_gate_passed": 0
+    },
+    {
+      "path": "backend/radar_collector/output/brabble-review/candidates.csv",
+      "sha256": "86ab53360cd80d3324f2d0a144642c2640473edf3beb22a6e5a318308f8e0106",
+      "rows": 206,
+      "review_status": {
+        "needs_review": 206
+      },
+      "collection_modes": {
+        "brabble_api": 206
+      },
+      "persistent_publication_executed": false,
+      "schema_valid_approved": 0,
+      "not_approved": 206,
+      "human_gate_passed": 0
+    },
+    {
+      "path": "backend/radar_collector/output/brabble-pilot/pilot_candidates.csv",
+      "sha256": "cb892c9d47ad4e1f47cdb9352739379ac174431921a3b210ce3c3634a80a71ca",
+      "rows": 25,
+      "review_status": {
+        "needs_review": 24,
+        "approved": 1
+      },
+      "collection_modes": {
+        "brabble_api": 25
+      },
+      "persistent_publication_executed": false,
+      "schema_valid_approved": 1,
+      "not_approved": 24,
+      "human_gate_passed": 0,
+      "generic_parser_projection_rows": 1,
+      "projection_upload_performed": false,
+      "projection_caveat": "Calendar-only dates require review; generic projection omits provider evidence and must not be published without preserving attribution via the reviewed API import contract."
+    },
+    {
+      "path": "backend/radar_collector/output/brabble-pilot/reviewed.csv",
+      "sha256": "3cd68d83384e405d802572178a9be5d1f3d0b4ba9e4795eec7245c12be44a9a0",
+      "rows": 1,
+      "review_status": {
+        "approved": 1
+      },
+      "collection_modes": {
+        "brabble_api": 1
+      },
+      "persistent_publication_executed": false,
+      "schema_valid_approved": 1,
+      "not_approved": 0,
+      "human_gate_passed": 0,
+      "generic_parser_projection_rows": 1,
+      "projection_upload_performed": false,
+      "projection_caveat": "Calendar-only dates require review; generic projection omits provider evidence and must not be published without preserving attribution via the reviewed API import contract."
+    },
+    {
+      "path": "hackathon_radar_scraper/collector/examples/offline_example_candidates.csv",
+      "sha256": "6c50d0005a46922668d53fcab20d5e4666096a25a070b6f1ac1b5b3963b12d3b",
+      "rows": 4,
+      "review_status": {
+        "needs_review": 4
+      },
+      "collection_modes": {
+        "missing": 4
+      },
+      "persistent_publication_executed": false,
+      "schema_valid_approved": 0,
+      "not_approved": 4,
+      "human_gate_passed": 0
+    }
+  ],
+  "publication_blocker": "Supplied approved pilot is AI reviewed; no matching human approval is present. Provider metadata must be retained."
+}

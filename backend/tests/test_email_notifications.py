@@ -31,6 +31,17 @@ def test_day_only_public_dates_never_create_timed_email(database):
         assert enqueue_due(db, NOW) == 0
 
 
+def test_precision_correction_cancels_already_queued_timed_email(database):
+    engine, (_, event_id) = database
+    with Session(engine) as db:
+        assert enqueue_due(db, NOW) == 2
+        db.get(Hackathon, event_id).description = "Date precision: day; exact time not published."
+        db.commit()
+        assert dispatch_due(db, config(), NOW) == {"cancelled": 2}
+        assert all(row.status == "cancelled" and row.accepted_at is None
+                   for row in db.scalars(select(EmailDelivery)))
+
+
 def config(**changes):
     return Settings(_env_file=None, DATABASE_URL="sqlite://", SECRET_KEY="x" * 32,
                     **{"EMAIL_MODE": "enabled", "SMTP_HOST": "smtp.example.com", **changes})

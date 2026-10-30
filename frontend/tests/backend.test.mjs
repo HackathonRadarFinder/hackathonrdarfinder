@@ -2,13 +2,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createApiClient } from '../src/services/apiClient.js';
+import { disposableUrl } from './disposable-url.mjs';
 
 const base = process.env.FRONTEND_DISPOSABLE_API;
 test('frontend client against disposable backend: pages, filters, auth, safe admin and revocation', { skip: !base }, async () => {
-  const url = new URL(base);
-  assert.equal(url.hostname, '127.0.0.1', 'Only the documented loopback disposable fixture is allowed');
-  assert.equal(url.port, '5174');
-  assert.equal(url.pathname, '/api');
+  disposableUrl(base, '/api');
   const marker = await fetch(`${base}/__disposable_fixture`).then(response => response.json());
   assert.equal(marker.database, 'temporary-sqlite-frontend-tests', 'Never write to a non-fixture backend');
   let adminToken;

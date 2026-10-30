@@ -1,0 +1,181 @@
+"""Integration adapter for Module 2.3 JSON outputs -> Module 2.4.
+
+Expected input directory (default: module_2_3/output):
+  valid_events.json (required; invalid events must never be passed here)
+  expired_events.json (optional; used only with --include-expired)
+
+Outputs master_events.json, uncertain_pairs.json, and a SQLite master database.
+"""
+
+import argparse
+import json
+from pathlib import Path
+
+from dedup import map_record, cluster, merge_group, to_iso, FIELD_MAP
+from master_db import save_master
+
+
+def read_events(path):
+    """Read a JSON list, or a wrapper object containing an events/valid/expired list."""
+    path = Path(path)
+
+    if not path.exists():
+        raise FileNotFoundError(f"Required input file not found: {path}")
+
+    with path.open("r", encoding="utf-8") as handle:
+        data = json.load(handle)
+
+    if isinstance(data, dict):
+        for key in ("events", "valid", "expired"):
+            if isinstance(data.get(key), list):
+                data = data[key]
+                break
+
+    if not isinstance(data, list):
+        raise ValueError(
+            f"{path} must contain a JSON list of event objects"
+        )
+
+    if any(not isinstance(item, dict) for item in data):
+        raise ValueError(
+            f"{path} must contain only JSON event objects"
+        )
+
+    return data
+
+
+def run_pipeline(input_dir, output_dir, db_path, include_expired=False):
+    """Run deduplication and save canonical events and review results."""
+    input_dir = Path(input_dir)
+    output_dir = Path(output_dir)
+
+    raw_events = read_events(input_dir / "valid_events.json")
+
+    if include_expired:
+        raw_events.extend(
+            read_events(input_dir / "expired_events.json")
+        )
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    if not raw_events:
+        return {
+            "input": 0,
+            "canonical": 0,
+            "duplicates_merged": 0,
+            "uncertain": 0,
+            "message": (
+                f"No events found in {input_dir / 'valid_events.json'}; "
+                "ingestion skipped (no database write performed)."
+            ),
+        }
+
+    events = [
+        map_record(event, index)
+        for index, event in enumerate(raw_events)
+    ]
+    for index, (raw, event) in enumerate(zip(raw_events, events)):
+        lowered = {str(k).strip().lower(): v for k, v in raw.items()}
+        if not event["title"] or event["source"] == "unknown" or not any(lowered.get(k) for k in FIELD_MAP["source_id"]):
+            raise ValueError(f"Record {index} requires title, source and stable source_id")
+        for field in ("start_date", "end_date", "registration_deadline"):
+            supplied = next((lowered[k] for k in FIELD_MAP[field] if lowered.get(k) not in (None, "")), "")
+            if supplied and not to_iso(str(supplied)):
+                raise ValueError(f"Record {index} has invalid {field}")
+        if event["start_date"] and event["end_date"] and event["end_date"] < event["start_date"]:
+            raise ValueError(f"Record {index} ends before it starts")
+
+    groups, uncertain = cluster(events)
+
+    master = [
+        merge_group(group, 101 + index)
+        for index, group in enumerate(groups)
+    ]
+
+    master_path = output_dir / "master_events.json"
+    review_path = output_dir / "uncertain_pairs.json"
+
+    # Persist before publishing output artifacts; a failed merge must not look successful.
+    stats = save_master(master, db_path=str(db_path))
+
+    master_path.write_text(
+        json.dumps(master, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+    review_path.write_text(
+        json.dumps(uncertain, indent=2, ensure_ascii=False),
+        encoding="utf-8",
+    )
+
+    return {
+        "input": len(events),
+        "canonical": len(master),
+        "duplicates_merged": len(events) - len(master),
+        "uncertain": len(uncertain),
+        "stats": stats,
+        "master_json": str(master_path),
+        "review_json": str(review_path),
+        "database": str(db_path),
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Integrate Module 2.3 event outputs with Module 2.4."
+    )
+
+    parser.add_argument(
+        "--input-dir",
+        default="module_2_3/output",
+        help="Folder containing valid_events.json",
+    )
+
+    parser.add_argument(
+        "--include-expired",
+        action="store_true",
+        help="Also process expired_events.json",
+    )
+
+    parser.add_argument(
+        "--db",
+        default="master_events.db",
+        help="SQLite database path",
+    )
+
+    parser.add_argument(
+        "--output-dir",
+        default="module_2_4_output",
+        help="Folder for output JSON files",
+    )
+
+    args = parser.parse_args()
+
+    result = run_pipeline(
+        args.input_dir,
+        args.output_dir,
+        args.db,
+        args.include_expired,
+    )
+
+    if "message" in result:
+        print(result["message"])
+        return
+
+    print(f"Input events: {result['input']}")
+    print(f"Canonical events: {result['canonical']}")
+    print(f"Duplicates merged: {result['duplicates_merged']}")
+    print(f"Uncertain pairs: {result['uncertain']}")
+    print(f"Master JSON: {result['master_json']}")
+    print(f"Review JSON: {result['review_json']}")
+    print(f"SQLite DB: {result['database']}")
+
+    print(
+        f"Database records: new={result['stats']['new']}, "
+        f"updated={result['stats']['updated']}, "
+        f"total={result['stats']['total']}"
+    )
+
+
+if __name__ == "__main__":
+    main()

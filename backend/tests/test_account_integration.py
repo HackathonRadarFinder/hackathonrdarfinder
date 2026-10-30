@@ -127,3 +127,35 @@ def test_collector_storage_ingestion_api_and_prediction(journey, tmp_path, monke
     assert forecast['historical_events'] == 3 and forecast['window'] is not None
     assert main(['--storage-root', str(tmp_path / 'raw'), '--location', '../outside']) == 1
     assert client.get('/events/', params={'q': 'Collected Radar'}).json()['total'] == 3
+
+
+def test_profile_update_is_owned_audited_and_keeps_identity(journey):
+    from app.models.core import AuditLog
+    client, (one, two), _, engine = journey
+    with Session(engine) as db:
+        role = Role(name='user')
+        for account in db.scalars(select(User)):
+            account.roles.append(role)
+        db.commit()
+    assert client.put('/account/profile', json={'name':'Changed'}).status_code == 401
+    before = client.get('/auth/me', headers=one).json()
+    response = client.put('/account/profile', headers=one, json={'name':'  Updated display name  '})
+    assert response.status_code == 200
+    assert response.json() == {**before, 'name':'Updated display name'}
+    assert client.get('/auth/me', headers=one).json()['name'] == 'Updated display name'
+    assert client.get('/auth/me', headers=two).json()['name'] == 'two'
+    assert client.put('/account/profile', headers=one, json={'name':'Updated display name'}).status_code == 200
+    with Session(engine) as db:
+        changes = db.scalars(select(AuditLog).where(AuditLog.action == 'account_profile_updated')).all()
+        assert len(changes) == 1 and 'Updated display name' not in changes[0].details
+    for body in ({'name':' '}, {'name':'x'*101}, {'name':'Bad\nName'}, {'name':'Admin','role':'administrator'}, {'name':'Other','email':'other@example.com'}, {'name':'Other','user_id':before['id']}):
+        assert client.put('/account/profile', headers=one, json=body).status_code == 422
+    assert client.post('/auth/logout', headers=one).status_code == 200
+    assert client.put('/account/profile', headers=one, json={'name':'Revoked'}).status_code == 401
+
+
+def test_profile_update_checks_role_before_mutating_legacy_account(journey):
+    client, (one, _), _, engine = journey
+    assert client.put('/account/profile', headers=one, json={'name':'Must not persist'}).status_code == 403
+    with Session(engine) as db:
+        assert db.scalar(select(User).where(User.email == 'one@example.com')).name == 'one'

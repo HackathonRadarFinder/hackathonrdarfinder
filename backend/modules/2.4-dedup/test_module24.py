@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from dedup import SAMPLE, map_record, compare, cluster, merge_group, normalize_link, same_location
-from integrate_pipeline import read_events
+from integrate_pipeline import read_events, run_pipeline
 from master_db import save_master
 
 class DedupTests(unittest.TestCase):
@@ -81,6 +81,39 @@ class DedupTests(unittest.TestCase):
             p=Path(d)/"valid_events.json"
             p.write_text(json.dumps([{"title":"One"}]),encoding="utf-8")
             self.assertEqual(len(read_events(p)),1)
+
+    def test_pipeline_end_to_end_idempotence(self):
+        """Duplicate source listings converge to one canonical row across re-runs."""
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            incoming = root / "incoming"
+            incoming.mkdir()
+            rows = [
+                {"source": "unstop", "source_id": "unstop-900",
+                 "title": "AI Buildathon", "organizer": "Tech Club",
+                 "start_date": "2026-11-12", "location": "Online",
+                 "registration_link": "https://example.test/apply?utm_source=unstop"},
+                {"source": "devfolio", "source_id": "devfolio-700",
+                 "title": "AI Buildathon", "organizer": "Tech Club",
+                 "start_date": "2026-11-12", "location": "Online",
+                 "registration_link": "https://example.test/apply"},
+            ]
+            (incoming / "valid_events.json").write_text(
+                json.dumps(rows), encoding="utf-8"
+            )
+            db = root / "master.db"
+            output = root / "output"
+            first = run_pipeline(incoming, output, db)
+            second = run_pipeline(incoming, output, db)
+
+            self.assertEqual(first["input"], 2)
+            self.assertEqual(first["canonical"], 1)
+            self.assertEqual(first["duplicates_merged"], 1)
+            self.assertEqual(first["stats"]["new"], 1)
+            self.assertEqual(second["stats"]["new"], 0)
+            self.assertEqual(second["stats"]["total"], 1)
+            self.assertTrue((output / "master_events.json").exists())
+            self.assertTrue((output / "uncertain_pairs.json").exists())
 
     def test_json_api_wrapper_reader(self):
         with tempfile.TemporaryDirectory() as d:

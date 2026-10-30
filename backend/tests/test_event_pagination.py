@@ -98,11 +98,11 @@ def seed(api, count=0, **fields):
     """Insert directly without weakening the API's authentication dependencies."""
     with api.sessions() as db:
         records = [
-            Hackathon(
-                title=f"Event {index:03}",
-                organization_id=api.organization_ids[0],
+            Hackathon(**{
+                "title": f"Event {index:03}",
+                "organization_id": api.organization_ids[0],
                 **fields,
-            )
+            })
             for index in range(count)
         ]
         db.add_all(records)
@@ -436,7 +436,7 @@ def test_openapi_describes_query_bounds_success_variants_and_global_errors(api):
     document = api.client.get("/openapi.json").json()
     operation = document["paths"]["/events/"]["get"]
     parameters = {parameter["name"]: parameter for parameter in operation["parameters"]}
-    assert set(parameters) == {"page", "page_size", "q", "location", "mode", "organization_id", "start_from", "start_to"}
+    assert set(parameters) == {"page", "page_size", "q", "location", "mode", "organization_id", "start_from", "start_to", "state", "institution_id", "deadline_from", "deadline_to", "sort", "period"}
     assert all(parameter["in"] == "query" and not parameter.get("required", False) for parameter in parameters.values())
 
     def resolve(schema):
@@ -447,12 +447,12 @@ def test_openapi_describes_query_bounds_success_variants_and_global_errors(api):
     def concrete(schema):
         return next((item for item in schema.get("anyOf", []) if item.get("type") != "null"), schema)
 
-    for name, maximum in (("page", 2_147_483_647), ("page_size", 100), ("organization_id", 2_147_483_647)):
+    for name, maximum in (("page", 2_147_483_647), ("page_size", 100), ("organization_id", 2_147_483_647), ("institution_id", 2_147_483_647)):
         schema = concrete(parameters[name]["schema"])
         assert schema["type"] == "integer"
         assert schema.get("minimum") == 1 or schema.get("exclusiveMinimum") == 0
         assert schema["maximum"] == maximum
-    for name, maximum in (("location", 255), ("mode", 50)):
+    for name, maximum in (("location", 255), ("mode", 50), ("state", 100)):
         schema = concrete(parameters[name]["schema"])
         assert schema["type"] == "string"
         assert schema["minLength"] == 1
@@ -471,3 +471,18 @@ def test_openapi_describes_query_bounds_success_variants_and_global_errors(api):
     for status in ("422", "503"):
         error = operation["responses"][status]["content"]["application/json"]["schema"]
         assert set(resolve(error)["properties"]) == {"code", "message", "details", "request_id", "timestamp"}
+
+
+def test_deadline_period_and_sort_are_applied_before_pagination(api):
+    seed(api, 1, title='Z future', start_date=datetime(2099, 1, 2), registration_deadline=datetime(2098, 12, 30))
+    seed(api, 1, title='A past', start_date=datetime(2020, 1, 2), registration_deadline=datetime(2019, 12, 30))
+    seed(api, 1, title='No dates')
+    payload = api.client.get('/events/', params={'sort': 'title', 'page_size': 1}).json()
+    assert payload['total'] == 3 and payload['data'][0]['title'] == 'A past'
+    payload = api.client.get('/events/', params={'period': 'upcoming', 'deadline_from': '2098-12-30', 'deadline_to': '2098-12-30', 'sort': 'deadline'}).json()
+    assert payload['total'] == 1 and payload['data'][0]['title'] == 'Z future'
+    assert api.client.get('/events/', params={'period': 'past'}).json()['total'] == 1
+    rows = api.client.get('/events/', params={'sort': 'start_date'}).json()['data']
+    assert [row['title'] for row in rows] == ['A past', 'Z future', 'No dates']
+    for params in ({'sort': 'unsafe SQL'}, {'period': 'invalid'}, {'deadline_from': '2026-10-27', 'deadline_to': '2026-10-26'}, {'deadline_from': '12345'}):
+        assert api.client.get('/events/', params=params).status_code == 422

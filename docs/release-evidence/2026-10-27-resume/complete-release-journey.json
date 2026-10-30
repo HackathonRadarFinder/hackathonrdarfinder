@@ -1,0 +1,11 @@
+{
+  "synthetic_owned_data_only": true,
+  "checks": [
+    "source registration, import, repeat idempotency, review and publication",
+    "live role denials, private preferences, recommendations and saved-item-preserving duplicate merge",
+    "idempotent scheduled notices, owned read state, email consent/dry-run, ML suppression and logout revocation"
+  ],
+  "smtp_attempts": 0,
+  "remaining_public_events_after_merge": 1,
+  "status": "passed"
+}

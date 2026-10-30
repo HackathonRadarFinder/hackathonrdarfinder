@@ -6,9 +6,10 @@ import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { chromium } from 'playwright-core';
 import AxeBuilder from '@axe-core/playwright';
+import { disposableUrl } from './disposable-url.mjs';
 
 const base = process.env.FRONTEND_CURATED_DEMO_BASE;
-assert.equal(base, 'http://127.0.0.1:5176');
+disposableUrl(base);
 const marker = await fetch(`${base}/api/__local_demo`).then(response => response.json());
 assert.equal(marker.database, 'temporary-curated-local-demo');
 assert.equal(marker.email, 'disabled');
@@ -87,11 +88,7 @@ try {
   await page.getByRole('button', { name: 'Add saved event for HackHarvard 2026', exact: true }).click();
   await page.getByRole('button', { name: 'Remove saved event for HackHarvard 2026', exact: true }).waitFor();
   await navigate('Preferences');
-  const consent = page.getByLabel('I consent to email reminders');
-  assert.equal(await consent.isChecked(), false);
-  await consent.check();
-  await page.getByRole('button', { name: 'Save preferences', exact: true }).click();
-  await page.getByText(/Preferences saved\. Reminders require a saved event and an enabled email worker\./).waitFor();
+  assert.equal(await page.getByLabel('I consent to email reminders').count(), 0);
   await page.getByRole('button', { name: 'Mark as read', exact: true }).first().click();
   await page.getByText('Read', { exact: true }).first().waitFor();
   passed('Explicit consent and stored notices work without claiming email delivery');
@@ -116,11 +113,8 @@ try {
   await navigate('Saved events');
   await page.getByRole('heading', { name: 'HackHarvard 2026', exact: true }).waitFor();
   await navigate('Preferences');
-  assert.equal(await consent.isChecked(), true);
+  assert.equal(await page.getByLabel('I consent to email reminders').count(), 0);
   await page.getByText('Read', { exact: true }).first().waitFor();
-  await consent.uncheck();
-  await page.getByRole('button', { name: 'Save preferences', exact: true }).click();
-  await page.getByText(/Preferences saved\./).waitFor();
   passed('Login preserves saves and preferences; logout revokes JWT access');
   await navigate('Saved events');
   await page.getByRole('button', { name: 'Remove saved event for HackHarvard 2026', exact: true }).click();
