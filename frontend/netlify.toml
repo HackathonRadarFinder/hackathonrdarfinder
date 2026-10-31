@@ -1,0 +1,15 @@
+[build]
+command = "npm ci && npm run build"
+publish = "dist"
+
+# Keep browser requests same-origin; strip the frontend /api prefix as Nginx does.
+[[redirects]]
+from = "/api/*"
+to = "https://hackathonrdarfinder.fly.dev/:splat"
+status = 200
+force = true
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
