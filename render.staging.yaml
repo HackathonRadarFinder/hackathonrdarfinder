@@ -1,0 +1,69 @@
+# Free, temporary demo only. All resources use Free plans.
+# Render Free Postgres EXPIRES after 30 days and has no managed backups.
+# Free web services sleep after 15 minutes and have no persistent filesystem.
+# Create resources only after reviewing the Render Blueprint preview.
+databases:
+  - name: hackathon-radar-demo-db
+    plan: free
+    region: singapore
+    postgresMajorVersion: "16"
+    ipAllowList: []
+
+services:
+  - type: web
+    name: hackathon-radar-demo-api
+    runtime: docker
+    plan: free
+    region: singapore
+    branch: develop
+    autoDeployTrigger: off
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    # Free Render web services do not support paid pre-deploy commands.
+    # Migration is idempotent and serialized; run before serving requests.
+    dockerCommand: /bin/sh -c "python -m workers.migrate && exec uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    healthCheckPath: /ready
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hackathon-radar-demo-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ENVIRONMENT
+        value: staging
+      - key: DEBUG
+        value: "false"
+      - key: EMAIL_MODE
+        value: disabled
+      - key: API_V1_PREFIX
+        value: /api/v1
+      - key: PORT
+        value: "8000"
+      - key: COLLECTION_ALLOW_LIVE
+        value: "false"
+
+  - type: web
+    name: hackathon-radar-demo-web
+    runtime: docker
+    plan: free
+    region: singapore
+    branch: develop
+    autoDeployTrigger: off
+    dockerContext: ./frontend
+    dockerfilePath: ./frontend/Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: "8080"
+      # Free Render web services cannot receive private-network traffic.
+      # Reach the Free backend through Render's public, TLS-protected endpoint.
+      - key: BACKEND_HOST
+        fromService:
+          type: web
+          name: hackathon-radar-demo-api
+          envVarKey: RENDER_EXTERNAL_HOSTNAME
+      - key: BACKEND_SCHEME
+        value: https
+      - key: BACKEND_PORT
+        value: "443"

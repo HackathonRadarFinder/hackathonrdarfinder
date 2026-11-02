@@ -8,6 +8,9 @@ RUN npm run build
 
 FROM nginxinc/nginx-unprivileged:stable-alpine
 
+USER root
+RUN apk add --no-cache ca-certificates
+
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/radar.conf.template
 COPY --chmod=755 docker-entrypoint.d/40-radar-upstream.sh /docker-entrypoint.d/40-radar-upstream.sh
