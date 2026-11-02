@@ -2,6 +2,8 @@
 
 The schema includes event end date, registration deadline, mode, and status.
 Existing databases are migrated additively when save_master() is called.
+A single bad event no longer aborts the batch: it is skipped and returned in
+the "needs_review" list instead.
 """
 import json
 import sqlite3
@@ -81,9 +83,107 @@ def _ensure_columns(cur):
         cur.execute("CREATE INDEX IF NOT EXISTS idx_links_canonical ON event_source_links(canonical_event_id)")
 
 
+def _save_one(cur, ev, today):
+    """Save one canonical event. Returns "new" or "updated". Raises ValueError for manual-review cases.
+
+    All ValueErrors are raised before any DB write for this event, so a skipped
+    event leaves nothing half-written.
+    """
+    incoming = ev
+    provenance = ev.get("provenance") or []
+    identities = [(p.get("source", ""), p["source_id"]) for p in provenance if p.get("source_id")]
+    if not identities or any(not source for source, _ in identities):
+        raise ValueError("Each canonical event must have at least one provenance source_id")
+    matches = {r[0] for identity in identities for r in cur.execute(
+        "SELECT canonical_event_id FROM event_source_links WHERE source=? AND source_id=?", identity)}
+    if len(matches) > 1:
+        raise ValueError("Merge spans existing canonical events; manual review required")
+    row = (next(iter(matches)),) if matches else None
+    # Resolve duplicate listings arriving in later batches without conflating source IDs.
+    if row is None:
+        columns = [r[1] for r in cur.execute("PRAGMA table_info(canonical_events)")]
+        candidates = []
+        for stored in cur.execute("SELECT * FROM canonical_events").fetchall():
+            old = dict(zip(columns, stored))
+            if compare(map_record(old, 0), map_record(ev, 1))[0] == "duplicate":
+                candidates.append(old["canonical_event_id"])
+        if len(candidates) > 1:
+            raise ValueError("Multiple persisted duplicate candidates; manual review required")
+        if candidates:
+            row = (candidates[0],)
+
+    if row:
+        columns = [r[1] for r in cur.execute("PRAGMA table_info(canonical_events)")]
+        previous = dict(zip(columns, cur.execute("SELECT * FROM canonical_events WHERE canonical_event_id=?", row).fetchone()))
+        if compare(map_record(previous, 0), map_record(ev, 1))[1] == "conflicting edition dates or years":
+            raise ValueError("Source identity was reused for a conflicting edition; manual review required")
+        # A subsequent source must not erase richer existing metadata.
+        ev = dict(ev)
+        for key, value in previous.items():
+            if key not in {"canonical_event_id", "created_at", "updated_at", "tags"} and not ev.get(key):
+                ev[key] = value
+        old_tags = json.loads(previous.get("tags") or "[]")
+        ev["tags"] = list(dict.fromkeys(old_tags + ev.get("tags", [])))
+
+    fields = (
+        ev.get("title", ""), ev.get("organizer", ""), ev.get("start_date", ""),
+        ev.get("end_date", ""), ev.get("registration_deadline", ""),
+        ev.get("mode", ""), ev.get("status", ""),
+        json.dumps(ev.get("tags", []), ensure_ascii=False),
+        ev.get("source_name", ""), ev.get("location", ""),
+        ev.get("registration_link", ""), ev.get("description", ""), ev.get("prize", ""),
+    )
+    if row:
+        cid = row[0]
+        cur.execute(
+            """UPDATE canonical_events SET title=?, organizer=?, start_date=?, end_date=?,
+               registration_deadline=?, mode=?, status=?, tags=?, source_name=?, location=?, registration_link=?,
+               description=?, prize=?, updated_at=? WHERE canonical_event_id=?""",
+            fields + (today, cid),
+        )
+        result = "updated"
+    else:
+        cur.execute(
+            """INSERT INTO canonical_events
+               (title, organizer, start_date, end_date, registration_deadline, mode, status, tags, source_name,
+                location, registration_link, description, prize, created_at, updated_at)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+            fields + (today, today),
+        )
+        cid = cur.lastrowid
+        result = "new"
+
+    incoming["canonical_event_id"] = cid
+
+    for p in provenance:
+        if not p.get("source_id"):
+            continue
+        cur.execute(
+            """INSERT INTO event_source_links
+               (canonical_event_id, source, source_id, source_url, first_seen, last_seen)
+               VALUES (?,?,?,?,?,?)
+               ON CONFLICT(source, source_id) DO UPDATE SET
+                 canonical_event_id=excluded.canonical_event_id,
+                 source=excluded.source,
+                 source_url=excluded.source_url,
+                 last_seen=excluded.last_seen""",
+            (cid, p.get("source", ""), p["source_id"], p.get("url", ""), today, today),
+        )
+    snapshot_fields = dict(zip(("title", "organizer", "start_date", "end_date", "registration_deadline",
+        "mode", "status", "tags", "source_name", "location", "registration_link", "description", "prize"), fields))
+    snapshot_fields["provenance"] = [dict(source=r[0], source_id=r[1], url=r[2]) for r in cur.execute(
+        "SELECT source,source_id,source_url FROM event_source_links WHERE canonical_event_id=? ORDER BY source,source_id", (cid,))]
+    snapshot = json.dumps(snapshot_fields, sort_keys=True, ensure_ascii=False)
+    last = cur.execute("SELECT snapshot FROM event_versions WHERE canonical_event_id=? ORDER BY version_id DESC LIMIT 1", (cid,)).fetchone()
+    if last is None or last[0] != snapshot:
+        cur.execute("INSERT INTO event_versions(canonical_event_id,snapshot,observed_at) VALUES (?,?,?)", (cid, snapshot, today))
+    return result
+
+
 def save_master(master, db_path=DB_PATH):
     today = date.today().isoformat()
     new = updated = 0
+    needs_review = []
     con = sqlite3.connect(db_path)
     try:
         con.execute("PRAGMA foreign_keys = ON")
@@ -91,97 +191,17 @@ def save_master(master, db_path=DB_PATH):
         cur = con.cursor()
         _ensure_columns(cur)
         for ev in master:
-            incoming = ev
-            provenance = ev.get("provenance") or []
-            identities = [(p.get("source", ""), p["source_id"]) for p in provenance if p.get("source_id")]
-            if not identities or any(not source for source, _ in identities):
-                raise ValueError("Each canonical event must have at least one provenance source_id")
-            matches = {r[0] for identity in identities for r in cur.execute(
-                "SELECT canonical_event_id FROM event_source_links WHERE source=? AND source_id=?", identity)}
-            if len(matches) > 1:
-                raise ValueError("Merge spans existing canonical events; manual review required")
-            row = (next(iter(matches)),) if matches else None
-            # Resolve duplicate listings arriving in later batches without conflating source IDs.
-            if row is None:
-                columns = [r[1] for r in cur.execute("PRAGMA table_info(canonical_events)")]
-                candidates = []
-                for stored in cur.execute("SELECT * FROM canonical_events").fetchall():
-                    old = dict(zip(columns, stored))
-                    if compare(map_record(old, 0), map_record(ev, 1))[0] == "duplicate":
-                        candidates.append(old["canonical_event_id"])
-                if len(candidates) > 1:
-                    raise ValueError("Multiple persisted duplicate candidates; manual review required")
-                if candidates:
-                    row = (candidates[0],)
-
-            previous = None
-            if row:
-                columns = [r[1] for r in cur.execute("PRAGMA table_info(canonical_events)")]
-                previous = dict(zip(columns, cur.execute("SELECT * FROM canonical_events WHERE canonical_event_id=?", row).fetchone()))
-                if compare(map_record(previous, 0), map_record(ev, 1))[1] == "conflicting edition dates or years":
-                    raise ValueError("Source identity was reused for a conflicting edition; manual review required")
-                # A subsequent source must not erase richer existing metadata.
-                ev = dict(ev)
-                for key, value in previous.items():
-                    if key not in {"canonical_event_id", "created_at", "updated_at", "tags"} and not ev.get(key):
-                        ev[key] = value
-                old_tags = json.loads(previous.get("tags") or "[]")
-                ev["tags"] = list(dict.fromkeys(old_tags + ev.get("tags", [])))
-
-            fields = (
-                ev.get("title", ""), ev.get("organizer", ""), ev.get("start_date", ""),
-                ev.get("end_date", ""), ev.get("registration_deadline", ""),
-                ev.get("mode", ""), ev.get("status", ""),
-                json.dumps(ev.get("tags", []), ensure_ascii=False),
-                ev.get("source_name", ""), ev.get("location", ""),
-                ev.get("registration_link", ""), ev.get("description", ""), ev.get("prize", ""),
-            )
-            if row:
-                cid = row[0]
-                cur.execute(
-                    """UPDATE canonical_events SET title=?, organizer=?, start_date=?, end_date=?,
-                       registration_deadline=?, mode=?, status=?, tags=?, source_name=?, location=?, registration_link=?,
-                       description=?, prize=?, updated_at=? WHERE canonical_event_id=?""",
-                    fields + (today, cid),
-                )
-                updated += 1
-            else:
-                cur.execute(
-                    """INSERT INTO canonical_events
-                       (title, organizer, start_date, end_date, registration_deadline, mode, status, tags, source_name,
-                        location, registration_link, description, prize, created_at, updated_at)
-                       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-                    fields + (today, today),
-                )
-                cid = cur.lastrowid
+            try:
+                result = _save_one(cur, ev, today)
+            except ValueError as e:
+                needs_review.append({"title": ev.get("title"), "reason": str(e)})
+                continue
+            if result == "new":
                 new += 1
-
-            incoming["canonical_event_id"] = cid
-
-            for p in provenance:
-                if not p.get("source_id"):
-                    continue
-                cur.execute(
-                    """INSERT INTO event_source_links
-                       (canonical_event_id, source, source_id, source_url, first_seen, last_seen)
-                       VALUES (?,?,?,?,?,?)
-                       ON CONFLICT(source, source_id) DO UPDATE SET
-                         canonical_event_id=excluded.canonical_event_id,
-                         source=excluded.source,
-                         source_url=excluded.source_url,
-                         last_seen=excluded.last_seen""",
-                    (cid, p.get("source", ""), p["source_id"], p.get("url", ""), today, today),
-                )
-            snapshot_fields = dict(zip(("title", "organizer", "start_date", "end_date", "registration_deadline",
-                "mode", "status", "tags", "source_name", "location", "registration_link", "description", "prize"), fields))
-            snapshot_fields["provenance"] = [dict(source=r[0], source_id=r[1], url=r[2]) for r in cur.execute(
-                "SELECT source,source_id,source_url FROM event_source_links WHERE canonical_event_id=? ORDER BY source,source_id", (cid,))]
-            snapshot = json.dumps(snapshot_fields, sort_keys=True, ensure_ascii=False)
-            last = cur.execute("SELECT snapshot FROM event_versions WHERE canonical_event_id=? ORDER BY version_id DESC LIMIT 1", (cid,)).fetchone()
-            if last is None or last[0] != snapshot:
-                cur.execute("INSERT INTO event_versions(canonical_event_id,snapshot,observed_at) VALUES (?,?,?)", (cid,snapshot,today))
+            else:
+                updated += 1
         con.commit()
         total = cur.execute("SELECT COUNT(*) FROM canonical_events").fetchone()[0]
     finally:
         con.close()
-    return {"new": new, "updated": updated, "total": total}
+    return {"new": new, "updated": updated, "total": total, "needs_review": needs_review}
