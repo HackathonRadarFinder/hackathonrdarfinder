@@ -1,1 +1,3 @@
+# Evidence fixtures must have identical checked-out bytes on every CI platform.
+backend/radar_collector/fixtures/** text eol=lf
 *.sh text eol=lf

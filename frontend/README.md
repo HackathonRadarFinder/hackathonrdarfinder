@@ -1,5 +1,7 @@
 # React + Vite
 
+For this project's Cloudflare Pages build, Functions proxy, local workerd acceptance and approved staging workflow, see [PHASE1-STAGING.md](../docs/operations/PHASE1-STAGING.md). Use `npm run build:pages` and `npm run test:pages`; neither command deploys.
+
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
 Currently, two official plugins are available:
