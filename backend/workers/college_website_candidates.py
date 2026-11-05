@@ -74,7 +74,8 @@ def http_json(url, params, *, timeout=45):
 
 def wikidata_candidates(college, fetch=http_json):
     """Wikidata's P856 provides candidates, not verified official domains."""
-    name = re.sub(r'\\s+', ' ', str(college.get('name', '')).strip(' \\"\'')).strip()
+    name = ' '.join(str(college.get('name', '')).split())
+    name = name.strip(' ').strip(chr(34)).strip(chr(39))
     if len(name) < 7:
         return []
     search = fetch(WIKIDATA_API, {
