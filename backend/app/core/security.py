@@ -49,6 +49,7 @@ def create_access_token(subject: str | Any, role: str, expires_delta: timedelta 
         "sub": str(subject),
         "role": role,
         "jti": str(uuid.uuid4()),  # Used for session revocation/logout (FR-AUTH-04)
-        "type": "access"
+        "type": "access",
+        "tv": token_version
     }
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
