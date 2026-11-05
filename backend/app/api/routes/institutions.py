@@ -3,11 +3,11 @@ from datetime import datetime
 from typing import Annotated, Literal
 import json
 import uuid
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
-from app.api.deps import require_source_manager, require_reviewer
+from app.api.deps import require_admin, require_source_manager, require_reviewer
 from app.core.database import get_db
 from app.models.core import AuditLog
 from app.models.institution import Institution, Announcement
@@ -16,6 +16,8 @@ from app.schemas.institution import DirectoryImport
 from app.services.database import database_operation
 from app.services.institution_service import import_directory, coverage, verified_event_coverage
 from app.services.announcement_review import review
+from app.services.institution_publication import public_institution_filters, public_source_url
+from app.services.private_college_directory import private_college_page
 
 router = APIRouter(tags=['Institution discovery'])
 
@@ -27,21 +29,50 @@ def public_event_coverage(db: Session = Depends(get_db)):
 
 
 @router.get('/institutions')
+@router.get('/colleges')
 def institutions(q: Annotated[str | None, Query(min_length=1, max_length=255)] = None,
                  state: Annotated[str | None, Query(min_length=1, max_length=100)] = None,
+                 district: Annotated[str | None, Query(min_length=1, max_length=150)] = None,
                  page: Annotated[int, Query(ge=1, le=2147483647)] = 1,
                  page_size: Annotated[int, Query(ge=1, le=100)] = 100,
                  db: Session = Depends(get_db)):
-    filters = [func.lower(Institution.state) == state.lower()] if state else []
+    filters = list(public_institution_filters())
+    if state:
+        filters.append(func.lower(Institution.state) == state.lower())
+    if district:
+        filters.append(func.lower(Institution.district) == district.lower())
     if q:
         filters.append(Institution.name.icontains(q, autoescape=True))
+    return institution_page(db, filters, page, page_size)
+
+
+def institution_page(db, filters, page, page_size, *, private=False):
     with database_operation(db):
         rows = db.scalars(select(Institution).where(*filters).order_by(Institution.name, Institution.id)
             .offset((page - 1) * page_size).limit(page_size)).all()
-        return dict(data=[dict(id=row.id, identifier=row.identifier, name=row.name, state=row.state,
+        data = [dict(id=row.id, identifier=row.identifier, name=row.name, state=row.state,
             district=row.district, city=row.city, category=row.category, website=row.website,
-            last_verified_at=row.last_verified_at, source_url=row.provenance['source_url']) for row in rows],
+            last_verified_at=row.last_verified_at, source_url=public_source_url(row.provenance)) for row in rows]
+        if private:
+            for item, row in zip(data, rows):
+                item['permission_status'] = row.permission_status
+                item['provenance'] = row.provenance
+        return dict(data=data,
             total=db.scalar(select(func.count()).select_from(Institution).where(*filters)), page=page, page_size=page_size)
+
+
+@router.get('/admin/discovery/institutions', dependencies=[Depends(require_admin)])
+def private_institutions(response: Response,
+                         q: Annotated[str | None, Query(min_length=1, max_length=255)] = None,
+                         state: Annotated[str | None, Query(min_length=1, max_length=100)] = None,
+                         district: Annotated[str | None, Query(min_length=1, max_length=150)] = None,
+                         page: Annotated[int, Query(ge=1, le=2147483647)] = 1,
+                         page_size: Annotated[int, Query(ge=1, le=100)] = 100,
+                         db: Session = Depends(get_db)):
+    """Authenticated review only; never changes permission or publication status."""
+    response.headers['Cache-Control'] = 'no-store'
+    with database_operation(db):
+        return private_college_page(db, q=q, state=state, district=district, page=page, page_size=page_size)
 
 
 @router.put('/admin/discovery/institutions')
