@@ -133,6 +133,13 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
       return result.data;
     },
     async institutions(state, search, signal, page = 1, pageSize = 100, district) { const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) }); if (state) params.set('state', state); if (district) params.set('district', district); if (search?.trim()) params.set('q', search.trim()); return request(`/institutions?${params}`, { signal, authenticated: false }); },
+    async institutionFacets(state = '', signal) {
+      const params = new URLSearchParams();
+      if (state?.trim()) params.set('state', state.trim());
+      const result = await request(`/institutions/facets${params.size ? `?${params}` : ''}`, { signal, authenticated: false });
+      if (!Array.isArray(result.states) || !Array.isArray(result.districts)) throw new Error('Invalid college filter response.');
+      return result;
+    },
     async adminInstitutions({ state, district, search, page = 1 }, signal) {
       const params = new URLSearchParams({ page: String(page), page_size: '100' });
       if (state?.trim()) params.set('state', state.trim());
