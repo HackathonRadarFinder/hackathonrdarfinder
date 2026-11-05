@@ -187,7 +187,7 @@ try {
   await page.unroute('**/api/predictions/catalog');
   passed('Synthetic prediction UI fixture: range, disclaimer, confidence, evidence and model timestamp');
   await page.goto(`${base}/colleges`);
-  await page.getByRole('heading', { name: 'No colleges are approved for publication yet' }).waitFor();
+  await page.getByRole('heading', { name: 'No colleges are publicly listed yet' }).waitFor();
   await page.getByLabel('College name', { exact: true }).fill('Private');
   await page.getByLabel('State', { exact: true }).fill('Assam');
   await page.getByLabel('District', { exact: true }).fill('Kamrup');
