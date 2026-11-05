@@ -105,7 +105,7 @@ def test_migration_roundtrip_isolated_database(tmp_path, monkeypatch):
         assert 'revoked_tokens' in inspect(engine).get_table_names()
         assert 'email_deliveries' in inspect(engine).get_table_names()
         with engine.connect() as connection:
-            assert connection.scalar(text('SELECT version_num FROM alembic_version')) == 'e0f1a2b3c4d5'
+            assert connection.scalar(text('SELECT version_num FROM alembic_version')) == 'f1a2b3c4d5e6'
         columns = inspect(engine).get_columns('revoked_tokens')
         assert {column['name'] for column in columns} == {'jti', 'expires_at', 'revoked_at'}
         assert all(not column['nullable'] for column in columns)

@@ -1,5 +1,7 @@
 # Hackathon Radar Finder
 
+Phase1 selected-platform configuration and controlled staging steps: [Render + Supabase + Cloudflare Pages](docs/operations/PHASE1-STAGING.md). Provider changes/deployment remain owner-controlled; do not push to an auto-deployed branch before configuring release protection.
+
 React/Vite frontend, FastAPI backend and PostgreSQL 16 for governed event discovery, review, saved events and explainable recommendations.
 
 ## Local setup

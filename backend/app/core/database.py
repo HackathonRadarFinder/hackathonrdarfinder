@@ -12,10 +12,9 @@ def normalize_database_url(url: str) -> str:
     return url
 
 
-engine = create_engine(
-    normalize_database_url(settings.DATABASE_URL),
-    pool_pre_ping=True,
-)
+database_url = normalize_database_url(settings.DATABASE_URL)
+options = {'connect_args': {'connect_timeout': 2}, 'pool_timeout': 2} if database_url.startswith('postgresql+') else {}
+engine = create_engine(database_url, pool_pre_ping=True, hide_parameters=True, **options)
 
 SessionLocal = sessionmaker(
     autocommit=False,

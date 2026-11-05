@@ -137,9 +137,33 @@ test('registration whitelists regular-account fields and authenticates through b
   client.clearSession();
 });
 
-test('unsupported reset never fabricates an email or calls an invented endpoint', async () => {
-  const client = createApiClient('/api', () => { assert.fail('No request expected'); });
-  await assert.rejects(client.forgotPassword('a@example.com'), /No email was sent/);
+test('OTP reset uses real anonymous request and confirm endpoints without session tokens', async () => {
+  const calls = [];
+  const client = createApiClient('/api', async (url, options) => {
+    calls.push({ url, options });
+    return ok({ message: 'Accepted' });
+  });
+  assert.deepEqual(await client.forgotPassword(' student@example.com '), { message: 'Accepted' });
+  assert.deepEqual(await client.confirmPasswordReset(' student@example.com ', ' 123456 ', 'VerySecurePassword123!'),
+    { message: 'Accepted' });
+  assert.deepEqual(calls.map(c => c.url),
+    ['/api/auth/password-reset/request', '/api/auth/password-reset/confirm']);
+  assert.deepEqual(JSON.parse(calls[0].options.body), { email: 'student@example.com' });
+  assert.deepEqual(JSON.parse(calls[1].options.body),
+    { email: 'student@example.com', code: '123456', new_password: 'VerySecurePassword123!' });
+  assert.ok(calls.every(c => c.options.headers.Authorization === undefined));
+});
+
+test('college facet choices use state filtering and do not expose credentials', async () => {
+  const calls = [];
+  const client = createApiClient('/api', async (url, options) => {
+    calls.push({ url, options });
+    return ok({ states: ['Delhi', 'Uttar Pradesh'], districts: url.includes('state=') ? ['Ghaziabad'] : [] });
+  });
+  assert.deepEqual((await client.institutionFacets()).states, ['Delhi', 'Uttar Pradesh']);
+  assert.deepEqual((await client.institutionFacets('Uttar Pradesh')).districts, ['Ghaziabad']);
+  assert.equal(calls[1].url, '/api/institutions/facets?state=Uttar+Pradesh');
+  assert.ok(calls.every(c => c.options.headers.Authorization === undefined));
 });
 
 test('request cancellation stays abortable', async () => {

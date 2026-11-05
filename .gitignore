@@ -30,3 +30,6 @@ backend/.pytest-*.json
 
 .env.production
 .venv/
+.wrangler/
+.dev.vars
+.dev.vars.*

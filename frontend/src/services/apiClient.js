@@ -47,6 +47,7 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
       if (error.name === 'AbortError') throw error;
       throw new Error('Cannot reach the API. Please try again.');
     }
+    if (response.headers?.get?.('content-type')?.includes('text/html')) throw new Error('The API is temporarily unavailable. Please try again.');
     let data;
     try { data = await response.json(); } catch { throw new Error('The API returned an unreadable response.'); }
     if (!response.ok) {
@@ -105,7 +106,16 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
       await request('/auth/register', { method: 'POST', authenticated: false, body: { name: name.trim(), email: email.trim(), password } });
       return login(email, password);
     },
-    async forgotPassword() { throw new Error('Password reset is not supported by this backend yet. No email was sent.'); },
+    forgotPassword(email) {
+      return request('/auth/password-reset/request', {
+        method: 'POST', authenticated: false, body: { email: email.trim() },
+      });
+    },
+    confirmPasswordReset(email, code, newPassword) {
+      return request('/auth/password-reset/confirm', {
+        method: 'POST', authenticated: false, body: { email: email.trim(), code: code.trim(), new_password: newPassword },
+      });
+    },
     async events({ page = 1, pageSize = 12, q, location, mode, organizationId, state, institutionId, startFrom, startTo, deadlineFrom, deadlineTo, sort, period } = {}, signal) {
       const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) });
       if (q?.trim()) params.set('q', q.trim());
@@ -131,7 +141,23 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
       const result = await request(`/events/${id}`, { signal, authenticated: false });
       return result.data;
     },
-    async institutions(state, search, signal, page = 1, pageSize = 100) { const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) }); if (state) params.set('state', state); if (search?.trim()) params.set('q', search.trim()); return request(`/institutions?${params}`, { signal, authenticated: false }); },
+    async institutions(state, search, signal, page = 1, pageSize = 100, district) { const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) }); if (state) params.set('state', state); if (district) params.set('district', district); if (search?.trim()) params.set('q', search.trim()); return request(`/institutions?${params}`, { signal, authenticated: false }); },
+    async institutionFacets(state = '', signal) {
+      const params = new URLSearchParams();
+      if (state?.trim()) params.set('state', state.trim());
+      const result = await request(`/institutions/facets${params.size ? `?${params}` : ''}`, { signal, authenticated: false });
+      if (!Array.isArray(result.states) || !Array.isArray(result.districts)) throw new Error('Invalid college filter response.');
+      return result;
+    },
+    async adminInstitutions({ state, district, search, page = 1 }, signal) {
+      const params = new URLSearchParams({ page: String(page), page_size: '100' });
+      if (state?.trim()) params.set('state', state.trim());
+      if (district?.trim()) params.set('district', district.trim());
+      if (search?.trim()) params.set('q', search.trim());
+      const result = await request(`/admin/discovery/institutions?${params}`, { signal });
+      if (!Array.isArray(result.data) || !Number.isInteger(result.total)) throw new Error('Invalid private college directory response.');
+      return result;
+    },
     async discoveryCoverage(signal) { return request('/admin/discovery/coverage', { signal }); },
     async discoveryRuns(signal) { return (await request('/admin/discovery/runs', { signal })).data; },
     async organizations(signal) { return (await request('/organizations/', { signal, authenticated: false })).data; },
