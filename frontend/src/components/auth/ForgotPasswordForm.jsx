@@ -1,168 +1,90 @@
-/**
- * @file ForgotPasswordForm.jsx
- * @description Forgot password request form component for Hackathon Radar AI.
- */
-
-import { useState, useEffect } from 'react';
+/** Password recovery with email OTP. No reset secret is stored in the browser. */
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { validateForgotPasswordForm, validateEmail } from '../../utils/validation';
+import { validateEmail } from '../../utils/validation';
 
 export default function ForgotPasswordForm() {
-  const { forgotPassword, isLoading, authError, authSuccess, clearMessages } = useAuth();
-
+  const { forgotPassword, confirmPasswordReset, isLoading, authError, authSuccess, clearMessages } = useAuth();
+  const [step, setStep] = useState('request');
   const [email, setEmail] = useState('');
-  const [fieldError, setFieldError] = useState(null);
-  const [touched, setTouched] = useState(false);
+  const [code, setCode] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmation, setConfirmation] = useState('');
+  const [localError, setLocalError] = useState('');
 
-  useEffect(() => {
-    clearMessages();
-  }, [clearMessages]);
+  useEffect(() => { clearMessages(); }, [clearMessages]);
 
-  const handleChange = (e) => {
-    const val = e.target.value;
-    setEmail(val);
-    if (touched) {
-      setFieldError(validateEmail(val));
-    }
-  };
+  async function requestCode(event) {
+    event.preventDefault();
+    setLocalError('');
+    const invalid = validateEmail(email);
+    if (invalid) { setLocalError(invalid); return; }
+    const response = await forgotPassword(email);
+    if (response.success) setStep('confirm');
+  }
 
-  const handleBlur = () => {
-    setTouched(true);
-    setFieldError(validateEmail(email));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setTouched(true);
-
-    const { isValid, errors } = validateForgotPasswordForm({ email });
-    setFieldError(errors.email || null);
-
-    if (!isValid) {
+  async function changePassword(event) {
+    event.preventDefault();
+    setLocalError('');
+    if (!/^\d{6}$/.test(code)) { setLocalError('Enter the six-digit code from your email.'); return; }
+    if (password.length < 12 || new TextEncoder().encode(password).length > 72) {
+      setLocalError('Use a password of at least 12 characters and at most 72 UTF-8 bytes.');
       return;
     }
+    if (password !== confirmation) { setLocalError('The passwords do not match.'); return; }
+    const result = await confirmPasswordReset(email, code, password);
+    if (result.success) {
+      setStep('done');
+      setCode(''); setPassword(''); setConfirmation('');
+    }
+  }
 
-    await forgotPassword(email);
-  };
-
-  return (
-    <form className="auth-form" onSubmit={handleSubmit} noValidate>
-      {/* Feedback alerts */}
-      {authError && (
-        <div className="auth-alert auth-alert-error" role="alert">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="auth-alert-icon"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" y1="8" x2="12" y2="12" />
-            <line x1="12" y1="16" x2="12.01" y2="16" />
-          </svg>
-          <span>{authError}</span>
-        </div>
-      )}
-
-      {authSuccess && (
-        <div className="auth-alert auth-alert-success" role="status">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="auth-alert-icon"
-          >
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-            <polyline points="22 4 12 14.01 9 11.01" />
-          </svg>
-          <span>{authSuccess}</span>
-        </div>
-      )}
-
-      <p className="auth-instructions">
-        Enter the email address associated with your Hackathon Radar account and we will send you a password reset link.
-      </p>
-
-      {/* Email Field */}
+  return <div>
+    {authError && <div role="alert" className="auth-alert auth-alert-error">{authError}</div>}
+    {authSuccess && <div role="status" className="auth-alert auth-alert-success">{authSuccess}</div>}
+    {localError && <div role="alert" className="auth-alert auth-alert-error">{localError}</div>}
+    {step === 'request' && <form className="auth-form" onSubmit={requestCode}>
+      <p className="auth-instructions">Enter your account email to request a six-digit password reset code. Codes expire after 10 minutes.</p>
       <div className="auth-field-group">
-        <label htmlFor="forgot-email" className="auth-label">
-          Email Address <span className="auth-required-star" aria-hidden="true">*</span>
-        </label>
-        <div className="auth-input-wrapper">
-          <input
-            id="forgot-email"
-            name="email"
-            type="email"
-            value={email}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            placeholder="developer@radar.ai"
-            autoComplete="email"
-            disabled={isLoading}
-            required
-            className={`auth-input ${fieldError ? 'auth-input-error' : ''}`}
-            aria-invalid={Boolean(fieldError)}
-            aria-describedby={fieldError ? 'forgot-email-error' : undefined}
-          />
-        </div>
-        {fieldError && (
-          <p id="forgot-email-error" className="auth-field-error" role="alert">
-            {fieldError}
-          </p>
-        )}
+        <label htmlFor="forgot-email" className="auth-label">Email address</label>
+        <input id="forgot-email" className="auth-input" name="email" type="email" autoComplete="email"
+          value={email} onChange={event => setEmail(event.target.value)}
+          disabled={isLoading} required maxLength={254} />
       </div>
-
-      {/* Submit Button */}
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="auth-submit-btn"
-        id="forgot-password-submit-btn"
-      >
-        {isLoading ? (
-          <span className="auth-spinner-wrapper">
-            <span className="auth-spinner" aria-hidden="true" />
-            Sending Reset Link...
-          </span>
-        ) : (
-          'Send Reset Instructions'
-        )}
+      <button className="auth-submit-btn" type="submit" disabled={isLoading}>
+        {isLoading ? 'Requesting code…' : 'Email me a reset code'}
       </button>
-
-      {/* Navigation back to Login */}
-      <div className="auth-back-action">
-        <Link to="/login" className="auth-link auth-link-back">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="auth-back-icon"
-          >
-            <line x1="19" y1="12" x2="5" y2="12" />
-            <polyline points="12 19 5 12 12 5" />
-          </svg>
-          Back to Sign In
-        </Link>
+    </form>}
+    {step === 'confirm' && <form className="auth-form" onSubmit={changePassword}>
+      <p className="auth-instructions">If an account exists, a code was requested for {email}. Check your inbox and spam folder.</p>
+      <div className="auth-field-group">
+        <label htmlFor="reset-code" className="auth-label">Six-digit email code</label>
+        <input id="reset-code" className="auth-input" type="text" autoComplete="one-time-code"
+          inputMode="numeric" pattern="[0-9]{6}" maxLength={6} value={code}
+          onChange={event => setCode(event.target.value.replace(/\D/g, ''))} required disabled={isLoading} />
       </div>
-    </form>
-  );
+      <div className="auth-field-group">
+        <label htmlFor="reset-password" className="auth-label">New password</label>
+        <input id="reset-password" className="auth-input" type="password" autoComplete="new-password"
+          minLength={12} value={password} onChange={event => setPassword(event.target.value)}
+          required disabled={isLoading} />
+      </div>
+      <div className="auth-field-group">
+        <label htmlFor="reset-confirm" className="auth-label">Confirm new password</label>
+        <input id="reset-confirm" className="auth-input" type="password" autoComplete="new-password"
+          minLength={12} value={confirmation} onChange={event => setConfirmation(event.target.value)}
+          required disabled={isLoading} />
+      </div>
+      <button className="auth-submit-btn" type="submit" disabled={isLoading}>
+        {isLoading ? 'Verifying…' : 'Verify code and reset password'}
+      </button>
+      <button className="auth-link" type="button" disabled={isLoading}
+        onClick={() => { clearMessages(); setLocalError(''); setStep('request'); setCode(''); setPassword(''); setConfirmation(''); }}>
+        Request a new code
+      </button>
+    </form>}
+    {step === 'done' && <p role="status">Password changed. Older sessions have been invalidated. Sign in again.</p>}
+    <div className="auth-back-action"><Link to="/login" className="auth-link auth-link-back">Back to Sign In</Link></div>
+  </div>;
 }
