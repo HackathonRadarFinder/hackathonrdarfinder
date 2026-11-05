@@ -42,8 +42,8 @@ export default function CollegeDirectory() {
     <h1>College directory</h1><p>Browse factual college records mined and structured from AISHE dashboard data. The portal has not independently verified individual institutions.</p>
     <form onSubmit={event => { event.preventDefault(); setQuery({ search: draft.search.trim(), state: draft.state.trim(), district: draft.district.trim(), page: 1 }); }}>
       <label>College name<input maxLength={255} value={draft.search} onChange={event => setDraft({ ...draft, search: event.target.value })} /></label>
-      <label>State<select value={draft.state} onChange={event => { setFacetsError(''); setDraft({ ...draft, state: event.target.value, district: '' }); }}><option value="">All states and union territories</option>{states.map(state => <option key={state} value={state}>{state}</option>)}</select></label>
-      <label>District<select value={draft.district} disabled={!draft.state} onChange={event => setDraft({ ...draft, district: event.target.value })}><option value="">All districts</option>{districts.map(district => <option key={district} value={district}>{district}</option>)}</select></label>
+      <label>State<select aria-label="State" value={draft.state} onChange={event => { setFacetsError(''); setDraft({ ...draft, state: event.target.value, district: '' }); }}><option value="">All states and union territories</option>{states.map(state => <option key={state} value={state}>{state}</option>)}</select></label>
+      <label>District<select aria-label="District" value={draft.district} disabled={!draft.state} onChange={event => setDraft({ ...draft, district: event.target.value })}><option value="">All districts</option>{districts.map(district => <option key={district} value={district}>{district}</option>)}</select></label>
       {facetsError && <p role="alert">{facetsError}</p>}
       <button>Search colleges</button><button type="button" onClick={() => { const empty = { search: '', state: '', district: '' }; setDraft(empty); setQuery({ ...empty, page: 1 }); }}>Clear filters</button>
     </form>
