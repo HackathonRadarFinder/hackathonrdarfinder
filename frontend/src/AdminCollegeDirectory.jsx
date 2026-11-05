@@ -46,8 +46,8 @@ function CollegeResults() {
     <p>Administrator-only review of original college records and their source-permission status. Public factual listings are tracked separately.</p>
     <form className="platform-filters" onSubmit={event => { event.preventDefault(); setQuery({ search: search.trim(), state, district, page: 1 }); }}>
       <label>College name<input name="college" maxLength={255} value={search} onChange={event => setSearch(event.target.value)} placeholder="Search colleges" /></label>
-      <label>State<select value={state} onChange={event => { setState(event.target.value); setDistrict(''); }}><option value="">All states</option>{states.map(item => <option key={item} value={item}>{item}</option>)}</select></label>
-      <label>District<select value={district} disabled={!state} onChange={event => setDistrict(event.target.value)}><option value="">All districts</option>{districts.map(item => <option key={item} value={item}>{item}</option>)}</select></label>
+      <label>State<select aria-label="State" value={state} onChange={event => { setState(event.target.value); setDistrict(''); }}><option value="">All states</option>{states.map(item => <option key={item} value={item}>{item}</option>)}</select></label>
+      <label>District<select aria-label="District" value={district} disabled={!state} onChange={event => setDistrict(event.target.value)}><option value="">All districts</option>{districts.map(item => <option key={item} value={item}>{item}</option>)}</select></label>
       <button type="submit">Search</button>
       <button type="button" onClick={() => { setSearch(''); setState(''); setDistrict(''); setQuery({ search: '', state: '', district: '', page: 1 }); }}>Clear filters</button>
     </form>
