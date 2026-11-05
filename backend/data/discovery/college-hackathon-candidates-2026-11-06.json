@@ -1,0 +1,38 @@
+{
+  "observed_on": "2026-11-06",
+  "status": "review_required_not_published",
+  "scope": "Manual pilot sourced from official college pages; unknown fields have not been inferred",
+  "candidates": [
+    {
+      "event_title": "Sakthi Hackathon 2.0",
+      "institution": "Dr. Mahalingam College of Engineering and Technology",
+      "state": "Tamil Nadu",
+      "official_event_url": "https://hackathon.drmcet.ac.in/",
+      "observed_registration_deadline": null,
+      "observed_submission_deadline": "2026-11-24",
+      "observed_event_start": null,
+      "review_notes": "Round 2 submission deadline from event portal. Confirm final event date and permissions before publication.",
+      "status": "pending_review"
+    },
+    {
+      "event_title": "FinTech Innovation Hackathon 2026",
+      "institution": "St Aloysius Institute of Management and Information Technology",
+      "state": "Karnataka",
+      "official_event_url": "https://fintech-hackathon.aimit.edu.in/",
+      "observed_registration_deadline": "2026-11-15",
+      "observed_event_start": null,
+      "review_notes": "AIMIT website describes a multi-stage challenge; residential boot camp December 4-6, not assumed to be hackathon start. Validate organizer and terms.",
+      "status": "pending_review"
+    },
+    {
+      "event_title": "MFSS SUSTAIN-AI 2026",
+      "institution": "Indian Institute of Technology Indore",
+      "state": "Madhya Pradesh",
+      "official_event_url": "https://mfsos.iiti.ac.in/conclave_index.php",
+      "observed_registration_deadline": "2026-11-30",
+      "observed_event_start": null,
+      "review_notes": "Submission deadline November 5 already passed; November 30 registration deadline relates to selected participants, with final presentations December 7. Confirm event eligibility.",
+      "status": "pending_review"
+    }
+  ]
+}

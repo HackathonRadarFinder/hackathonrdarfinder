@@ -1,0 +1,42 @@
+name: College Website Candidate Discovery
+
+on:
+  # Scheduled workflows run only on GitHub's default branch.
+  # The current production release branch must be reconciled into default first.
+  schedule:
+    - cron: '17 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: college-website-candidates
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Read reviewed source code (no credentials)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Install Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Collect bounded Wikidata website suggestions
+        run: |
+          python backend/workers/college_website_candidates.py \
+            --pages 3 --max-colleges 50 \
+            --out "$RUNNER_TEMP/college-website-candidates.json"
+      - name: Upload candidates for human verification
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: college-website-candidates
+          path: ${{ runner.temp }}/college-website-candidates.json
+          if-no-files-found: warn
+          retention-days: 14
