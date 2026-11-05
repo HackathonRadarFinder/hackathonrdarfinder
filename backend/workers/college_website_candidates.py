@@ -145,7 +145,7 @@ def run(pages=1, max_colleges=50, start_page=None, fetch=http_json, delay=1.1, s
         raise ValueError('Invalid starting page')
     inspected, errors, candidates, used = 0, 0, [], set()
     throttled = False
-    for page_number in range(start, min(start + pages, page_count)):
+    for page_number in range(start, min(start + pages, page_count + 1)):
         listing = first if page_number == 1 else fetch(DIRECTORY_API, {'page': page_number, 'page_size': 100})
         for college in listing.get('data', []):
             if inspected >= max_colleges:
