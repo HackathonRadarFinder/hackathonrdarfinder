@@ -37,7 +37,7 @@ def get_password_hash(password: str) -> str:
     ).decode("utf-8")
 
 
-def create_access_token(subject: str | Any, role: str, expires_delta: timedelta | None = None) -> str:
+def create_access_token(subject: str | Any, role: str, expires_delta: timedelta | None = None, token_version: int = 0) -> str:
     """Generate a signed JWT access token containing user UUID, role, and a unique JTI."""
     if expires_delta:
         expire = datetime.now(timezone.utc) + expires_delta
