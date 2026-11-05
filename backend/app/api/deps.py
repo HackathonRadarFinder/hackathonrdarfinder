@@ -65,6 +65,12 @@ def get_current_user_token(
 
         if db.get(RevokedToken, jti) is not None:
             unauthorized("Session has been revoked")
+        token_version = payload.get("tv", 0)  # Legacy tokens predate OTP resets.
+        if type(token_version) is not int or token_version < 0:
+            unauthorized()
+        account = db.get(User, UUID(subject))
+        if account is None or account.token_version != token_version:
+            unauthorized("Session was invalidated by a password reset")
 
         return TokenPayload(
             sub=subject,

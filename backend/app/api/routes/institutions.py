@@ -28,6 +28,24 @@ def public_event_coverage(db: Session = Depends(get_db)):
         return verified_event_coverage(db)
 
 
+@router.get('/institutions/facets')
+@router.get('/colleges/facets')
+def institution_facets(state: Annotated[str | None, Query(min_length=1, max_length=100)] = None,
+                       db: Session = Depends(get_db)):
+    """Public, bounded filter choices from the same published rows as /colleges."""
+    filters = list(public_institution_filters())
+    with database_operation(db):
+        states = db.scalars(select(Institution.state).where(*filters)
+            .distinct().order_by(Institution.state)).all()
+        districts = []
+        if state:
+            districts = db.scalars(select(Institution.district).where(
+                *filters, func.lower(Institution.state) == state.lower(),
+                Institution.district.is_not(None), Institution.district != ''
+            ).distinct().order_by(Institution.district)).all()
+        return {'states': states, 'districts': districts}
+
+
 @router.get('/institutions')
 @router.get('/colleges')
 def institutions(q: Annotated[str | None, Query(min_length=1, max_length=255)] = None,

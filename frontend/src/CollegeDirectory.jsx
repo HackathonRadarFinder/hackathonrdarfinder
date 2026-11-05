@@ -5,6 +5,26 @@ import { api, safeEventUrl } from './services/apiClient';
 export default function CollegeDirectory() {
   const [draft, setDraft] = useState({ search: '', state: '', district: '' });
   const [query, setQuery] = useState({ ...draft, page: 1 });
+  const [states, setStates] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [facetsError, setFacetsError] = useState('');
+  useEffect(() => {
+    const controller = new AbortController();
+    api.institutionFacets('', controller.signal)
+      .then(data => { if (!controller.signal.aborted) setStates(data.states); })
+      .catch(() => { if (!controller.signal.aborted) setFacetsError('State choices are unavailable. Reload to retry.'); });
+    return () => controller.abort();
+  }, []);
+  useEffect(() => {
+    const controller = new AbortController();
+    setDistricts([]);
+    if (draft.state) {
+      api.institutionFacets(draft.state, controller.signal)
+        .then(data => { if (!controller.signal.aborted) setDistricts(data.districts); })
+        .catch(() => { if (!controller.signal.aborted) setFacetsError('District choices could not load.'); });
+    }
+    return () => controller.abort();
+  }, [draft.state]);
   const [revision, setRevision] = useState(0);
   const [result, setResult] = useState(null);
   const key = JSON.stringify([query, revision]);
@@ -22,8 +42,9 @@ export default function CollegeDirectory() {
     <h1>College directory</h1><p>Browse factual college records mined and structured from AISHE dashboard data. The portal has not independently verified individual institutions.</p>
     <form onSubmit={event => { event.preventDefault(); setQuery({ search: draft.search.trim(), state: draft.state.trim(), district: draft.district.trim(), page: 1 }); }}>
       <label>College name<input maxLength={255} value={draft.search} onChange={event => setDraft({ ...draft, search: event.target.value })} /></label>
-      <label>State<input maxLength={100} value={draft.state} placeholder="State or union territory" onChange={event => setDraft({ ...draft, state: event.target.value })} /></label>
-      <label>District<input maxLength={150} value={draft.district} onChange={event => setDraft({ ...draft, district: event.target.value })} /></label>
+      <label>State<select aria-label="State" value={draft.state} onChange={event => { setFacetsError(''); setDraft({ ...draft, state: event.target.value, district: '' }); }}><option value="">All states and union territories</option>{states.map(state => <option key={state} value={state}>{state}</option>)}</select></label>
+      <label>District<select aria-label="District" value={draft.district} disabled={!draft.state} onChange={event => setDraft({ ...draft, district: event.target.value })}><option value="">All districts</option>{districts.map(district => <option key={district} value={district}>{district}</option>)}</select></label>
+      {facetsError && <p role="alert">{facetsError}</p>}
       <button>Search colleges</button><button type="button" onClick={() => { const empty = { search: '', state: '', district: '' }; setDraft(empty); setQuery({ ...empty, page: 1 }); }}>Clear filters</button>
     </form>
     {!current && <p role="status">Loading colleges…</p>}
