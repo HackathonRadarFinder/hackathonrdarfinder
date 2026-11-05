@@ -1,7 +1,7 @@
 """Offline discovery tests: proposals never verify, crawl, or publish."""
 from workers.college_website_candidates import (
     DIRECTORY_API, WIKIDATA_API, match_score, normalized,
-    safe_website, wikidata_candidates, run,
+    safe_website, wikidata_candidates, run, SourceThrottled,
 )
 
 
@@ -81,3 +81,21 @@ def test_bounded_public_pages_and_never_mutates_database():
     assert report['candidates'][0]['status'].startswith('needs_manual')
     assert all(url in (DIRECTORY_API, WIKIDATA_API) for url, _ in calls)
     assert sum(1 for url, _ in calls if url == DIRECTORY_API) == 1
+
+
+def test_throttling_stops_entire_batch():
+    calls = []
+    rows = [
+        {'identifier': 'AISHE:U-1','name':'Test Engineering University','state':'Delhi'},
+        {'identifier': 'AISHE:U-2','name':'Next Technology University','state':'Delhi'},
+    ]
+    def fake(url, params):
+        calls.append((url, params))
+        if url == DIRECTORY_API:
+            return {'total': 2, 'data': rows}
+        raise SourceThrottled('stop')
+    report = run(pages=1, max_colleges=2, start_page=1, fetch=fake, delay=0)
+    assert report['rate_limited'] is True
+    assert report['upstream_errors'] == 1
+    assert report['colleges_queried'] == 1
+    assert len(calls) == 2  # One directory request and a single rejected lookup.
