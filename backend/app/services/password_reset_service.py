@@ -1,6 +1,6 @@
 """Email OTP recovery with per-account cooldown, bounded guesses and session revocation."""
 from datetime import datetime, timedelta, timezone
-from email.message import EmailMessage
+import httpx
 import hashlib
 import hmac
 import logging
@@ -13,7 +13,6 @@ from app.core.config import settings
 from app.core.security import get_password_hash
 from app.models.core import AuditLog, User
 from app.models.password_reset_otp import PasswordResetOTP
-from app.services.email_service import send_message
 
 logger = logging.getLogger(__name__)
 GENERIC_RESPONSE = 'If an active account exists, a password reset code will be emailed.'
@@ -43,18 +42,32 @@ def code_digest(email: str, code: str) -> str:
 
 
 def send_otp(email: str, code: str) -> bool:
-    """Uses configured SMTP only. Never passes OTP to logs or responses."""
-    message = EmailMessage()
-    message['From'] = str(settings.EMAIL_FROM)
-    message['To'] = email
-    message['Subject'] = 'Hackathon Radar Finder password reset code'
-    message.set_content(
-        'Your Hackathon Radar Finder password reset code is: ' + code +
-        '\nThis code expires in 10 minutes. If you did not request it, ignore this email.'
-    )
-    # Event reminders remain disabled even when reset OTP email is enabled.
-    return send_message(settings.model_copy(update={'EMAIL_MODE': 'enabled'}), message) == 'accepted'
-
+    """HTTPS transactional email; no SMTP dependency or OTPs in server logs."""
+    if not settings.PASSWORD_RESET_OTP_ENABLED:
+        return False
+    try:
+        with httpx.Client(timeout=10.0, follow_redirects=False) as client:
+            response = client.post(
+                'https://api.resend.com/emails',
+                headers={
+                    'Authorization': 'Bearer ' + settings.RESEND_API_KEY.get_secret_value(),
+                    'Content-Type': 'application/json',
+                    'User-Agent': 'HackathonRadarFinder/1.0',
+                },
+                json={
+                    'from': str(settings.EMAIL_FROM),
+                    'to': [email],
+                    'subject': 'Hackathon Radar Finder password reset code',
+                    'text': (
+                        'Your Hackathon Radar Finder password reset code is: ' + code +
+                        '\\nThis code expires in 10 minutes. If you did not request it, ignore this email.'
+                    ),
+                },
+            )
+        # Do not log response bodies: provider errors may contain recipient info.
+        return response.status_code == 200
+    except (httpx.HTTPError, ValueError):
+        return False
 
 def request_otp(email: str, db) -> dict:
     if not settings.PASSWORD_RESET_OTP_ENABLED:
