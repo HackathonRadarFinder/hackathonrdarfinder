@@ -50,7 +50,7 @@ try {
   }
   for (const width of (process.argv.includes('--journey-only') ? [] : [320, 390, 768, 1440])) {
     await page.setViewportSize({ width, height: 900 });
-    for (const path of ['/explore', '/login', '/register', '/predictions']) {
+    for (const path of ['/explore', '/login', '/register', '/predictions', '/colleges', '/admin/colleges']) {
       await page.goto(`${base}${path}`);
       await page.getByRole('main').waitFor();
       await page.waitForLoadState('networkidle');
@@ -186,6 +186,19 @@ try {
   await page.screenshot({ path: resolve(artifactDir, 'synthetic-prediction-rendering.png'), fullPage: true });
   await page.unroute('**/api/predictions/catalog');
   passed('Synthetic prediction UI fixture: range, disclaimer, confidence, evidence and model timestamp');
+  await page.goto(`${base}/colleges`);
+  await page.getByRole('heading', { name: 'No colleges are approved for publication yet' }).waitFor();
+  await page.getByLabel('College name', { exact: true }).fill('Private');
+  await page.getByLabel('State', { exact: true }).fill('Assam');
+  await page.getByLabel('District', { exact: true }).fill('Kamrup');
+  await page.getByRole('button', { name: 'Search colleges', exact: true }).click();
+  await page.getByRole('heading', { name: 'No colleges match these filters' }).waitFor();
+  assert.equal(await page.locator('.platform-grid article').count(), 0);
+  await accessible('Public college directory empty state and filters');
+  await page.goto(`${base}/admin/colleges`);
+  await page.getByText('Sign in with your administrator account to view colleges.').waitFor();
+  assert.equal(await page.getByRole('table').count(), 0);
+  passed('College directory filters, pending-record privacy and signed-out admin denial');
   assert.deepEqual(errors, [], 'No unhandled browser exceptions');
   passed('No browser credential persistence or unhandled exceptions');
   console.log(`Browser acceptance: ${checks.length} checks passed; ${evidence.length} axe scans without violations.`);

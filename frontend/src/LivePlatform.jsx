@@ -11,6 +11,8 @@ import './App.css';
 import './platform.css';
 import ProviderCredit from './components/ProviderCredit';
 import AdminWorkspace from './AdminWorkspace';
+import CollegeDirectory from './CollegeDirectory';
+import AdminCollegeDirectory from './AdminCollegeDirectory';
 
 function useResource(load) {
   const [state, setState] = useState({ key: null });
@@ -165,7 +167,7 @@ function Admin() {
       <h2>Users</h2><div className="platform-table" tabIndex={0} role="region" aria-label="User accounts table"><table><thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Roles</th></tr></thead><tbody>{resource.data.users.map(user => <tr key={user.id}><td>{user.name}</td><td>{user.email}</td><td>{user.status}</td><td>{user.roles.join(', ')}</td></tr>)}</tbody></table></div>
       <h2>Organizations</h2><ul>{resource.data.organizations.map(org => <li key={org.id}>{org.name}</li>)}</ul>
       <p className="platform-muted">Use the administration tools below to manage records, review announcements, and inspect audit history.</p></>}
-    {user?.role === 'administrator' && <AdminWorkspace />}
+    {user?.role === 'administrator' && <><p><Link to="/admin/colleges">Open private college directory</Link></p><AdminWorkspace /></>}
   </section>;
 }
 
@@ -275,9 +277,9 @@ export default function LivePlatform() {
   return <div className={`platform ${dark ? 'platform-dark' : ''}`}><a className="platform-skip" href="#platform-content">Skip to content</a>
     <header className="platform-header"><Link className="platform-brand" to="/"><BrainCircuit size={26} />Hackathon <strong>Radar</strong></Link>
       <button className="platform-menu" aria-expanded={mobileOpen} aria-controls="platform-navigation" onClick={() => setMobileOpenKey(mobileOpen ? null : location.key)}>Menu</button>
-      <nav id="platform-navigation" className={mobileOpen ? 'open' : ''} aria-label="Main navigation"><NavLink to="/explore">Explore</NavLink><NavLink to="/universities">Universities</NavLink><NavLink to="/saved">Saved events</NavLink><NavLink to="/predictions">Predictions</NavLink><NavLink to="/notifications">Preferences</NavLink><NavLink to="/admin">Admin</NavLink><a href="/demo/">Design demo</a></nav>
+      <nav id="platform-navigation" className={mobileOpen ? 'open' : ''} aria-label="Main navigation"><NavLink to="/explore">Explore</NavLink><NavLink to="/colleges">Colleges</NavLink><NavLink to="/saved">Saved events</NavLink><NavLink to="/predictions">Predictions</NavLink><NavLink to="/notifications">Preferences</NavLink><NavLink to="/admin">Admin</NavLink><a href="/demo/">Design demo</a></nav>
       <div className="platform-session"><button aria-label={`Use ${dark ? 'light' : 'dark'} theme`} onClick={() => setDark(value => !value)}>{dark ? <Sun size={18} /> : <Moon size={18} />}</button>{user ? <><span>{user.name}</span><button disabled={isLoading} onClick={logout}>Sign out</button></> : <Link to="/login">Sign in</Link>}</div>
     </header><main id="platform-content" tabIndex={-1}><div className="platform-container">{authError && <p role="alert">{authError}</p>}{bookmarkError && <p role="alert">{bookmarkError}</p>}
-      <Routes><Route path="/" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/home" element={<Navigate replace to="/" />} /><Route path="/explore" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/event/:id" element={<EventDetails saved={saved} toggle={toggle} />} /><Route path="/universities" element={<InstitutionDirectory />} /><Route path="/saved" element={<Bookmarks saved={saved} toggle={toggle} />} /><Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} /><Route path="/forgot-password" element={<section><h1>Password reset unavailable</h1><p>The current backend does not support password reset. No email has been sent.</p><Link to="/login">Return to sign in</Link></section>} /><Route path="/admin/*" element={<Admin />} /><Route path="/notifications" element={<Preferences key={user?.id || "guest"} />} /><Route path="/predictions" element={<Predictions />} /><Route path="*" element={<section><h1>Page not found</h1><Link to="/">Return to events</Link></section>} /></Routes>
+      <Routes><Route path="/" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/home" element={<Navigate replace to="/" />} /><Route path="/explore" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/event/:id" element={<EventDetails saved={saved} toggle={toggle} />} /><Route path="/universities" element={<InstitutionDirectory />} /><Route path="/saved" element={<Bookmarks saved={saved} toggle={toggle} />} /><Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} /><Route path="/forgot-password" element={<section><h1>Password reset unavailable</h1><p>The current backend does not support password reset. No email has been sent.</p><Link to="/login">Return to sign in</Link></section>} /><Route path="/colleges" element={<CollegeDirectory />} /><Route path="/admin/colleges" element={<AdminCollegeDirectory />} /><Route path="/admin/*" element={<Admin />} /><Route path="/notifications" element={<Preferences key={user?.id || "guest"} />} /><Route path="/predictions" element={<Predictions />} /><Route path="*" element={<section><h1>Page not found</h1><Link to="/">Return to events</Link></section>} /></Routes>
     </div></main><footer className="platform-footer">Hackathon Radar · Backend catalog and saved events. <a href="/demo/">Fictional design demo</a></footer></div>;
 }

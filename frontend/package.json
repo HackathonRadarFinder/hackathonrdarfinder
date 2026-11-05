@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "build:pages": "vite build && wrangler pages functions build functions --outdir=../.test-support/pages-worker",
+    "build:pages": "vite build && wrangler pages functions build functions --outdir=../.test-support/pages-worker && node scripts/package-pages.mjs",
     "test:pages": "node tests/pages.acceptance.mjs",
     "test": "node --test tests/*.test.mjs",
     "test:browser": "node tests/browser.acceptance.mjs",

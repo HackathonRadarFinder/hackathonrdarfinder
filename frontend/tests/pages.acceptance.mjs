@@ -3,7 +3,7 @@
  * Never connects to Render/Supabase, deploys, or uses production credentials.
  */
 import assert from 'node:assert/strict';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { createServer } from 'node:net';
 import { readFile, stat } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
@@ -13,7 +13,10 @@ import { chromium } from 'playwright-core';
 import { BACKEND_ORIGIN } from '../src/server/pagesProxy.js';
 
 const root = resolve('..');
-const python = process.env.RADAR_TEST_PYTHON || (process.platform === 'win32' ? resolve('../backend/.venv/Scripts/python.exe') : 'python');
+const localPython = resolve('../backend/.venv/Scripts/python.exe');
+const python = process.env.RADAR_TEST_PYTHON || (process.platform === 'win32' && existsSync(localPython) ? localPython : 'python');
+const probe = spawnSync(python, ['-c', 'import fastapi, sqlalchemy, alembic, bcrypt, jwt, uvicorn'], { encoding: 'utf8', timeout: 15000 });
+assert.equal(probe.status, 0, 'Disposable Python dependencies unavailable. Set RADAR_TEST_PYTHON to an existing backend virtualenv interpreter.');
 const port = await new Promise((resolvePort, reject) => {
   const listener = createServer();
   listener.once('error', reject);
@@ -30,9 +33,9 @@ let runtime;
 let calls = 0;
 const fixtureBase = `http://127.0.0.1:${port}`;
 
-async function runNode(script, env) {
+async function runNode(script, env, args = []) {
   return new Promise((resolveRun, reject) => {
-    const child = spawn(process.execPath, [script], { env: { ...process.env, ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
+    const child = spawn(process.execPath, [script, ...args], { env: { ...process.env, ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
     child.stdout.on('data', data => process.stdout.write(data));
     child.stderr.on('data', data => process.stderr.write(data));
     child.once('error', reject);
@@ -42,18 +45,23 @@ async function runNode(script, env) {
 
 try {
   let ready = false;
-  for (let attempt = 0; attempt < 120; attempt++) {
-    if (fixtureError || fixture.exitCode !== null) throw new Error('Disposable fixture failed to start.');
+  const started = Date.now();
+  // First-time Python imports and migrations can take over 30s on Windows.
+  const startupTimeout = 90_000;
+  let readinessFailure = 'not yet listening';
+  while (Date.now() - started < startupTimeout) {
+    if (fixtureError || fixture.exitCode !== null) throw new Error(`Disposable fixture failed to start (${fixtureError?.code || fixture.exitCode}). Check RADAR_TEST_PYTHON dependencies.`);
     try {
       const marker = await fetch(`${fixtureBase}/__disposable_fixture`, { signal: AbortSignal.timeout(1000) }).then(response => response.json());
       assert.equal(marker.database, 'temporary-sqlite-frontend-tests');
       ready = true; break;
-    } catch { await new Promise(resolveWait => setTimeout(resolveWait, 250)); }
+    } catch (error) { readinessFailure = error.name; await new Promise(resolveWait => setTimeout(resolveWait, 250)); }
   }
-  assert.ok(ready, 'Disposable fixture readiness timeout');
+  assert.ok(ready, `Disposable fixture readiness timeout after ${startupTimeout}ms (${readinessFailure}).`);
+  console.log(`Disposable Python backend ready in ${Date.now() - started}ms.`);
   const dist = resolve('dist');
   runtime = new Miniflare(convertV4MiniflareOptions({
-    modules: true, script: await readFile(resolve('../.test-support/pages-worker/index.js'), 'utf-8'),
+    modules: true, script: await readFile(resolve('dist/_worker.js'), 'utf-8'),
     compatibilityDate: '2026-11-03', host: '127.0.0.1', port: 0,
     outboundService: async request => {
       const url = new URL(request.url);
@@ -83,7 +91,7 @@ try {
     body: JSON.stringify({ email: 'missing@example.com', password: 'synthetic-invalid-password' }) });
   assert.equal(badLogin.status, 401);
   assert.equal((await badLogin.json()).message, 'Invalid email or password');
-  for (const path of ['/login', '/register', '/explore', '/event/1']) {
+  for (const path of ['/login', '/register', '/explore', '/event/1', '/colleges', '/admin/colleges']) {
     const page = await fetch(`${base}${path}`);
     assert.equal(page.status, 200); assert.match(await page.text(), /<div id="root"><\/div>/);
   }
@@ -93,7 +101,7 @@ try {
     'C:/Program Files/Google/Chrome/Application/chrome.exe',
     'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'].find(existsSync);
   assert.ok(browserPath, 'Install Chromium with playwright-core or configure BROWSER_EXECUTABLE_PATH');
-  await runNode('tests/browser.acceptance.mjs', { FRONTEND_DISPOSABLE_BROWSER_BASE: base, BROWSER_EXECUTABLE_PATH: browserPath });
+  await runNode('tests/browser.acceptance.mjs', { FRONTEND_DISPOSABLE_BROWSER_BASE: base, BROWSER_EXECUTABLE_PATH: browserPath }, process.argv.includes('--journey-only') ? ['--journey-only'] : []);
   assert.ok(calls > 0);
   console.log(`PASS compiled Pages router/workerd, JSON auth failures, SPA refresh and real local API/browser journeys (${calls} intercepted backend requests; no external backend requests).`);
 } finally {

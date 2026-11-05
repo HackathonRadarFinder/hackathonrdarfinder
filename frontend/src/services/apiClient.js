@@ -47,6 +47,7 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
       if (error.name === 'AbortError') throw error;
       throw new Error('Cannot reach the API. Please try again.');
     }
+    if (response.headers?.get?.('content-type')?.includes('text/html')) throw new Error('The API is temporarily unavailable. Please try again.');
     let data;
     try { data = await response.json(); } catch { throw new Error('The API returned an unreadable response.'); }
     if (!response.ok) {
@@ -131,7 +132,16 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
       const result = await request(`/events/${id}`, { signal, authenticated: false });
       return result.data;
     },
-    async institutions(state, search, signal, page = 1, pageSize = 100) { const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) }); if (state) params.set('state', state); if (search?.trim()) params.set('q', search.trim()); return request(`/institutions?${params}`, { signal, authenticated: false }); },
+    async institutions(state, search, signal, page = 1, pageSize = 100, district) { const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) }); if (state) params.set('state', state); if (district) params.set('district', district); if (search?.trim()) params.set('q', search.trim()); return request(`/institutions?${params}`, { signal, authenticated: false }); },
+    async adminInstitutions({ state, district, search, page = 1 }, signal) {
+      const params = new URLSearchParams({ page: String(page), page_size: '100' });
+      if (state?.trim()) params.set('state', state.trim());
+      if (district?.trim()) params.set('district', district.trim());
+      if (search?.trim()) params.set('q', search.trim());
+      const result = await request(`/admin/discovery/institutions?${params}`, { signal });
+      if (!Array.isArray(result.data) || !Number.isInteger(result.total)) throw new Error('Invalid private college directory response.');
+      return result;
+    },
     async discoveryCoverage(signal) { return request('/admin/discovery/coverage', { signal }); },
     async discoveryRuns(signal) { return (await request('/admin/discovery/runs', { signal })).data; },
     async organizations(signal) { return (await request('/organizations/', { signal, authenticated: false })).data; },
