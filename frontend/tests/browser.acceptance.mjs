@@ -189,8 +189,8 @@ try {
   await page.goto(`${base}/colleges`);
   await page.getByRole('heading', { name: 'No colleges are publicly listed yet' }).waitFor();
   await page.getByLabel('College name', { exact: true }).fill('Private');
-  await page.getByLabel('State', { exact: true }).fill('Assam');
-  await page.getByLabel('District', { exact: true }).fill('Kamrup');
+  await page.getByLabel('State', { exact: true }).selectOption('');
+  assert.equal(await page.getByLabel('District', { exact: true }).isDisabled(), true);
   await page.getByRole('button', { name: 'Search colleges', exact: true }).click();
   await page.getByRole('heading', { name: 'No colleges match these filters' }).waitFor();
   assert.equal(await page.locator('.platform-grid article').count(), 0);
