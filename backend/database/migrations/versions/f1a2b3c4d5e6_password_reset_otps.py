@@ -19,7 +19,14 @@ def upgrade():
         sa.Column('requests_in_window', sa.Integer(), nullable=False))
     if op.get_bind().dialect.name == 'postgresql':
         op.execute('ALTER TABLE password_reset_otps ENABLE ROW LEVEL SECURITY')
-        op.execute('REVOKE ALL ON TABLE password_reset_otps FROM PUBLIC, anon, authenticated')
+        op.execute('REVOKE ALL ON TABLE password_reset_otps FROM PUBLIC')
+        # Supabase roles are absent on disposable vanilla PostgreSQL CI databases.
+        for role in ('anon', 'authenticated'):
+            exists = op.get_bind().execute(sa.text(
+                "SELECT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :role)"),
+                {'role': role}).scalar()
+            if exists:
+                op.execute(f'REVOKE ALL ON TABLE password_reset_otps FROM {role}')
 
 
 def downgrade():
