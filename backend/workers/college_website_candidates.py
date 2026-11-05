@@ -26,6 +26,10 @@ TECHNICAL = re.compile(r'engineering|technology|technological|university|polytec
                        r'computer|technical|science|institute|iit|nit', re.I)
 
 
+class SourceThrottled(RuntimeError):
+    """Stop all further requests when an API signals throttling."""
+
+
 def normalized(value):
     value = re.sub(r'[^a-z0-9]+', ' ', str(value).casefold()).strip()
     return ' '.join(value.split())
@@ -61,14 +65,21 @@ def http_json(url, params, *, timeout=45):
     request = Request(url + '?' + urlencode(params), headers={
         'User-Agent': UA, 'Accept': 'application/json',
     })
-    with urlopen(request, timeout=timeout) as response:
-        if response.status != 200:
-            raise RuntimeError('Upstream API unavailable')
-        if int(response.headers.get('Content-Length', '0') or 0) > 2_000_000:
-            raise ValueError('Upstream payload too large')
-        data = response.read(2_000_001)
-        if len(data) > 2_000_000:
-            raise ValueError('Upstream payload too large')
+    try:
+        with urlopen(request, timeout=timeout) as response:
+            if response.status != 200:
+                raise RuntimeError('Upstream API unavailable')
+            if int(response.headers.get('Content-Length', '0') or 0) > 2_000_000:
+                raise ValueError('Upstream payload too large')
+            data = response.read(2_000_001)
+            if len(data) > 2_000_000:
+                raise ValueError('Upstream payload too large')
+    except HTTPError as error:
+        if error.code in (429, 503):
+            # Stop the whole batch, not just this college. This respects the
+            # API's throttle window without sleeping past a GitHub job budget.
+            raise SourceThrottled('API throttled; no further requests') from None
+        raise
     return json.loads(data)
 
 
@@ -133,6 +144,7 @@ def run(pages=1, max_colleges=50, start_page=None, fetch=http_json, delay=1.1, s
     if not 1 <= start <= page_count:
         raise ValueError('Invalid starting page')
     inspected, errors, candidates, used = 0, 0, [], set()
+    throttled = False
     for page_number in range(start, min(start + pages, page_count)):
         listing = first if page_number == 1 else fetch(DIRECTORY_API, {'page': page_number, 'page_size': 100})
         for college in listing.get('data', []):
@@ -146,6 +158,10 @@ def run(pages=1, max_colleges=50, start_page=None, fetch=http_json, delay=1.1, s
             inspected += 1
             try:
                 matches = wikidata_candidates(college, fetch=fetch)
+            except SourceThrottled:
+                errors += 1
+                throttled = True
+                break
             except (HTTPError, URLError, RuntimeError, ValueError, KeyError, TimeoutError):
                 errors += 1
                 matches = []
@@ -156,7 +172,7 @@ def run(pages=1, max_colleges=50, start_page=None, fetch=http_json, delay=1.1, s
                     candidates.append(row)
             if delay:
                 sleep(delay)
-        if inspected >= max_colleges:
+        if inspected >= max_colleges or throttled:
             break
     return {
         'generated_at': datetime.now(timezone.utc).isoformat(),
@@ -166,6 +182,7 @@ def run(pages=1, max_colleges=50, start_page=None, fetch=http_json, delay=1.1, s
         'start_page': start,
         'colleges_queried': inspected,
         'upstream_errors': errors,
+        'rate_limited': throttled,
         'candidates': sorted(candidates, key=lambda row: (-row['name_similarity'], row['college_name'])),
     }
 
