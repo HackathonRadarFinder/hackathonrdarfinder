@@ -106,7 +106,16 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
       await request('/auth/register', { method: 'POST', authenticated: false, body: { name: name.trim(), email: email.trim(), password } });
       return login(email, password);
     },
-    async forgotPassword() { throw new Error('Password reset is not supported by this backend yet. No email was sent.'); },
+    forgotPassword(email) {
+      return request('/auth/password-reset/request', {
+        method: 'POST', authenticated: false, body: { email: email.trim() },
+      });
+    },
+    confirmPasswordReset(email, code, newPassword) {
+      return request('/auth/password-reset/confirm', {
+        method: 'POST', authenticated: false, body: { email: email.trim(), code: code.trim(), new_password: newPassword },
+      });
+    },
     async events({ page = 1, pageSize = 12, q, location, mode, organizationId, state, institutionId, startFrom, startTo, deadlineFrom, deadlineTo, sort, period } = {}, signal) {
       const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) });
       if (q?.trim()) params.set('q', q.trim());
