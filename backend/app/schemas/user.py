@@ -68,3 +68,22 @@ class TokenPayload(BaseModel):
     role: str
     jti: str
     exp: int
+
+
+class PasswordResetRequest(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    email: EmailStr
+
+
+class PasswordResetConfirm(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    email: EmailStr
+    code: str = Field(pattern=r'^\d{6}$')
+    new_password: str = Field(min_length=12, max_length=72)
+
+    @field_validator('new_password')
+    @classmethod
+    def password_bytes(cls, value: str) -> str:
+        if len(value.encode('utf-8')) > 72:
+            raise ValueError('Password must not exceed 72 bytes')
+        return value
