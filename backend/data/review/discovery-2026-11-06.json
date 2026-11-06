@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "packet_type": "review_only_college_hackathon_discovery",
+  "created_at": "2026-11-06T08:15:27+05:30",
+  "collection_method": "Public web search results and official public pages; no automated crawling of third-party sites",
+  "duplicate_check": "GitHub default-branch code search by title keywords found no exact matches; production database and earlier automation report records not accessible; deduplication provisional",
+  "restrictions": [
+    "Do not publish without human review",
+    "Do not infer permission to crawl from official domain or institution name",
+    "Do not collect participant data",
+    "Do not treat null institution_id as verified match"
+  ],
+  "candidates": [
+    {
+      "discovered_at": "2026-11-06T08:15:27+05:30",
+      "review_status": "pending",
+      "institution_id": null,
+      "publication_allowed": false,
+      "crawling_permission_verified": false,
+      "title": "SAKEC – ChipMonk Hackathon 2.0",
+      "hosting_college": "Shah & Anchor Kutchhi Engineering College",
+      "state": null,
+      "district": null,
+      "start_date": "2027-02-06",
+      "end_date": "2027-02-06",
+      "registration_deadline": "2026-11-13",
+      "registration_url": null,
+      "official_source_url": "https://www.sakec.ac.in/iete-sakec/sakec-chipmonk-hackathon-2-0-6th-february-2026/",
+      "uncertainty": [
+        "Page heading says February 2026 but body explicitly states final evaluation on 6 February 2027; event dates require organizer clarification",
+        "Registration form linked from official page but direct destination not independently resolved",
+        "State/district and AISHE ID not verified"
+      ]
+    },
+    {
+      "discovered_at": "2026-11-06T08:15:27+05:30",
+      "review_status": "pending",
+      "institution_id": null,
+      "publication_allowed": false,
+      "crawling_permission_verified": false,
+      "title": "KU Hackathon 2027",
+      "hosting_college": "Kalinga University",
+      "state": null,
+      "district": null,
+      "start_date": "2027-02-18",
+      "end_date": "2027-02-19",
+      "registration_deadline": "2026-11-30",
+      "registration_url": "https://kalingauniversity.ac.in/ku-hackathon-2027",
+      "official_source_url": "https://kalingauniversity.ac.in/ku-hackathon-2027",
+      "uncertainty": [
+        "Deadline refers to PPT submission with registration fee",
+        "Direct registration form destination not independently resolved; link is official landing page",
+        "State/district and AISHE ID not verified"
+      ]
+    },
+    {
+      "discovered_at": "2026-11-06T08:15:27+05:30",
+      "review_status": "pending",
+      "institution_id": null,
+      "publication_allowed": false,
+      "crawling_permission_verified": false,
+      "title": "SSETC Hackathon 2026",
+      "hosting_college": "Symbiosis International (Deemed University) / Symbiosis Medical College for Women",
+      "state": "Maharashtra",
+      "district": "Pune",
+      "start_date": "2026-12-10",
+      "end_date": "2026-12-12",
+      "registration_deadline": null,
+      "registration_url": "https://ssetc.smcw.edu.in/hackathon-registration-form",
+      "official_source_url": "https://ssetc.smcw.edu.in/hackathon",
+      "uncertainty": [
+        "Dates represent conclave/finale window; exact hackathon activity timing not isolated",
+        "No verified registration deadline",
+        "AISHE ID not verified"
+      ]
+    },
+    {
+      "discovered_at": "2026-11-06T08:15:27+05:30",
+      "review_status": "pending",
+      "institution_id": null,
+      "publication_allowed": false,
+      "crawling_permission_verified": false,
+      "title": "ATLAS Hackathon 2026 — Prompt to Product",
+      "hosting_college": "ATLAS SkillTech University",
+      "state": "Maharashtra",
+      "district": "Mumbai",
+      "start_date": "2026-11-28",
+      "end_date": "2026-12-15",
+      "registration_deadline": "2026-11-25",
+      "registration_url": "https://atlasuniversity.edu.in/atlas-hackathon-2026/",
+      "official_source_url": "https://atlasuniversity.edu.in/atlas-hackathon-2026/",
+      "uncertainty": [
+        "Start/end denote first online round and final, not a continuous hackathon",
+        "Direct registration destination not independently resolved",
+        "AISHE ID not verified"
+      ]
+    },
+    {
+      "discovered_at": "2026-11-06T08:15:27+05:30",
+      "review_status": "pending",
+      "institution_id": null,
+      "publication_allowed": false,
+      "crawling_permission_verified": false,
+      "title": "St Aloysius × RBIH FinTech Innovation Hackathon 2026",
+      "hosting_college": "St Aloysius (Deemed to be University), AIMIT Centre",
+      "state": "Karnataka",
+      "district": "Dakshina Kannada",
+      "start_date": "2026-12-04",
+      "end_date": "2026-12-06",
+      "registration_deadline": "2026-11-15",
+      "registration_url": "https://fintech-hackathon.aimit.edu.in/",
+      "official_source_url": "https://www.aimit.edu.in/events/st-aloysius-fintech-innovation-hackathon-2026-register-by-15-nov",
+      "uncertainty": [
+        "Dates are the residential bootcamp/final pitching phase, not full multi-stage event",
+        "Official portal currently displays 'REGISTRATIONS CLOSED' despite stated November 15 deadline; status requires verification",
+        "Direct registration form destination not independently resolved",
+        "AISHE ID not verified"
+      ]
+    },
+    {
+      "discovered_at": "2026-11-06T08:15:27+05:30",
+      "review_status": "pending",
+      "institution_id": null,
+      "publication_allowed": false,
+      "crawling_permission_verified": false,
+      "title": "Winter Trust Blockchain 2026 — Hackathon",
+      "hosting_college": "Indian Institute of Technology Madras (CyStar)",
+      "state": "Tamil Nadu",
+      "district": "Chennai",
+      "start_date": "2026-12-05",
+      "end_date": "2026-12-05",
+      "registration_deadline": "2026-11-15",
+      "registration_url": "https://cystar.iitm.ac.in/winter-trust-blockchain-2026/",
+      "official_source_url": "https://cystar.iitm.ac.in/winter-trust-blockchain-2026/",
+      "uncertainty": [
+        "November 15 deadline is invited-participant registration; expression of interest closes November 12",
+        "Hackathon is day 6 of broader winter school",
+        "Direct invitation-only registration URL not resolved",
+        "AISHE ID not verified"
+      ]
+    }
+  ]
+}
