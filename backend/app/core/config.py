@@ -40,6 +40,9 @@ class Settings(BaseSettings):
     # Logging
     LOG_LEVEL: str = "INFO"
 
+    # Separate from optional event reminders; enabled only with an actual SMTP sender.
+    PASSWORD_RESET_OTP_ENABLED: bool = False
+    RESEND_API_KEY: SecretStr = SecretStr("")
     EMAIL_MODE: Literal["disabled", "dry-run", "enabled"] = "disabled"
     SMTP_HOST: str = Field(default="", max_length=255)
     SMTP_PORT: int = Field(default=587, ge=1, le=65535)
@@ -66,9 +69,15 @@ class Settings(BaseSettings):
             raise ValueError("SMTP username and password must be configured together")
         if self.EMAIL_MODE == "enabled" and not self.SMTP_HOST.strip():
             raise ValueError("Enabled email requires SMTP_HOST")
+        if self.PASSWORD_RESET_OTP_ENABLED and (
+            not self.RESEND_API_KEY.get_secret_value().strip()
+            or str(self.EMAIL_FROM) == "noreply@example.com"
+        ):
+            raise ValueError("OTP reset requires RESEND_API_KEY and a verified EMAIL_FROM")
         return self
 
     model_config = SettingsConfigDict(
+        hide_input_in_errors=True,
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
