@@ -198,7 +198,7 @@ export default function AdminWorkspace() {
       <h3>No pending listings to verify</h3>
       <p>The 206 unverified Explore listings must first be staged into the backend review queue. Select <strong>Stage 206 listings</strong> above, configure a source with documented permission, then return here to verify them.</p>
       <button type="button" onClick={() => { setTab('sources'); setPage(1); setRevision(value => value + 1); }}>Go to Sources to stage listings</button>
-    </section>
+    </section>}
     {tab === 'duplicates' && result && <p>Compared {result.scanned} events. {result.truncated ? 'This is a limited review window; more candidates may exist.' : 'All events in the scan window were compared.'} Verify both records before merging. The retained record keeps its identity.</p>}
     {rows.map(row => <article className="platform-card" key={row.id || row.key || `${row.survivor?.id}-${row.duplicate?.id}`} style={{ marginTop: 12 }}>
       <h3>{row.title || row.name || row.key || row.payload?.title || row.action || row.email || `Potential duplicate: ${row.survivor?.title}`}</h3>
