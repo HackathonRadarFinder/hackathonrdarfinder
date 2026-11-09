@@ -13,8 +13,11 @@ from app.schemas.user import (
     UserLogin,
     Token,
     TokenPayload,
+    PasswordResetRequest,
+    PasswordResetConfirm,
 )
 from app.services.auth_service import AuthService
+from app.services.password_reset_service import request_otp, confirm_otp
 from app.models.revoked_token import RevokedToken
 from app.api.deps import (
     get_current_user,
@@ -65,6 +68,7 @@ def login(
     access_token = create_access_token(
         subject=str(user.id),
         role=role,
+        token_version=user.token_version,
     )
 
     return Token(
@@ -72,6 +76,18 @@ def login(
         token_type="bearer",
         role=role,
     )
+
+
+@router.post('/password-reset/request')
+def request_password_reset(body: PasswordResetRequest, db: Session = Depends(get_db)):
+    """Send a non-enumerating email OTP only when separately configured."""
+    return request_otp(str(body.email), db)
+
+
+@router.post('/password-reset/confirm')
+def confirm_password_reset(body: PasswordResetConfirm, db: Session = Depends(get_db)):
+    """Consume OTP, replace bcrypt password and revoke all earlier JWTs."""
+    return confirm_otp(str(body.email), body.code, body.new_password, db)
 
 
 @router.get("/me", response_model=UserResponse)
