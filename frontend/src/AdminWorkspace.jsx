@@ -145,6 +145,15 @@ export default function AdminWorkspace() {
   const rows = result?.data || [];
   return <section className="platform-panel" aria-label="Administration workspace">
     <h2>Operations workspace</h2>
+    <section className="platform-card" aria-label="Verification and update actions">
+      <h3>Verify &amp; update hackathons</h3>
+      <p>Use <strong>Review</strong> to verify pending events, or <strong>Sources</strong> to stage the 206 unverified listings first. Listings shown on Explore are not automatically in this review queue.</p>
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <button type="button" className="platform-primary" onClick={() => { setTab('review'); setStatus('pending'); setPage(1); setRevision(value => value + 1); clearSelection(); setEditor(null); setMessage('Review queue updated.'); }}>Verify unverified listings</button>
+        <button type="button" onClick={() => { setTab('sources'); setPage(1); setRevision(value => value + 1); setEditor(null); setMessage('Select an authorized source to stage archived listings.'); }}>Stage 206 listings</button>
+        <button type="button" disabled={busy} onClick={() => { setRevision(value => value + 1); setMessage('Admin data updated.'); }}>Update / Refresh</button>
+      </div>
+    </section>
     <nav aria-label="Administration sections" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
       {Object.keys(sections).map(key => <button key={key} aria-pressed={tab === key} onClick={() => { setTab(key); setPage(1); setEditor(null); setMessage(''); clearSelection(); }}>{key[0].toUpperCase() + key.slice(1)}</button>)}
     </nav>
@@ -185,11 +194,16 @@ export default function AdminWorkspace() {
         setDrafts={setReviewDrafts} onClear={clearSelection} onDone={bulkReviewCompleted} />}
     </section>}
     {result && tab !== 'notifications' && !rows.length && <p>No records in this section.</p>}
+    {tab === 'review' && result && rows.length === 0 && <section className="platform-card" aria-label="Empty verification queue">
+      <h3>No pending listings to verify</h3>
+      <p>The 206 unverified Explore listings must first be staged into the backend review queue. Select <strong>Stage 206 listings</strong> above, configure a source with documented permission, then return here to verify them.</p>
+      <button type="button" onClick={() => { setTab('sources'); setPage(1); setRevision(value => value + 1); }}>Go to Sources to stage listings</button>
+    </section>
     {tab === 'duplicates' && result && <p>Compared {result.scanned} events. {result.truncated ? 'This is a limited review window; more candidates may exist.' : 'All events in the scan window were compared.'} Verify both records before merging. The retained record keeps its identity.</p>}
     {rows.map(row => <article className="platform-card" key={row.id || row.key || `${row.survivor?.id}-${row.duplicate?.id}`} style={{ marginTop: 12 }}>
       <h3>{row.title || row.name || row.key || row.payload?.title || row.action || row.email || `Potential duplicate: ${row.survivor?.title}`}</h3>
       {tab === 'sources' && <><p>{row.enabled ? 'Enabled' : 'Disabled'} Â· every {row.interval_seconds} seconds</p><button onClick={() => open('source', row)}>Configure</button></>}
-      {tab === 'review' && <>{row.status === 'pending' && <label style={{ display: 'flex', gap: 8 }}><input type="checkbox" aria-label={`Select ${row.payload?.title || row.id} for bulk review`} checked={!!selectedRows[row.id]} onChange={e => toggleReview(row, e.target.checked)} /> Select for bulk approval</label>}<p>{row.status} Â· observed {row.observed_at}</p><pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{JSON.stringify(row.evidence, null, 2)}</pre>{safeEventUrl(row.payload?.url) && <a href={safeEventUrl(row.payload.url)} target="_blank" rel="noreferrer">Open evidence page</a>}{row.status === 'pending' && <button onClick={() => open('review', row)}>Review and publish</button>}{row.review_note && <p>{row.review_note}</p>}</>}
+      {tab === 'review' && <>{row.status === 'pending' && <label style={{ display: 'flex', gap: 8 }}><input type="checkbox" aria-label={`Select ${row.payload?.title || row.id} for bulk review`} checked={!!selectedRows[row.id]} onChange={e => toggleReview(row, e.target.checked)} /> Select for bulk approval</label>}<p>{row.status} Â· observed {row.observed_at}</p><pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{JSON.stringify(row.evidence, null, 2)}</pre>{safeEventUrl(row.payload?.url) && <a href={safeEventUrl(row.payload.url)} target="_blank" rel="noreferrer">Open evidence page</a>}{row.status === 'pending' && <button className="platform-primary" type="button" onClick={() => open('review', row)}>Verify / Update &amp; Publish</button>}{row.review_note && <p>{row.review_note}</p>}</>}
       {tab === 'audit' && <><p>{row.created_at} Â· actor {row.actor_id || 'system'} Â· {row.entity_type}</p><pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{row.details}</pre></>}
       {tab === 'roles' && <><p>{row.email} Â· current role: {row.roles?.join(', ')}</p><label>Assign role <select aria-label={`Role for ${row.email}`} value={row.roles?.[0] || 'user'} disabled={busy} onChange={e => mutate(`/admin/users/${row.id}/role`, { role: e.target.value })}>{roles.map(role => <option key={role}>{role}</option>)}</select></label></>}
       {['events', 'organizations'].includes(tab) && <button onClick={() => open(tab === 'events' ? 'event' : 'organization', row)}>Edit {tab === 'events' ? 'event' : 'organization'}</button>}
