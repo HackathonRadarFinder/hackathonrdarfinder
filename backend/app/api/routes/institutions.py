@@ -26,13 +26,30 @@ def public_event_coverage(db: Session = Depends(get_db)):
         return verified_event_coverage(db)
 
 
+@router.get('/institutions/filters')
+def institution_filters(state: Annotated[str | None, Query(min_length=1, max_length=100)] = None,
+                        db: Session = Depends(get_db)):
+    """Distinct directory states and districts; district options depend on state."""
+    with database_operation(db):
+        states = db.scalars(select(Institution.state).distinct().order_by(Institution.state)).all()
+        districts_query = select(Institution.district).where(
+            Institution.district.is_not(None), Institution.district != '')
+        if state:
+            districts_query = districts_query.where(func.lower(Institution.state) == state.lower())
+        districts = db.scalars(districts_query.distinct().order_by(Institution.district)).all()
+        return dict(states=states, districts=districts)
+
+
 @router.get('/institutions')
 def institutions(q: Annotated[str | None, Query(min_length=1, max_length=255)] = None,
                  state: Annotated[str | None, Query(min_length=1, max_length=100)] = None,
+                 district: Annotated[str | None, Query(min_length=1, max_length=100)] = None,
                  page: Annotated[int, Query(ge=1, le=2147483647)] = 1,
                  page_size: Annotated[int, Query(ge=1, le=100)] = 100,
                  db: Session = Depends(get_db)):
     filters = [func.lower(Institution.state) == state.lower()] if state else []
+    if district:
+        filters.append(func.lower(Institution.district) == district.lower())
     if q:
         filters.append(Institution.name.icontains(q, autoescape=True))
     with database_operation(db):

@@ -131,7 +131,8 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
       const result = await request(`/events/${id}`, { signal, authenticated: false });
       return result.data;
     },
-    async institutions(state, search, signal, page = 1, pageSize = 100) { const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) }); if (state) params.set('state', state); if (search?.trim()) params.set('q', search.trim()); return request(`/institutions?${params}`, { signal, authenticated: false }); },
+    async institutions(state, search, signal, page = 1, pageSize = 100, district = '') { const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) }); if (state) params.set('state', state); if (district) params.set('district', district); if (search?.trim()) params.set('q', search.trim()); return request(`/institutions?${params}`, { signal, authenticated: false }); },
+    async institutionFilters(state, signal) { const params = new URLSearchParams(); if (state) params.set('state', state); return request(`/institutions/filters?${params}`, { signal, authenticated: false }); },
     async discoveryCoverage(signal) { return request('/admin/discovery/coverage', { signal }); },
     async discoveryRuns(signal) { return (await request('/admin/discovery/runs', { signal })).data; },
     async organizations(signal) { return (await request('/organizations/', { signal, authenticated: false })).data; },
