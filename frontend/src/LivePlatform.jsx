@@ -99,14 +99,70 @@ function Explore({ saved, toggle }) {
 }
 
 function InstitutionDirectory() {
-  const [filters, setFilters] = useState({state:'', q:''});
+  const [filters, setFilters] = useState({ state: '', district: '', q: '' });
   const [draft, setDraft] = useState(filters);
   const [page, setPage] = useState(1);
-  const resource = useResource(useCallback(signal => api.institutions(filters.state, filters.q, signal, page, 25), [filters, page]));
+  const locations = useResource(useCallback(signal => api.institutionFilters(draft.state, signal), [draft.state]));
+  const resource = useResource(useCallback(
+    signal => api.institutions(filters.state, filters.q, signal, page, 25, filters.district),
+    [filters, page]
+  ));
   const result = resource.data;
-  return <section aria-label="University directory"><h1>University directory</h1><p>Browse the stored institution directory. Directory entries do not imply permission to collect from their websites.</p>
-    <form onSubmit={event => {event.preventDefault();setFilters({...draft});setPage(1);}}><label>University name search<input maxLength={255} value={draft.q} onChange={event => setDraft({...draft,q:event.target.value})} /></label><label>Directory state<input maxLength={100} value={draft.state} placeholder="Exact state or union territory" onChange={event => setDraft({...draft,state:event.target.value})} /></label><button type="submit">Search universities</button><button type="button" onClick={() => {const empty={state:'',q:''};setDraft(empty);setFilters(empty);setPage(1);}}>Reset directory</button></form>
-    <Feedback resource={resource} />{result && <><p role="status">{result.total} institutions | page {page}</p>{!result.data.length && <p>No institutions match these filters.</p>}<div className="platform-grid">{result.data.map(row => <article className="platform-card" key={row.id}><h2>{row.name}</h2><p>{row.state}{row.city ? ` | ${row.city}` : ''}</p><p>{row.category} | {row.identifier}</p>{safeEventUrl(row.website) && <a href={safeEventUrl(row.website)} target="_blank" rel="noopener noreferrer">Institution website</a>}{safeEventUrl(row.source_url) && <p><a href={safeEventUrl(row.source_url)} target="_blank" rel="noopener noreferrer">Directory source</a></p>}<Link to={`/?institutionId=${row.id}`}>View college hackathons</Link><small>Directory verified: {date(row.last_verified_at, true)}</small></article>)}</div><nav aria-label="Directory pages" className="platform-pagination"><button disabled={page<=1 || resource.loading} onClick={() => setPage(value => value-1)}>Previous institutions</button><span>Page {page} of {Math.max(1,Math.ceil(result.total/25))}</span><button disabled={page*25>=result.total || resource.loading} onClick={() => setPage(value => value+1)}>Next institutions</button></nav></>}
+
+  return <section aria-label="University directory">
+    <h1>College and university directory</h1>
+    <p>Find colleges and universities by name, state, and district. Directory entries do not imply permission to collect from their websites.</p>
+    <form className="platform-directory-form" onSubmit={event => {
+      event.preventDefault();
+      setFilters({ ...draft });
+      setPage(1);
+    }}>
+      <label>College or university name
+        <input maxLength={255} value={draft.q} placeholder="Search institution name" onChange={event => setDraft({ ...draft, q: event.target.value })} />
+      </label>
+      <label>Directory state
+        <select value={draft.state} onChange={event => setDraft({ ...draft, state: event.target.value, district: '' })}>
+          <option value="">All states and union territories</option>
+          {(locations.data?.states || []).map(state => <option key={state} value={state}>{state}</option>)}
+        </select>
+      </label>
+      <label>Directory district
+        <select value={draft.district} disabled={!draft.state || locations.loading || Boolean(locations.error)}
+          onChange={event => setDraft({ ...draft, district: event.target.value })}>
+          <option value="">{draft.state ? 'All districts' : 'Select a state first'}</option>
+          {(locations.data?.districts || []).map(district => <option key={district} value={district}>{district}</option>)}
+        </select>
+      </label>
+      {locations.error && <div className="platform-directory-feedback" role="alert">
+        State and district options could not load. <button type="button" onClick={locations.retry}>Retry location filters</button>
+      </div>}
+      <div className="platform-directory-actions">
+        <button className="platform-primary" type="submit">Search colleges and universities</button>
+        <button type="button" onClick={() => {
+          const empty = { state: '', district: '', q: '' };
+          setDraft(empty); setFilters(empty); setPage(1);
+        }}>Reset directory</button>
+      </div>
+    </form>
+    <Feedback resource={resource} />
+    {result && <>
+      <p role="status">{result.total} institutions | page {page}</p>
+      {!result.data.length && <p>No institutions match these filters.</p>}
+      <div className="platform-grid">{result.data.map(row => <article className="platform-card" key={row.id}>
+        <h2>{row.name}</h2>
+        <p>{[row.state, row.district, row.city && row.city !== row.district ? row.city : null].filter(Boolean).join(' | ')}</p>
+        <p>{row.category} | {row.identifier}</p>
+        {safeEventUrl(row.website) && <a href={safeEventUrl(row.website)} target="_blank" rel="noopener noreferrer">Institution website</a>}
+        {safeEventUrl(row.source_url) && <p><a href={safeEventUrl(row.source_url)} target="_blank" rel="noopener noreferrer">Directory source</a></p>}
+        <Link to={`/?institutionId=${row.id}`}>View college hackathons</Link>
+        <small>Directory verified: {date(row.last_verified_at, true)}</small>
+      </article>)}</div>
+      <nav aria-label="Directory pages" className="platform-pagination">
+        <button disabled={page <= 1 || resource.loading} onClick={() => setPage(value => value - 1)}>Previous institutions</button>
+        <span>Page {page} of {Math.max(1, Math.ceil(result.total / 25))}</span>
+        <button disabled={page * 25 >= result.total || resource.loading} onClick={() => setPage(value => value + 1)}>Next institutions</button>
+      </nav>
+    </>}
   </section>;
 }
 
