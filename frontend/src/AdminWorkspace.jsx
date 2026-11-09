@@ -184,7 +184,7 @@ export default function AdminWorkspace() {
       {Object.keys(selectedRows).length > 0 && <BulkReviewPanel selected={selectedRows} drafts={reviewDrafts}
         setDrafts={setReviewDrafts} onClear={clearSelection} onDone={bulkReviewCompleted} />}
     </section>}
-    {result && tab !== 'notifications' && !rows.length && <p>No records in this section.</p>
+    {result && tab !== 'notifications' && !rows.length && <p>No records in this section.</p>}
     {tab === 'duplicates' && result && <p>Compared {result.scanned} events. {result.truncated ? 'This is a limited review window; more candidates may exist.' : 'All events in the scan window were compared.'} Verify both records before merging. The retained record keeps its identity.</p>}
     {rows.map(row => <article className="platform-card" key={row.id || row.key || `${row.survivor?.id}-${row.duplicate?.id}`} style={{ marginTop: 12 }}>
       <h3>{row.title || row.name || row.key || row.payload?.title || row.action || row.email || `Potential duplicate: ${row.survivor?.title}`}</h3>
