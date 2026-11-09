@@ -5,6 +5,7 @@ from app.api.routes.duplicate_review import router as duplicate_review_router
 from app.api.routes.dataset_import import router as dataset_import_router
 from app.api.routes.personalized import router as personalized_router
 import time
+import re
 from datetime import datetime, timezone
 
 from fastapi import FastAPI, Request
@@ -74,42 +75,29 @@ async def health_check():
 @app.get("/ready", tags=["Health"])
 def readiness_check():
     """Readiness requires database connectivity and every shipped migration."""
-    from pathlib import Path
-    from alembic.config import Config
-    from alembic.script import ScriptDirectory
-    from sqlalchemy import text
-    from sqlalchemy.exc import SQLAlchemyError
     from app.core.database import engine
-    backend = Path(__file__).resolve().parents[1]
-    config = Config()
-    config.set_main_option("script_location", str(backend / "database" / "migrations"))
-    expected = set(ScriptDirectory.from_config(config).get_heads())
-    try:
-        with engine.connect() as connection:
-            current = set(connection.scalars(text("SELECT version_num FROM alembic_version")))
-        if current != expected:
-            raise AppException(code="SCHEMA_NOT_READY", message="Database migrations are required.", status_code=503)
-    except SQLAlchemyError:
-        raise AppException(code="DATABASE_NOT_READY", message="Database is unavailable or migrations are required.", status_code=503) from None
-    return {"status": "ready", "database": "connected", "migrations": "current"}
+    from app.services.readiness import check_readiness
+    return check_readiness(engine)
 
 
 # Request ID and request logging
 @app.middleware("http")
 async def request_context_middleware(request: Request, call_next):
-    request_id = request.headers.get("X-Request-ID") or generate_request_id()
+    incoming_id = request.headers.get("X-Request-ID", "")
+    request_id = incoming_id if re.fullmatch(r'[A-Za-z0-9_.-]{1,64}', incoming_id) else generate_request_id()
     request.state.request_id = request_id
 
     start_time = time.perf_counter()
 
     try:
         response = await call_next(request)
-    except Exception:
-        logger.exception(
-            "Unhandled request error | request_id=%s method=%s path=%s",
+    except Exception as error:
+        # Driver tracebacks may contain SQL parameters, credentials or user data.
+        logger.error(
+            "Unhandled request error | request_id=%s method=%s error_type=%s",
             request_id,
             request.method,
-            request.url.path,
+            type(error).__name__,
         )
         raise
 
@@ -196,8 +184,9 @@ async def unexpected_exception_handler(
     exc: Exception,
 ):
     logger.error(
-        "Unhandled application exception",
-        exc_info=(type(exc), exc, exc.__traceback__),
+        "Unhandled application exception | request_id=%s error_type=%s",
+        getattr(request.state, 'request_id', 'unavailable'),
+        type(exc).__name__,
     )
 
     return error_response(

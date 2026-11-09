@@ -2,11 +2,13 @@
 
 The schema includes event end date, registration deadline, mode, and status.
 Existing databases are migrated additively when save_master() is called.
-A single bad event no longer aborts the batch: it is skipped and returned in
-the "needs_review" list instead.
+Conflicts abort the entire batch. A bounded BEGIN IMMEDIATE transaction serializes
+identity resolution across writers before any canonical record is read or changed.
 """
 import json
 import sqlite3
+from contextlib import nullcontext
+from copy import deepcopy
 from datetime import date
 from dedup import compare, map_record
 
@@ -84,11 +86,7 @@ def _ensure_columns(cur):
 
 
 def _save_one(cur, ev, today):
-    """Save one canonical event. Returns "new" or "updated". Raises ValueError for manual-review cases.
-
-    All ValueErrors are raised before any DB write for this event, so a skipped
-    event leaves nothing half-written.
-    """
+    """Save a staged event; any conflict aborts the caller's whole transaction."""
     incoming = ev
     provenance = ev.get("provenance") or []
     identities = [(p.get("source", ""), p["source_id"]) for p in provenance if p.get("source_id")]
@@ -180,34 +178,42 @@ def _save_one(cur, ev, today):
     return result
 
 
-def save_master(master, db_path=DB_PATH):
+def save_master(master, db_path=DB_PATH, *, publication=None):
+    """Commit all identities/history or none; never mutate input on a failed batch.
+
+    publication, used by the offline pipeline, is a context manager factory that
+    publishes staged IDs while the writer lock is held and restores prior files
+    if publication or the database commit fails. SQLite remains authoritative;
+    separate filesystem files and a DB cannot share a crash-atomic commit.
+    """
     today = date.today().isoformat()
     new = updated = 0
-    needs_review = []
-    con = sqlite3.connect(db_path)
+    staged = deepcopy(master)
+    con = sqlite3.connect(db_path, timeout=30, isolation_level=None)
     try:
         con.execute("PRAGMA foreign_keys = ON")
-        con.executescript(SCHEMA)
+        con.execute("BEGIN IMMEDIATE")
+        # executescript() implicitly commits; execute this fixed DDL inside the
+        # same transaction as additive migration, identity lookup and writes.
+        for statement in SCHEMA.split(';'):
+            if statement.strip():
+                con.execute(statement)
         cur = con.cursor()
         _ensure_columns(cur)
-        for ev in master:
-            try:
-                result = _save_one(cur, ev, today)
-            except ValueError as e:
-                # A source ID reused for a different annual edition is a hard
-                # integrity conflict: abort the batch and roll back its writes.
-                # Other reviewable records may still be skipped individually.
-                if "conflicting edition" in str(e):
-                    con.rollback()
-                    raise
-                needs_review.append({"title": ev.get("title"), "reason": str(e)})
-                continue
+        for ev in staged:
+            result = _save_one(cur, ev, today)
             if result == "new":
                 new += 1
             else:
                 updated += 1
-        con.commit()
         total = cur.execute("SELECT COUNT(*) FROM canonical_events").fetchone()[0]
+        with publication(staged) if publication else nullcontext():
+            con.commit()
+    except BaseException:
+        con.rollback()
+        raise
     finally:
         con.close()
-    return {"new": new, "updated": updated, "total": total, "needs_review": needs_review}
+    for incoming, persisted in zip(master, staged):
+        incoming['canonical_event_id'] = persisted['canonical_event_id']
+    return {"new": new, "updated": updated, "total": total}

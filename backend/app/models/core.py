@@ -26,6 +26,7 @@ class User(Base):
     name = Column(String(100), nullable=False)
     email = Column(String(255), unique=True, nullable=False)
     password_hash = Column(String(255), nullable=False)
+    token_version = Column(Integer, nullable=False, default=0, server_default="0")
     status = Column(String(50), nullable=False, default="active")
 
     created_at = Column(
