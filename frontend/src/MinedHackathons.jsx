@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { safeEventUrl } from './services/apiClient';
 import './MinedHackathons.css';
 
@@ -37,7 +36,7 @@ function MinedListing({ item }) {
   </article>;
 }
 
-export default function MinedHackathons() {
+export default function MinedHackathons({ exploreQuery = "", exploreLocation = "", exploreMode = "" }) {
   const [snapshot, setSnapshot] = useState(null);
   const [error, setError] = useState('');
   const [search, setSearch] = useState('');
@@ -63,20 +62,23 @@ export default function MinedHackathons() {
   const results = useMemo(() => (snapshot?.records || []).filter(item => {
     const text = [item.title, item.organization, item.location].filter(Boolean).join(' ').toLowerCase();
     return (!search.trim() || text.includes(search.trim().toLowerCase())) &&
+      (!exploreQuery.trim() || text.includes(exploreQuery.trim().toLowerCase())) &&
+      (!exploreLocation.trim() || (item.location || "").toLowerCase().includes(exploreLocation.trim().toLowerCase())) &&
+      (!exploreMode.trim() || (item.mode || "").toLowerCase().includes(exploreMode.trim().toLowerCase())) &&
       (platform === 'all' || item.source === platform) &&
       (mode === 'all' || item.mode === mode);
-  }), [snapshot, search, platform, mode]);
+  }), [snapshot, search, platform, mode, exploreQuery, exploreLocation, exploreMode]);
   const pages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
   const visible = results.slice((Math.min(page, pages) - 1) * PAGE_SIZE, Math.min(page, pages) * PAGE_SIZE);
   const changeFilter = (setter, value) => { setter(value); setPage(1); };
 
-  return <section className="mined-archive" aria-label="Mined hackathon data archive">
+  return <section id="additional-hackathons" className="mined-archive" aria-label="Additional unverified hackathon listings">
     <div className="mined-intro">
-      <span className="platform-eyebrow">HACKATHON RADAR RESEARCH ARCHIVE</span>
-      <h1>Mined hackathon data</h1>
+      <span className="platform-eyebrow">MORE HACKATHONS ON EXPLORE</span>
+      <h2>Additional hackathon listings</h2>
       <p>Browse <strong>206 historical API snapshot listings</strong>: 195 from Unstop and 11 from Devfolio, collected via <a href="https://brabble.ai/" target="_blank" rel="noopener noreferrer">Brabble.ai</a> on 25 October 2026.</p>
       <p className="mined-caution"><strong>Unverified research data — not the verified event catalog.</strong> These are archived provider-reported listings, not current registration offers or independently checked hackathon announcements. Dates, cities, organizers, and links may be outdated or incorrect, and some records could overlap with verified events. Do not use these records as model ground truth.</p>
-      <Link to="/explore">Browse the verified catalog instead →</Link>
+      <p className="platform-muted">The main Explore search, location, and mode filters also apply here. College, start-date, and organizer filters apply only to the verified catalog because those fields are not verified for this dataset.</p>
     </div>
     <div className="mined-controls">
       <label>Search archive<input value={search} onChange={event => changeFilter(setSearch, event.target.value)} placeholder="Title, organizer, or city" maxLength={255} /></label>
