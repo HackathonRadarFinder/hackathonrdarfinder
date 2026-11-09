@@ -3,14 +3,32 @@ import hashlib
 import io
 from pathlib import Path
 import platform
+import time
 import shutil
 import subprocess
 import tarfile
 import tempfile
 import urllib.request
+import urllib.error
 import zipfile
 
 VERSION = "1.7.7"
+
+
+def download_with_retry(url, attempts=4):
+    """Retry transient release-host errors without weakening checksum validation."""
+    for attempt in range(attempts):
+        try:
+            with urllib.request.urlopen(url, timeout=45) as response:
+                return response.read()
+        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
+            if isinstance(exc, urllib.error.HTTPError) and exc.code not in {429, 500, 502, 503, 504}:
+                raise
+            if attempt == attempts - 1:
+                raise
+            delay = 2 ** attempt
+            print(f"actionlint download temporarily unavailable ({type(exc).__name__}); retrying in {delay}s", flush=True)
+            time.sleep(delay)
 
 
 def main():
@@ -20,10 +38,8 @@ def main():
     extension = "zip" if operating_system == "windows" else "tar.gz"
     name = f"actionlint_{VERSION}_{operating_system}_amd64.{extension}"
     base = f"https://github.com/rhysd/actionlint/releases/download/v{VERSION}/"
-    with urllib.request.urlopen(base + name, timeout=30) as response:
-        archive = response.read()
-    with urllib.request.urlopen(base + f"actionlint_{VERSION}_checksums.txt", timeout=30) as response:
-        checksums = response.read().decode()
+    archive = download_with_retry(base + name)
+    checksums = download_with_retry(base + f"actionlint_{VERSION}_checksums.txt").decode()
     expected = next(line.split()[0] for line in checksums.splitlines() if line.split()[-1] == name)
     if hashlib.sha256(archive).hexdigest() != expected:
         raise RuntimeError("actionlint release checksum mismatch")
