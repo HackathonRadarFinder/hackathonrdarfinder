@@ -1,0 +1,37 @@
+name: Render API readiness monitor
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: render-api-readiness-monitor
+  cancel-in-progress: false
+
+jobs:
+  readiness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check Render readiness JSON
+        shell: bash
+        env:
+          READY_URL: https://hackathonrdarfinder.onrender.com/ready
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location \
+            --connect-timeout 10 --max-time 100 \
+            --retry 1 --retry-delay 5 \
+            --output response.json "$READY_URL"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          data = json.loads(Path("response.json").read_text())
+          if data.get("status") != "ready" or data.get("database") != "connected" or data.get("migrations") != "current":
+              raise SystemExit("Render API is not ready: " + json.dumps(data))
+          print("Render API ready; database connected; migrations current.")
+          PY
