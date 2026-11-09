@@ -11,6 +11,7 @@ import './App.css';
 import './platform.css';
 import ProviderCredit from './components/ProviderCredit';
 import AdminWorkspace from './AdminWorkspace';
+import MinedHackathons from './MinedHackathons';
 
 function useResource(load) {
   const [state, setState] = useState({ key: null });
@@ -69,7 +70,7 @@ function Explore({ saved, toggle }) {
   const institutions = useResource(useCallback(signal => api.institutions(draft.state, collegeSearch, signal), [draft.state, collegeSearch]));
   const names = new Map((organizations.data || []).map(org => [org.id, org.name]));
   const result = resource.data;
-  return <><section className="platform-hero"><span className="platform-eyebrow">HACKATHON RADAR</span><h1>Find your next<br /><em>building opportunity.</em></h1><p>Explore events from the backend catalog. Clear filters, real dates, and a place to keep your next idea.</p></section>
+  return <><section className="platform-hero"><span className="platform-eyebrow">HACKATHON RADAR</span><h1>Find your next<br /><em>building opportunity.</em></h1><p>Explore verified catalog events and 206 additional provider listings from Unstop and Devfolio. All additional listings are clearly marked unverified.</p><p><a href="#additional-hackathons">Jump to 206 additional hackathon listings ↓</a></p></section>
     <div className="platform-explore"><aside className="platform-filter"><h2>Explore events</h2>
       <form onSubmit={event => { event.preventDefault(); setPage(1); setFilters({ ...draft }); }}>
         <label>Search<input value={draft.q} maxLength={255} placeholder="Title or description" onChange={event => setDraft({ ...draft, q: event.target.value })} /></label>
@@ -95,6 +96,7 @@ function Explore({ saved, toggle }) {
       {result && <><p role="status">{result.total} events · page {result.page}</p>{!result.data.length && <div className="platform-empty"><h2>No events found</h2><p>Try another location or reset your filters.</p></div>}
         <div className="platform-grid">{result.data.map(event => <EventCard key={event.id} event={event} saved={saved.includes(event.id)} toggle={toggle} organization={names.get(event.organization_id)} />)}</div>
         <nav className="platform-pagination" aria-label="Event pages"><button disabled={page <= 1 || resource.loading} onClick={() => setPage(value => value - 1)}>Previous</button><span>Page {page} of {Math.max(1, Math.ceil(result.total / result.page_size))}</span><button disabled={page * result.page_size >= result.total || resource.loading} onClick={() => setPage(value => value + 1)}>Next</button></nav></>}
+      <MinedHackathons exploreQuery={filters.q} exploreLocation={filters.location} exploreMode={filters.mode} />
     </section></div></>;
 }
 
@@ -173,6 +175,10 @@ function Admin() {
       <h2>Users</h2><div className="platform-table" tabIndex={0} role="region" aria-label="User accounts table"><table><thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Roles</th></tr></thead><tbody>{resource.data.users.map(user => <tr key={user.id}><td>{user.name}</td><td>{user.email}</td><td>{user.status}</td><td>{user.roles.join(', ')}</td></tr>)}</tbody></table></div>
       <h2>Organizations</h2><ul>{resource.data.organizations.map(org => <li key={org.id}>{org.name}</li>)}</ul>
       <p className="platform-muted">Use the administration tools below to manage records, review announcements, and inspect audit history.</p></>}
+    {user && user.role !== 'administrator' && <section className="platform-card" aria-label="Admin verification permissions">
+      <h3>Verify &amp; Update access</h3>
+      <p>The Verify / Update and bulk approval controls require the <strong>administrator</strong> role. Your current role is <strong>{user.role}</strong>. Ask an existing administrator to grant the correct role through Admin → Roles. Signing in again will refresh your permissions.</p>
+    </section>}
     {user?.role === 'administrator' && <AdminWorkspace />}
   </section>;
 }
@@ -286,6 +292,6 @@ export default function LivePlatform() {
       <nav id="platform-navigation" className={mobileOpen ? 'open' : ''} aria-label="Main navigation"><NavLink to="/explore">Explore</NavLink><NavLink to="/universities">Universities</NavLink><NavLink to="/saved">Saved events</NavLink><NavLink to="/predictions">Predictions</NavLink><NavLink to="/notifications">Preferences</NavLink><NavLink to="/admin">Admin</NavLink></nav>
       <div className="platform-session"><button aria-label={`Use ${dark ? 'light' : 'dark'} theme`} onClick={() => setDark(value => !value)}>{dark ? <Sun size={18} /> : <Moon size={18} />}</button>{user ? <><span>{user.name}</span><button disabled={isLoading} onClick={logout}>Sign out</button></> : <Link to="/login">Sign in</Link>}</div>
     </header><main id="platform-content" tabIndex={-1}><div className="platform-container">{authError && <p role="alert">{authError}</p>}{bookmarkError && <p role="alert">{bookmarkError}</p>}
-      <Routes><Route path="/" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/home" element={<Navigate replace to="/" />} /><Route path="/demo/*" element={<Navigate replace to="/explore" />} /><Route path="/explore" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/event/:id" element={<EventDetails saved={saved} toggle={toggle} />} /><Route path="/universities" element={<InstitutionDirectory />} /><Route path="/saved" element={<Bookmarks saved={saved} toggle={toggle} />} /><Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} /><Route path="/forgot-password" element={<section><h1>Password reset unavailable</h1><p>The current backend does not support password reset. No email has been sent.</p><Link to="/login">Return to sign in</Link></section>} /><Route path="/admin/*" element={<Admin />} /><Route path="/notifications" element={<Preferences key={user?.id || "guest"} />} /><Route path="/predictions" element={<Predictions />} /><Route path="*" element={<section><h1>Page not found</h1><Link to="/">Return to events</Link></section>} /></Routes>
-    </div></main><footer className="platform-footer">Hackathon Radar · Backend catalog and saved events.</footer></div>;
+      <Routes><Route path="/" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/home" element={<Navigate replace to="/" />} /><Route path="/demo/*" element={<Navigate replace to="/explore" />} /><Route path="/explore" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/event/:id" element={<EventDetails saved={saved} toggle={toggle} />} /><Route path="/mined-hackathons" element={<Navigate replace to="/explore" />} /><Route path="/universities" element={<InstitutionDirectory />} /><Route path="/saved" element={<Bookmarks saved={saved} toggle={toggle} />} /><Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} /><Route path="/forgot-password" element={<section><h1>Password reset unavailable</h1><p>The current backend does not support password reset. No email has been sent.</p><Link to="/login">Return to sign in</Link></section>} /><Route path="/admin/*" element={<Admin />} /><Route path="/notifications" element={<Preferences key={user?.id || "guest"} />} /><Route path="/predictions" element={<Predictions />} /><Route path="*" element={<section><h1>Page not found</h1><Link to="/">Return to events</Link></section>} /></Routes>
+    </div></main><footer className="platform-footer">Hackathon Radar · Verified events and attributed provider listings.</footer></div>;
 }
