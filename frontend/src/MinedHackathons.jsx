@@ -39,7 +39,7 @@ function MinedListing({ item }) {
  * Archive cards render inside Explore's normal event grid. The source snapshot
  * remains explicitly unverified; it is never merged into the verified API.
  */
-export default function MinedHackathons({ filters = {}, page = 1, pageSize = 12 }) {
+export default function MinedHackathons({ filters = {}, page = 1, pageSize = 12, onCountChange }) {
   const [snapshot, setSnapshot] = useState(null);
   const [error, setError] = useState('');
   useEffect(() => {
@@ -69,6 +69,7 @@ export default function MinedHackathons({ filters = {}, page = 1, pageSize = 12 
     return true;
   }), [snapshot, filters]);
 
+  useEffect(() => { onCountChange?.(snapshot ? results.length : 0); }, [onCountChange, snapshot, results.length]);
   const start = Math.max(0, page - 1) * pageSize;
   const visible = results.slice(start, start + pageSize);
   return <>
