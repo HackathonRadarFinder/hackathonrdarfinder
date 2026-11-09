@@ -34,9 +34,16 @@ test('archive entries link to allowed sources and do not claim independent verif
   assert.doesNotMatch(archive, /api\.save\(/);
 });
 
-test('public portal links archive but keeps API-backed verified Explore unchanged', () => {
-  assert.match(portal, /<NavLink to="\/mined-hackathons">Mined data<\/NavLink>/);
-  assert.match(portal, /<Route path="\/mined-hackathons" element=\{<MinedHackathons \/>\}/);
+test('all provider listings appear on Explore and no separate Mined Data page remains', () => {
+  assert.match(portal, /<MinedHackathons exploreQuery=\{filters\.q\} exploreLocation=\{filters\.location\} exploreMode=\{filters\.mode\} \/>/);
+  assert.match(portal, /<Route path="\/mined-hackathons" element=\{<Navigate replace to="\/explore" \/>\}/);
+  assert.doesNotMatch(portal, /<NavLink to="\/mined-hackathons">/);
+  assert.match(portal, /<NavLink to="\/explore">Explore<\/NavLink>/);
   assert.match(portal, /<Route path="\/explore" element=\{<Explore saved=\{saved\} toggle=\{toggle\} \/>\}/);
-  assert.match(portal, /Browse 206 mined API listings \(unverified\)/);
+  assert.match(portal, /href="#additional-hackathons"/);
+  assert.match(archive, /id="additional-hackathons"/);
+  assert.match(archive, /Additional hackathon listings/);
+  assert.match(archive, /exploreQuery/);
+  assert.match(archive, /exploreLocation/);
+  assert.match(archive, /exploreMode/);
 });
