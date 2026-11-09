@@ -33,7 +33,7 @@ export function prepareBrabbleArchiveCsv(snapshot) {
     throw new Error('Unexpected Brabble archive snapshot; no dataset staged');
   }
   const ids = new Set();
-  const fields = ['title', 'organization', 'url', 'registration_deadline', 'location', 'mode', 'description'];
+  const fields = ['title', 'organization', 'url', 'description'];
   const rows = [fields.map(csvCell).join(',')];
   for (const row of snapshot.records) {
     if (!row.id || ids.has(row.id) || !row.title || !row.url ||
@@ -43,9 +43,10 @@ export function prepareBrabbleArchiveCsv(snapshot) {
     }
     ids.add(row.id);
     const description = 'Data provided by Brabble.ai API (snapshot 25 October 2026). Original platform: ' +
-      row.source + '. Dates and organizer identity require independent review before publication.';
-    rows.push(fields.map(field => csvCell(field === 'description' ? description :
-      field === 'registration_deadline' ? row.reported_deadline : row[field])).join(','));
+      row.source + '. Unverified provider reports: deadline ' + (row.reported_deadline || 'not known') +
+      ', city ' + (row.location || 'not known') + ', mode ' + (row.mode || 'not known') +
+      '. All facts require independent review before publication.';
+    rows.push(fields.map(field => csvCell(field === 'description' ? description : row[field])).join(','));
   }
   if (ids.size !== 206 || snapshot.records.filter(x => x.source === 'Unstop').length !== 195) {
     throw new Error('Brabble source counts did not match the preserved snapshot');
