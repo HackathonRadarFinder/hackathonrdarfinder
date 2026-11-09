@@ -13,7 +13,8 @@ test('full 206-listing archive can be staged as an attributed CSV, not approved 
   const csv = prepareBrabbleArchiveCsv(snapshot);
   const rows = csv.trimEnd().split('\r\n');
   assert.equal(rows.length, 207);
-  assert.match(rows[0], /registration_deadline/);
+  assert.doesNotMatch(rows[0], /registration_deadline|location|mode/);
+  assert.match(csv, /Unverified provider reports: deadline/);
   assert.match(csv, /Data provided by Brabble\.ai API/);
   assert.match(csv, /Original platform: Devfolio/);
   assert.match(csv, /Original platform: Unstop/);
