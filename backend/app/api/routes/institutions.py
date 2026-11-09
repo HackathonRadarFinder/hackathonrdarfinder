@@ -28,6 +28,7 @@ def public_event_coverage(db: Session = Depends(get_db)):
         return verified_event_coverage(db)
 
 
+@router.get('/institutions/filters', include_in_schema=False)
 @router.get('/institutions/facets')
 @router.get('/colleges/facets')
 def institution_facets(state: Annotated[str | None, Query(min_length=1, max_length=100)] = None,
