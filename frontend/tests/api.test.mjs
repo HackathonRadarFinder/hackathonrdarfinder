@@ -214,3 +214,24 @@ test('college search combines state, district, name and pagination without chang
     district: 'Ghaziabad', q: 'Engineering',
   });
 });
+
+test('email OTP reset uses credential-free endpoints without leaking codes in URLs', async () => {
+  const captured = [];
+  const api = createApiClient('/api', async (url, options) => {
+    captured.push({ url, options });
+    return ok({ message: 'Request processed' });
+  });
+  await api.forgotPassword(' test@example.com ');
+  await api.confirmPasswordReset(' test@example.com ', ' 123456 ', 'NewStrongPassword123!');
+  assert.equal(captured[0].url, '/api/auth/password-reset/request');
+  assert.equal(captured[1].url, '/api/auth/password-reset/confirm');
+  for (const item of captured) {
+    assert.equal(item.options.method, 'POST');
+    assert.equal(item.options.headers.Authorization, undefined);
+    assert.ok(!item.url.includes('123456') && !item.url.includes('NewStrongPassword'));
+  }
+  assert.deepEqual(JSON.parse(captured[0].options.body), { email: 'test@example.com' });
+  assert.deepEqual(JSON.parse(captured[1].options.body), {
+    email: 'test@example.com', code: '123456', new_password: 'NewStrongPassword123!',
+  });
+});
