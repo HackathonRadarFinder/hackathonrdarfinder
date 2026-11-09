@@ -26,13 +26,38 @@ def public_event_coverage(db: Session = Depends(get_db)):
         return verified_event_coverage(db)
 
 
+@router.get('/institutions/filters')
+def institution_filter_options(
+        state: Annotated[str | None, Query(min_length=1, max_length=100)] = None,
+        db: Session = Depends(get_db)):
+    """Read-only dropdown values from the stored directory, never from a hard-coded list."""
+    with database_operation(db):
+        states = db.scalars(
+            select(Institution.state).where(func.length(func.trim(Institution.state)) > 0)
+            .distinct().order_by(Institution.state)
+        ).all()
+        districts = []
+        if state:
+            districts = db.scalars(
+                select(Institution.district).where(
+                    func.lower(Institution.state) == state.lower(),
+                    Institution.district.is_not(None),
+                    func.length(func.trim(Institution.district)) > 0,
+                ).distinct().order_by(Institution.district)
+            ).all()
+        return dict(states=states, districts=districts)
+
+
 @router.get('/institutions')
 def institutions(q: Annotated[str | None, Query(min_length=1, max_length=255)] = None,
                  state: Annotated[str | None, Query(min_length=1, max_length=100)] = None,
+                 district: Annotated[str | None, Query(min_length=1, max_length=100)] = None,
                  page: Annotated[int, Query(ge=1, le=2147483647)] = 1,
                  page_size: Annotated[int, Query(ge=1, le=100)] = 100,
                  db: Session = Depends(get_db)):
     filters = [func.lower(Institution.state) == state.lower()] if state else []
+    if district:
+        filters.append(func.lower(Institution.district) == district.lower())
     if q:
         filters.append(Institution.name.icontains(q, autoescape=True))
     with database_operation(db):
