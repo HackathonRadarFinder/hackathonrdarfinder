@@ -184,3 +184,33 @@ test('late profile response cannot restore a logged-out account',async()=>{
   await assert.rejects(update,/session ended/);
   assert.equal(lastUser,null);
 });
+
+test('college filter choices use the published facets endpoint and state-scoped districts', async () => {
+  const paths = [];
+  const client = createApiClient('/api', async (url, options) => {
+    paths.push(url);
+    assert.equal(options.headers.Authorization, undefined);
+    return ok({ states: ['Uttar Pradesh'], districts: ['Ghaziabad'] });
+  });
+  const choices = await client.institutionFilters('Uttar Pradesh');
+  assert.deepEqual(choices, { states: ['Uttar Pradesh'], districts: ['Ghaziabad'] });
+  const url = new URL(paths[0], 'http://localhost');
+  assert.equal(url.pathname, '/api/institutions/facets');
+  assert.equal(url.searchParams.get('state'), 'Uttar Pradesh');
+});
+
+test('college search combines state, district, name and pagination without changing source visibility', async () => {
+  let requestUrl;
+  const client = createApiClient('/api', async (url, options) => {
+    requestUrl = url;
+    assert.equal(options.headers.Authorization, undefined);
+    return ok({ data: [], page: 2, page_size: 25, total: 0 });
+  });
+  await client.institutions('Uttar Pradesh', 'Engineering', undefined, 2, 25, 'Ghaziabad');
+  const url = new URL(requestUrl, 'http://localhost');
+  assert.equal(url.pathname, '/api/institutions');
+  assert.deepEqual(Object.fromEntries(url.searchParams), {
+    page: '2', page_size: '25', state: 'Uttar Pradesh',
+    district: 'Ghaziabad', q: 'Engineering',
+  });
+});
