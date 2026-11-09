@@ -153,6 +153,12 @@ export default function AdminWorkspace() {
     {!result && !error && <p role="status">Loading operationsâ€¦</p>}
     {tab === 'review' && <label>Review status <select value={status} onChange={e => { setStatus(e.target.value); setPage(1); clearSelection(); }}>{['pending', 'approved', 'rejected'].map(value => <option key={value}>{value}</option>)}</select></label>}
     {tab === 'sources' && <><p>Configuration saves do not start a discovery run. Enable only after recording current permission and expiry.</p><button onClick={() => open('source', null)}>Register source</button>
+      <button type="button" onClick={() => {
+        open('source', null);
+        setText(JSON.stringify({ ...sourceExample, key: 'brabble-archive', name: 'Brabble.ai research archive',
+          adapter: 'brabble-api-v1', url: 'https://brabble.ai/api/listings', interval_seconds: 21600,
+          reference: 'https://brabble.ai/docs', enabled: false, terms_permit: false }, null, 2));
+      }}>Prepare Brabble source policy</button>
       <form onSubmit={uploadDataset} className="platform-card" style={{ marginTop: 16 }}><h3>Import dataset</h3>
         <p>Upload CSV (UTF-8) or a single-sheet XLSX with unique field headers. Required headers: title, url. Optional: organization, start_date, end_date, registration_deadline, registration_url, description, eligibility, location, mode, prize, state. Maximum 2 MB and 1000 rows. Dates without an explicit timezone remain unverified for human review.</p>
         <label>Registered source<select required value={dataset.source_key} onChange={e => setDataset({ ...dataset, source_key: e.target.value })}><option value="">Select approved source</option>{rows.map(row => <option key={row.key} value={row.key}>{row.key} ({row.enabled ? 'enabled' : 'disabled'})</option>)}</select></label>
@@ -161,14 +167,29 @@ export default function AdminWorkspace() {
         <label>Dataset file<input required type="file" accept=".csv,.xlsx" onChange={e => setUpload(e.target.files?.[0] || null)} /></label>
         <p>Source must be enabled with current explicit reuse permission. Imports enter the review queue and do not publish events.</p>
         <button disabled={busy || !upload} type="submit">{busy ? 'Staging…' : 'Upload to review queue'}</button>
-      </form></>}
+      </form>
+      <section className="platform-card" style={{ marginTop: 18 }} aria-label="Stage archived hackathons">
+        <h3>Stage the 206 Brabble listings for review</h3>
+        <p>Select an enabled, permission-reviewed Brabble API source above, enter its exact approval reference, then stage the saved snapshot as pending records. This does not verify or publish them. The bulk approval tool appears in Review after staging.</p>
+        <button type="button" disabled={busy || !dataset.source_key || !dataset.approval_reference.trim()} onClick={stageBrabbleArchive}>
+          {busy ? 'Staging archive…' : 'Stage 206 listings into review queue'}
+        </button>
+        <p className="platform-muted">The original Brabble snapshot has no independently confirmed event start dates. You must supply verified dates and organizers for any event you approve.</p>
+      </section></>}
     {result && tab === 'notifications' && <><p>Persisted delivery counts. This view does not send messages.</p><dl><dt>In-app notifications</dt><dd>{result.in_app_total}</dd><dt>Unread</dt><dd>{result.in_app_unread}</dd><dt>Email delivery records</dt><dd>{result.email_total}</dd>{Object.entries(result.email_by_status).map(([key, value]) => <div key={key}><dt>{key}</dt><dd>{value}</dd></div>)}</dl></>}
-    {result && tab !== 'notifications' && !rows.length && <p>No records in this section.</p>}
+    {tab === 'review' && status === 'pending' && result && <section className="platform-card" aria-label="Bulk approval tools" style={{ marginTop: 16 }}>
+      <h3>Bulk approval</h3>
+      <p>Select pending announcements to verify and publish in one workflow. You can select up to {BULK_REVIEW_LIMIT} across pages. Every selected listing needs its own source check, verified start date and organizer.</p>
+      <button type="button" disabled={busy || !rows.some(row => !selectedRows[row.id]) || Object.keys(selectedRows).length >= BULK_REVIEW_LIMIT} onClick={() => selectPageForReview(rows)}>Select this page (up to {BULK_REVIEW_LIMIT})</button>
+      {Object.keys(selectedRows).length > 0 && <BulkReviewPanel selected={selectedRows} drafts={reviewDrafts}
+        setDrafts={setReviewDrafts} onClear={clearSelection} onDone={bulkReviewCompleted} />}
+    </section>}
+    {result && tab !== 'notifications' && !rows.length && <p>No records in this section.</p>
     {tab === 'duplicates' && result && <p>Compared {result.scanned} events. {result.truncated ? 'This is a limited review window; more candidates may exist.' : 'All events in the scan window were compared.'} Verify both records before merging. The retained record keeps its identity.</p>}
     {rows.map(row => <article className="platform-card" key={row.id || row.key || `${row.survivor?.id}-${row.duplicate?.id}`} style={{ marginTop: 12 }}>
       <h3>{row.title || row.name || row.key || row.payload?.title || row.action || row.email || `Potential duplicate: ${row.survivor?.title}`}</h3>
       {tab === 'sources' && <><p>{row.enabled ? 'Enabled' : 'Disabled'} Â· every {row.interval_seconds} seconds</p><button onClick={() => open('source', row)}>Configure</button></>}
-      {tab === 'review' && <><p>{row.status} Â· observed {row.observed_at}</p><pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{JSON.stringify(row.evidence, null, 2)}</pre>{safeEventUrl(row.payload?.url) && <a href={safeEventUrl(row.payload.url)} target="_blank" rel="noreferrer">Open evidence page</a>}{row.status === 'pending' && <button onClick={() => open('review', row)}>Review and publish</button>}{row.review_note && <p>{row.review_note}</p>}</>}
+      {tab === 'review' && <>{row.status === 'pending' && <label style={{ display: 'flex', gap: 8 }}><input type="checkbox" aria-label={`Select ${row.payload?.title || row.id} for bulk review`} checked={!!selectedRows[row.id]} onChange={e => toggleReview(row, e.target.checked)} /> Select for bulk approval</label>}<p>{row.status} Â· observed {row.observed_at}</p><pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{JSON.stringify(row.evidence, null, 2)}</pre>{safeEventUrl(row.payload?.url) && <a href={safeEventUrl(row.payload.url)} target="_blank" rel="noreferrer">Open evidence page</a>}{row.status === 'pending' && <button onClick={() => open('review', row)}>Review and publish</button>}{row.review_note && <p>{row.review_note}</p>}</>}
       {tab === 'audit' && <><p>{row.created_at} Â· actor {row.actor_id || 'system'} Â· {row.entity_type}</p><pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{row.details}</pre></>}
       {tab === 'roles' && <><p>{row.email} Â· current role: {row.roles?.join(', ')}</p><label>Assign role <select aria-label={`Role for ${row.email}`} value={row.roles?.[0] || 'user'} disabled={busy} onChange={e => mutate(`/admin/users/${row.id}/role`, { role: e.target.value })}>{roles.map(role => <option key={role}>{role}</option>)}</select></label></>}
       {['events', 'organizations'].includes(tab) && <button onClick={() => open(tab === 'events' ? 'event' : 'organization', row)}>Edit {tab === 'events' ? 'event' : 'organization'}</button>}
