@@ -175,6 +175,10 @@ function Admin() {
       <h2>Users</h2><div className="platform-table" tabIndex={0} role="region" aria-label="User accounts table"><table><thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Roles</th></tr></thead><tbody>{resource.data.users.map(user => <tr key={user.id}><td>{user.name}</td><td>{user.email}</td><td>{user.status}</td><td>{user.roles.join(', ')}</td></tr>)}</tbody></table></div>
       <h2>Organizations</h2><ul>{resource.data.organizations.map(org => <li key={org.id}>{org.name}</li>)}</ul>
       <p className="platform-muted">Use the administration tools below to manage records, review announcements, and inspect audit history.</p></>}
+    {user && user.role !== 'administrator' && <section className="platform-card" aria-label="Admin verification permissions">
+      <h3>Verify &amp; Update access</h3>
+      <p>The Verify / Update and bulk approval controls require the <strong>administrator</strong> role. Your current role is <strong>{user.role}</strong>. Ask an existing administrator to grant the correct role through Admin → Roles. Signing in again will refresh your permissions.</p>
+    </section>}
     {user?.role === 'administrator' && <AdminWorkspace />}
   </section>;
 }
