@@ -9,8 +9,8 @@ export function checkCandidateReview(candidate, event, evidenceChecked) {
   const issues = [];
   if (!evidenceChecked) issues.push('Confirm evidence against the original event page');
   if (!event || typeof event !== 'object' || Array.isArray(event)) return ['Enter a valid event object'];
-  if (!event.title?.trim()) issues.push('Verified title required');
-  if (!event.organization?.trim() || /^(see listing|unknown|n\/a)$/i.test(event.organization.trim())) issues.push('Verified organizer required');
+  if (typeof event.title !== 'string' || !event.title.trim()) issues.push('Verified title required');
+  if (typeof event.organization !== 'string' || !event.organization.trim() || /^(see listing|unknown|n\/a)$/i.test(event.organization.trim())) issues.push('Verified organizer required');
   if (!event.url || event.url !== candidate?.payload?.url) issues.push('Keep the original source URL');
   if (event.institution_id !== (candidate?.institution_id ?? null) &&
       !(event.institution_id == null && candidate?.institution_id == null)) issues.push('Keep the original institution identity');
