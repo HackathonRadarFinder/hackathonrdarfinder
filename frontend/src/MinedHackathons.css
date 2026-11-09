@@ -1,4 +1,4 @@
-.mined-archive { max-width: 1340px; margin: auto; }
+.mined-archive { max-width: 100%; margin: 44px auto 0; padding-top: 30px; border-top: 2px solid var(--border); scroll-margin-top: 110px; }
 .mined-intro { padding: 12px 0 30px; max-width: 940px; }
 .mined-intro > p { color: var(--text-muted); font-size: 16px; line-height: 1.7; }
 .mined-caution { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid #a78bfa; border-radius: 12px; padding: 18px 20px; }
@@ -8,7 +8,7 @@
 .mined-controls input,.mined-controls select { width: 100%; }
 .mined-controls button { flex: 0 0 auto; }
 .mined-count { color: var(--text-muted); font-weight: 600; }
-.mined-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.mined-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .mined-card { display: flex; flex-direction: column; }
 .mined-card h2 { font-size: 19px; overflow-wrap: anywhere; }
 .mined-card-heading,.mined-links { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
@@ -19,5 +19,5 @@
 .mined-warning { color: var(--text-muted); font-size: 12px; }
 .mined-links { justify-content: flex-start; gap: 12px; font-size: 13px; font-weight: 600; }
 .mined-card small { display: block; color: var(--text-muted); margin-top: 18px; line-height: 1.5; }
-@media (max-width: 1100px) { .mined-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 1100px) { .mined-grid { grid-template-columns: minmax(0,1fr); } }
 @media (max-width: 680px) { .mined-grid { grid-template-columns: minmax(0,1fr); } .mined-controls { display: grid; } }
