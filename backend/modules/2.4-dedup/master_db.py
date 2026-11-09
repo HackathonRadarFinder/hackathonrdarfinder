@@ -194,6 +194,12 @@ def save_master(master, db_path=DB_PATH):
             try:
                 result = _save_one(cur, ev, today)
             except ValueError as e:
+                # A source ID reused for a different annual edition is a hard
+                # integrity conflict: abort the batch and roll back its writes.
+                # Other reviewable records may still be skipped individually.
+                if "conflicting edition" in str(e):
+                    con.rollback()
+                    raise
                 needs_review.append({"title": ev.get("title"), "reason": str(e)})
                 continue
             if result == "new":
