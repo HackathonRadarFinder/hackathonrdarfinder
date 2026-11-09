@@ -137,9 +137,17 @@ test('registration whitelists regular-account fields and authenticates through b
   client.clearSession();
 });
 
-test('unsupported reset never fabricates an email or calls an invented endpoint', async () => {
-  const client = createApiClient('/api', () => { assert.fail('No request expected'); });
-  await assert.rejects(client.forgotPassword('a@example.com'), /No email was sent/);
+test('unconfigured OTP reset reports backend failure and never claims email delivery', async () => {
+  let called = 0;
+  const client = createApiClient('/api', async (url, options) => {
+    called++;
+    assert.equal(url, '/api/auth/password-reset/request');
+    assert.deepEqual(JSON.parse(options.body), { email: 'a@example.com' });
+    assert.equal(options.headers.Authorization, undefined);
+    return bad(503, 'Email password reset is not configured.');
+  });
+  await assert.rejects(client.forgotPassword('a@example.com'), /not configured/);
+  assert.equal(called, 1);
 });
 
 test('request cancellation stays abortable', async () => {
