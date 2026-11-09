@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { safeEventUrl } from './services/apiClient';
 import './MinedHackathons.css';
 
-const PAGE_SIZE = 18;
 const SNAPSHOT_PATH = '/mined-hackathons-20261025.json';
 
 function reportedDay(value) {
@@ -36,67 +35,44 @@ function MinedListing({ item }) {
   </article>;
 }
 
-export default function MinedHackathons({ exploreQuery = "", exploreLocation = "", exploreMode = "" }) {
+/**
+ * Archive cards render inside Explore's normal event grid. The source snapshot
+ * remains explicitly unverified; it is never merged into the verified API.
+ */
+export default function MinedHackathons({ filters = {}, page = 1, pageSize = 12 }) {
   const [snapshot, setSnapshot] = useState(null);
   const [error, setError] = useState('');
-  const [search, setSearch] = useState('');
-  const [platform, setPlatform] = useState('all');
-  const [mode, setMode] = useState('all');
-  const [page, setPage] = useState(1);
-
   useEffect(() => {
     const controller = new AbortController();
     fetch(SNAPSHOT_PATH, { signal: controller.signal })
-      .then(response => { if (!response.ok) throw new Error('Archive snapshot unavailable'); return response.json(); })
+      .then(response => { if (!response.ok) throw new Error('Additional listings unavailable'); return response.json(); })
       .then(data => {
         if (data.schema_version !== 1 || data.review_state !== 'unverified' ||
             data.record_count !== 206 || !Array.isArray(data.records) || data.records.length !== 206) {
-          throw new Error('Archive snapshot failed integrity checks');
+          throw new Error('Additional listing snapshot failed integrity checks');
         }
         if (!controller.signal.aborted) setSnapshot(data);
       })
-      .catch(reason => { if (!controller.signal.aborted) setError(reason.message || 'Could not load archive'); });
+      .catch(reason => { if (!controller.signal.aborted) setError(reason.message || 'Could not load additional listings'); });
     return () => controller.abort();
   }, []);
 
   const results = useMemo(() => (snapshot?.records || []).filter(item => {
     const text = [item.title, item.organization, item.location].filter(Boolean).join(' ').toLowerCase();
-    return (!search.trim() || text.includes(search.trim().toLowerCase())) &&
-      (!exploreQuery.trim() || text.includes(exploreQuery.trim().toLowerCase())) &&
-      (!exploreLocation.trim() || (item.location || "").toLowerCase().includes(exploreLocation.trim().toLowerCase())) &&
-      (!exploreMode.trim() || (item.mode || "").toLowerCase().includes(exploreMode.trim().toLowerCase())) &&
-      (platform === 'all' || item.source === platform) &&
-      (mode === 'all' || item.mode === mode);
-  }), [snapshot, search, platform, mode, exploreQuery, exploreLocation, exploreMode]);
-  const pages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
-  const visible = results.slice((Math.min(page, pages) - 1) * PAGE_SIZE, Math.min(page, pages) * PAGE_SIZE);
-  const changeFilter = (setter, value) => { setter(value); setPage(1); };
+    if (filters.q && !text.includes(filters.q.trim().toLowerCase())) return false;
+    if (filters.location && !(item.location || '').toLowerCase().includes(filters.location.trim().toLowerCase())) return false;
+    if (filters.mode && !(item.mode || '').toLowerCase().includes(filters.mode.trim().toLowerCase())) return false;
+    // Never infer unknown college, organizer, state, or event dates from the archive.
+    // The backend handles these filters for verified events only.
+    if (filters.organizationId || filters.institutionId || filters.state ||
+        filters.startFrom || filters.startTo || filters.deadlineFrom || filters.deadlineTo || filters.period) return false;
+    return true;
+  }), [snapshot, filters]);
 
-  return <section id="additional-hackathons" className="mined-archive" aria-label="Additional unverified hackathon listings">
-    <div className="mined-intro">
-      <span className="platform-eyebrow">MORE HACKATHONS ON EXPLORE</span>
-      <h2>Additional hackathon listings</h2>
-      <p>Browse <strong>206 historical API snapshot listings</strong>: 195 from Unstop and 11 from Devfolio, collected via <a href="https://brabble.ai/" target="_blank" rel="noopener noreferrer">Brabble.ai</a> on 25 October 2026.</p>
-      <p className="mined-caution"><strong>Unverified research data — not the verified event catalog.</strong> These are archived provider-reported listings, not current registration offers or independently checked hackathon announcements. Dates, cities, organizers, and links may be outdated or incorrect, and some records could overlap with verified events. Do not use these records as model ground truth.</p>
-      <p className="platform-muted">The main Explore search, location, and mode filters also apply here. College, start-date, and organizer filters apply only to the verified catalog because those fields are not verified for this dataset.</p>
-    </div>
-    <div className="mined-controls">
-      <label>Search archive<input value={search} onChange={event => changeFilter(setSearch, event.target.value)} placeholder="Title, organizer, or city" maxLength={255} /></label>
-      <label>Original platform<select value={platform} onChange={event => changeFilter(setPlatform, event.target.value)}><option value="all">All platforms</option><option value="Unstop">Unstop</option><option value="Devfolio">Devfolio</option></select></label>
-      <label>Reported mode<select value={mode} onChange={event => changeFilter(setMode, event.target.value)}><option value="all">All modes</option><option value="ONLINE">Online</option><option value="OFFLINE">Offline</option><option value="HYBRID">Hybrid</option></select></label>
-      <button type="button" onClick={() => {setSearch(''); setPlatform('all'); setMode('all'); setPage(1);}}>Clear filters</button>
-    </div>
-    {error && <div className="platform-error" role="alert">{error}</div>}
-    {!snapshot && !error && <p role="status">Loading archived listings…</p>}
-    {snapshot && <>
-      <p role="status" className="mined-count">{results.length} of {snapshot.record_count} archived listings · page {Math.min(page, pages)} of {pages}</p>
-      {results.length === 0 ? <p>No matching archive listings. Try clearing a filter.</p> : <div className="platform-grid mined-grid">{visible.map(item => <MinedListing key={item.id} item={item} />)}</div>}
-      {results.length > PAGE_SIZE && <nav className="platform-pagination" aria-label="Archive pages">
-        <button type="button" disabled={page <= 1} onClick={() => setPage(p => Math.max(1, p - 1))}>Previous</button>
-        <span>Page {page} of {pages}</span>
-        <button type="button" disabled={page >= pages} onClick={() => setPage(p => Math.min(pages, p + 1))}>Next</button>
-      </nav>}
-    </>}
-    <p className="platform-muted">Provenance: 25 October 2026 Brabble.ai API archive. Data provided by <a href="https://brabble.ai/docs" target="_blank" rel="noopener noreferrer">Brabble.ai</a>, with source listings on Unstop and Devfolio. Provider-reported deadlines are not organizer-confirmed event dates. Registration takes place on the original platform; this page does not collect registrations or payments.</p>
-  </section>;
+  const start = Math.max(0, page - 1) * pageSize;
+  const visible = results.slice(start, start + pageSize);
+  return <>
+    {error && <p role="alert" className="platform-error">{error}</p>}
+    {visible.map(item => <MinedListing key={`archive-${item.id}`} item={item} />)}
+  </>;
 }
