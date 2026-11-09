@@ -50,3 +50,13 @@
 @media (max-width:1050px) { .platform-header { flex-wrap:wrap; } .platform-header nav { order:3; width:100%; justify-content:center; } }
 @media (max-width:700px) { .platform-header { padding:12px 4%; gap:12px; } .platform-brand { font-size:17px; } .platform-session { font-size:13px; } .platform-session span { display:none; } .platform-menu { display:block; } .platform-header nav { display:none; } .platform-header nav.open { display:flex; flex-wrap:wrap; gap:18px; } .platform-explore { grid-template-columns:1fr; gap:24px; } .platform-filter { position:static; } .platform-grid { grid-template-columns:1fr; } .platform-hero { padding:12px 0 36px; } .platform-container { padding-top:20px; } }
 @media (prefers-reduced-motion:reduce) { .platform * { transition:none!important; animation:none!important; scroll-behavior:auto!important; } }
+
+
+/* Directory filters: live state options, district options scoped to the selected state. */
+.platform-directory-form { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; align-items:end; margin:22px 0; }
+.platform-directory-form label { display:grid; gap:7px; min-width:0; font-size:14px; font-weight:600; }
+.platform-directory-form select,.platform-directory-form input { width:100%; min-width:0; }
+.platform-directory-form select:disabled { opacity:.65; cursor:not-allowed; }
+.platform-directory-actions,.platform-directory-feedback { grid-column:1/-1; }
+.platform-directory-actions { display:flex; flex-wrap:wrap; gap:10px; }
+@media (max-width:700px) { .platform-directory-form { grid-template-columns:1fr; } }
