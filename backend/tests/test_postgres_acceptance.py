@@ -1,4 +1,4 @@
-"""Only the ownership-verified disposable container runner may enable these tests."""
+"""Only ownership-verified disposable container/native runners may enable writes."""
 import copy
 import json
 import os
@@ -33,7 +33,22 @@ def pg():
         pytest.skip('Run scripts/postgres_acceptance.py to create an owned disposable PostgreSQL container')
     manifest = json.loads(Path(manifest_path).read_text(encoding='utf-8'))
     assert manifest['database'].startswith('radar_acceptance_')
-    assert manifest['storage'] == 'tmpfs' and manifest['environment'] == 'development'
+    assert manifest['environment'] == 'development'
+    native = manifest['storage'] == 'native-temporary'
+    if native:
+        from sqlalchemy.engine import make_url
+        target = make_url(value)
+        assert target.host == '127.0.0.1' and target.port == manifest['server_port']
+        assert target.database == manifest['database'] and target.username == 'radar_acceptance'
+        data = Path(manifest['data_directory']).resolve()
+        owned_root = BACKEND.parent / '.test-support/native-postgres'
+        assert data.is_relative_to(owned_root.resolve()) and data != owned_root.resolve()
+        assert (data / '.radar-acceptance-owner').read_text(encoding='utf-8') == manifest['ownership_marker'] == manifest['run_id']
+        assert manifest['server_address'] == '127.0.0.1'
+        assert manifest['server_version_major'] in (16, 18)
+        assert value.startswith('postgresql+psycopg://')
+    else:
+        assert manifest['storage'] == 'tmpfs'
     engine = create_engine(value, connect_args={'connect_timeout': 5}, pool_pre_ping=True)
     with engine.connect() as connection:
         connection.execute(text('SET TRANSACTION READ ONLY'))
@@ -43,13 +58,20 @@ def pg():
         assert identity['database'] == manifest['database']
         assert identity['username'] == 'radar_acceptance'
         assert identity['server_address'] == manifest['server_address']
-        assert identity['server_port'] == 5432 and 160000 <= identity['version'] < 170000
+        if native:
+            assert identity['server_port'] == manifest['server_port']
+            major = manifest['server_version_major']
+            assert major * 10000 <= identity['version'] < (major + 1) * 10000
+            actual = connection.scalar(text("SELECT current_setting('data_directory')"))
+            assert Path(actual).resolve() == data
+        else:
+            assert identity['server_port'] == 5432 and 160000 <= identity['version'] < 170000
         assert not identity['recovery']
         assert inspect(connection).get_table_names(schema='public') == []
     # No migration or test writes occur until all identity checks above pass.
     environment = dict(os.environ, DATABASE_URL=value, DEBUG='false', ENVIRONMENT='development',
                        SECRET_KEY='disposable-postgres-migration-test-key-123456', EMAIL_MODE='disabled')
-    result = subprocess.run([sys.executable, '-m', 'alembic', 'upgrade', 'head'], cwd=BACKEND,
+    result = subprocess.run([sys.executable, '-m', 'workers.migrate'], cwd=BACKEND,
                             env=environment, capture_output=True, text=True)
     assert result.returncode == 0, 'Alembic migration failed: ' + result.stderr
     heads = ScriptDirectory.from_config(Config(str(BACKEND / 'alembic.ini'))).get_heads()

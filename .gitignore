@@ -29,3 +29,4 @@ backend/.pytest-*.json
 /t *Latest develop included*
 
 .env.production
+.venv/

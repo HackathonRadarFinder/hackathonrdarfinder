@@ -59,6 +59,25 @@ def test_offline_collection(tmp_path):
     assert (tmp_path / "candidates.csv").exists()
 
 
+@pytest.mark.parametrize('newline', [b'\n', b'\r\n'])
+def test_offline_evidence_hash_preserves_exact_fixture_bytes(tmp_path, newline):
+    import hashlib
+    import json
+    base = Path(__file__).resolve().parents[1]
+    url = 'https://hacknauts26.devfolio.co/'
+    filename = hashlib.sha256(url.encode()).hexdigest()[:16] + '.html'
+    fixture_bytes = (base / 'fixtures' / filename).read_bytes().replace(b'\r\n', b'\n').replace(b'\n', newline)
+    fixtures = tmp_path / 'fixtures'
+    fixtures.mkdir()
+    (fixtures / filename).write_bytes(fixture_bytes)
+    seeds = tmp_path / 'seed.txt'
+    seeds.write_text(url + '\n', encoding='utf-8')
+    collect({}, seeds, tmp_path / 'out', discover=False, max_pages=1, delay=1, offline=fixtures)
+    row = json.loads((tmp_path / 'out/candidates.json').read_text(encoding='utf-8'))[0]
+    assert row['source_hash'] == hashlib.sha256(fixture_bytes).hexdigest()
+    assert row['title'] == 'Hacknauts 2.0'
+
+
 def test_robots_disallow_fail_closed(monkeypatch):
     client = GovernedClient({"Devfolio": {"approved": True, "basis": "reviewed"}})
     monkeypatch.setattr(client, "get_raw", lambda url: (200, "User-agent: *\nDisallow: /", "text/plain"))
