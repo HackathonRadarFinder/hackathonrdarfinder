@@ -1,5 +1,7 @@
 ﻿import { useEffect, useState } from 'react';
 import { api, safeEventUrl } from './services/apiClient';
+import BulkReviewPanel from './BulkReviewPanel';
+import { BULK_REVIEW_LIMIT, encodeCsvToBase64, prepareBrabbleArchiveCsv } from './adminBulkReview';
 
 const roles = ['user', 'institution_coordinator', 'reviewer', 'source_manager', 'data_scientist', 'administrator'];
 const sections = {
@@ -26,6 +28,61 @@ export default function AdminWorkspace() {
   const [note, setNote] = useState('');
   const [dataset, setDataset] = useState({ source_key: '', approval_reference: '' });
   const [upload, setUpload] = useState(null);
+  const [selectedRows, setSelectedRows] = useState({});
+  const [reviewDrafts, setReviewDrafts] = useState({});
+  function clearSelection() { setSelectedRows({}); setReviewDrafts({}); }
+  function toggleReview(row, checked) {
+    if (!checked) {
+      setSelectedRows(previous => { const next = { ...previous }; delete next[row.id]; return next; });
+      setReviewDrafts(previous => { const next = { ...previous }; delete next[row.id]; return next; });
+      return;
+    }
+    if (!selectedRows[row.id] && Object.keys(selectedRows).length >= BULK_REVIEW_LIMIT) {
+      setError(`Select at most ${BULK_REVIEW_LIMIT} announcements per bulk action.`);
+      return;
+    }
+    setSelectedRows(previous => ({ ...previous, [row.id]: row }));
+    setReviewDrafts(previous => ({ ...previous, [row.id]: previous[row.id] || { json: JSON.stringify(row.payload, null, 2), evidenceChecked: false } }));
+    setError('');
+  }
+  function selectPageForReview(items) {
+    const available = items.filter(row => row.status === 'pending' && !selectedRows[row.id]);
+    const remaining = BULK_REVIEW_LIMIT - Object.keys(selectedRows).length;
+    const added = available.slice(0, Math.max(0, remaining));
+    setSelectedRows(previous => ({ ...previous, ...Object.fromEntries(added.map(row => [row.id, row])) }));
+    setReviewDrafts(previous => ({ ...previous, ...Object.fromEntries(added.map(row =>
+      [row.id, { json: JSON.stringify(row.payload, null, 2), evidenceChecked: false }])) }));
+    if (available.length > added.length) setMessage(`Selected ${added.length} additional records; maximum ${BULK_REVIEW_LIMIT} per batch.`);
+  }
+  function bulkReviewCompleted({ approved, error: failed }) {
+    if (approved.length) {
+      setSelectedRows(previous => { const next = { ...previous }; for (const id of approved) delete next[id]; return next; });
+      setReviewDrafts(previous => { const next = { ...previous }; for (const id of approved) delete next[id]; return next; });
+    }
+    setMessage(`${approved.length} verified announcement(s) published. ${failed ? 'Other records remain pending.' : ''}`);
+    setError(failed || '');
+    setRevision(value => value + 1);
+  }
+  async function stageBrabbleArchive() {
+    setBusy(true); setError(''); setMessage('');
+    try {
+      const source = (result?.data || []).find(row => row.key === dataset.source_key);
+      if (!source || source.config?.adapter !== 'brabble-api-v1' || !source.enabled || !source.config?.terms_permit ||
+          dataset.approval_reference !== source.config?.reference) {
+        throw new Error('Select an enabled Brabble API source with documented reuse permission and the matching approval reference.');
+      }
+      const response = await fetch('/mined-hackathons-20261025.json', { cache: 'no-cache' });
+      if (!response.ok) throw new Error('Could not load the preserved 206-listing snapshot.');
+      const csv = prepareBrabbleArchiveCsv(await response.json());
+      const imported = await api.request('/admin/discovery/dataset-imports', { method: 'POST', body: {
+        source_key: dataset.source_key, approval_reference: dataset.approval_reference,
+        filename: 'brabble-archive-review-20261025.csv', content_base64: encodeCsvToBase64(csv),
+      } });
+      setMessage(`${imported.candidates_inserted} source listings staged in the approval queue; ${imported.candidate_duplicates} previously present. No listing was approved automatically.`);
+      clearSelection(); setStatus('pending'); setPage(1); setTab('review'); setRevision(value => value + 1);
+    } catch (err) { setError(err.message); }
+    finally { setBusy(false); }
+  }
   const resourceKey = `${tab}:${revision}:${page}:${status}`;
   const result = resource?.key === resourceKey ? resource.data : null;
   useEffect(() => {
@@ -89,12 +146,12 @@ export default function AdminWorkspace() {
   return <section className="platform-panel" aria-label="Administration workspace">
     <h2>Operations workspace</h2>
     <nav aria-label="Administration sections" style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-      {Object.keys(sections).map(key => <button key={key} aria-pressed={tab === key} onClick={() => { setTab(key); setPage(1); setEditor(null); setMessage(''); }}>{key[0].toUpperCase() + key.slice(1)}</button>)}
+      {Object.keys(sections).map(key => <button key={key} aria-pressed={tab === key} onClick={() => { setTab(key); setPage(1); setEditor(null); setMessage(''); clearSelection(); }}>{key[0].toUpperCase() + key.slice(1)}</button>)}
     </nav>
     {message && <p role="status">{message}</p>}
     {error && <p role="alert">{error} <button onClick={() => setRevision(value => value + 1)}>Retry loading</button></p>}
     {!result && !error && <p role="status">Loading operationsâ€¦</p>}
-    {tab === 'review' && <label>Review status <select value={status} onChange={e => { setStatus(e.target.value); setPage(1); }}>{['pending', 'approved', 'rejected'].map(value => <option key={value}>{value}</option>)}</select></label>}
+    {tab === 'review' && <label>Review status <select value={status} onChange={e => { setStatus(e.target.value); setPage(1); clearSelection(); }}>{['pending', 'approved', 'rejected'].map(value => <option key={value}>{value}</option>)}</select></label>}
     {tab === 'sources' && <><p>Configuration saves do not start a discovery run. Enable only after recording current permission and expiry.</p><button onClick={() => open('source', null)}>Register source</button>
       <form onSubmit={uploadDataset} className="platform-card" style={{ marginTop: 16 }}><h3>Import dataset</h3>
         <p>Upload CSV (UTF-8) or a single-sheet XLSX with unique field headers. Required headers: title, url. Optional: organization, start_date, end_date, registration_deadline, registration_url, description, eligibility, location, mode, prize, state. Maximum 2 MB and 1000 rows. Dates without an explicit timezone remain unverified for human review.</p>
