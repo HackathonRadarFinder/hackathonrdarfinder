@@ -65,12 +65,15 @@ function Explore({ saved, toggle }) {
   const [draft, setDraft] = useState(filters);
   const [collegeSearch, setCollegeSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [archiveCount, setArchiveCount] = useState(0);
+  const onArchiveCountChange = useCallback(count => setArchiveCount(count), []);
   const organizations = useResource(api.organizations);
   const resource = useResource(useCallback(signal => api.events({ ...filters, page }, signal), [filters, page]));
   const institutions = useResource(useCallback(signal => api.institutions(draft.state, collegeSearch, signal), [draft.state, collegeSearch]));
   const names = new Map((organizations.data || []).map(org => [org.id, org.name]));
   const result = resource.data;
-  return <><section className="platform-hero"><span className="platform-eyebrow">HACKATHON RADAR</span><h1>Find your next<br /><em>building opportunity.</em></h1><p>Explore verified catalog events and 206 additional provider listings from Unstop and Devfolio. All additional listings are clearly marked unverified.</p><p><a href="#additional-hackathons">Jump to 206 additional hackathon listings ↓</a></p></section>
+  const totalPages = Math.max(1, Math.ceil((result?.total || 0) / filters.pageSize), Math.ceil(archiveCount / filters.pageSize));
+  return <><section className="platform-hero"><span className="platform-eyebrow">HACKATHON RADAR</span><h1>Find your next<br /><em>building opportunity.</em></h1><p>Explore verified catalog events alongside additional Unstop and Devfolio listings. Provider-reported archive entries are clearly marked unverified.</p></section>
     <div className="platform-explore"><aside className="platform-filter"><h2>Explore events</h2>
       <form onSubmit={event => { event.preventDefault(); setPage(1); setFilters({ ...draft }); }}>
         <label>Search<input value={draft.q} maxLength={255} placeholder="Title or description" onChange={event => setDraft({ ...draft, q: event.target.value })} /></label>
@@ -93,10 +96,14 @@ function Explore({ saved, toggle }) {
         <button className="platform-primary" type="submit">Apply filters</button><button type="button" onClick={() => { const cleared = { q: '', location: '', mode: '', organizationId: '', state: '', institutionId: '', startFrom: '', startTo: '', deadlineFrom: '', deadlineTo: '', period: '', sort: 'id', pageSize: 12 }; setCollegeSearch(''); setDraft(cleared); setFilters(cleared); setPage(1); }}>Reset</button>
       </form><p className="platform-muted">The catalog includes historical events. Use start dates to narrow upcoming results. Dates filter by UTC calendar day; events without start dates are excluded when filtering. Choose a sort order above; dates without published values appear last.</p>
     </aside><section aria-label="Event results" aria-busy={resource.loading}><Feedback resource={resource} />
-      {result && <><p role="status">{result.total} events · page {result.page}</p>{!result.data.length && <div className="platform-empty"><h2>No events found</h2><p>Try another location or reset your filters.</p></div>}
-        <div className="platform-grid">{result.data.map(event => <EventCard key={event.id} event={event} saved={saved.includes(event.id)} toggle={toggle} organization={names.get(event.organization_id)} />)}</div>
-        <nav className="platform-pagination" aria-label="Event pages"><button disabled={page <= 1 || resource.loading} onClick={() => setPage(value => value - 1)}>Previous</button><span>Page {page} of {Math.max(1, Math.ceil(result.total / result.page_size))}</span><button disabled={page * result.page_size >= result.total || resource.loading} onClick={() => setPage(value => value + 1)}>Next</button></nav></>}
-      <MinedHackathons exploreQuery={filters.q} exploreLocation={filters.location} exploreMode={filters.mode} />
+      <p className="platform-muted">Verified catalog events and archived provider-reported listings appear together below. Archive entries carry an <strong>Unverified API listing</strong> label, retain original source links and may be outdated. Date, state, college, and organization filters exclude archive entries because those details are not independently confirmed.</p>
+      {result && <p role="status">{result.total} verified catalog events · {archiveCount} matching unverified archive listings · page {page} of {totalPages}</p>}
+      <div className="platform-grid">
+        {result?.data.map(event => <EventCard key={event.id} event={event} saved={saved.includes(event.id)} toggle={toggle} organization={names.get(event.organization_id)} />)}
+        <MinedHackathons filters={filters} page={page} pageSize={filters.pageSize} onCountChange={onArchiveCountChange} />
+      </div>
+      {result && result.data.length === 0 && archiveCount === 0 && <div className="platform-empty"><h2>No events found</h2><p>Try another location or reset your filters.</p></div>}
+      {totalPages > 1 && <nav className="platform-pagination" aria-label="Event pages"><button disabled={page <= 1 || resource.loading} onClick={() => setPage(value => Math.max(1, value - 1))}>Previous</button><span>Page {page} of {totalPages}</span><button disabled={page >= totalPages || resource.loading} onClick={() => setPage(value => Math.min(totalPages, value + 1))}>Next</button></nav>}
     </section></div></>;
 }
 

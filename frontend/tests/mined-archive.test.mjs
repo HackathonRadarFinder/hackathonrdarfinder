@@ -34,16 +34,14 @@ test('archive entries link to allowed sources and do not claim independent verif
   assert.doesNotMatch(archive, /api\.save\(/);
 });
 
-test('all provider listings appear on Explore and no separate Mined Data page remains', () => {
-  assert.match(portal, /<MinedHackathons exploreQuery=\{filters\.q\} exploreLocation=\{filters\.location\} exploreMode=\{filters\.mode\} \/>/);
-  assert.match(portal, /<Route path="\/mined-hackathons" element=\{<Navigate replace to="\/explore" \/>\}/);
-  assert.doesNotMatch(portal, /<NavLink to="\/mined-hackathons">/);
-  assert.match(portal, /<NavLink to="\/explore">Explore<\/NavLink>/);
-  assert.match(portal, /<Route path="\/explore" element=\{<Explore saved=\{saved\} toggle=\{toggle\} \/>\}/);
-  assert.match(portal, /href="#additional-hackathons"/);
-  assert.match(archive, /id="additional-hackathons"/);
-  assert.match(archive, /Additional hackathon listings/);
-  assert.match(archive, /exploreQuery/);
-  assert.match(archive, /exploreLocation/);
-  assert.match(archive, /exploreMode/);
+test('archive cards share Explore grid and pagination, with no separate panel', () => {
+  assert.match(portal, /<div className="platform-grid">[\\s\\S]*<MinedHackathons filters=\\{filters\\}/);
+  assert.match(portal, /onCountChange=\\{onArchiveCountChange\\}/);
+  assert.match(portal, /Math\\.ceil\\(archiveCount \\/ filters\\.pageSize\\)/);
+  assert.match(portal, /<Route path="\\/mined-hackathons" element=\\{<Navigate replace to="\\/explore" \\/>\\}/);
+  assert.doesNotMatch(portal, /href="#additional-hackathons"/);
+  assert.doesNotMatch(archive, /Additional hackathon listings|id="additional-hackathons"|mined-intro|mined-caution/);
+  assert.match(archive, /Unverified API listing/);
+  assert.match(archive, /filters\\.institutionId|filters\\.state/);
+  assert.match(archive, /onCountChange/);
 });
