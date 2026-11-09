@@ -3,31 +3,35 @@ import hashlib
 import io
 from pathlib import Path
 import platform
-import time
 import shutil
 import subprocess
 import tarfile
 import tempfile
-import urllib.request
+import time
 import urllib.error
+import urllib.request
 import zipfile
 
 VERSION = "1.7.7"
+# SHA-256 values from the upstream v1.7.7 release checksum manifest.
+RELEASE_SHA256 = {
+    "actionlint_1.7.7_linux_amd64.tar.gz": "023070a287cd8cccd71515fedc843f1985bf96c436b7effaecce67290e7e0757",
+    "actionlint_1.7.7_windows_amd64.zip": "7f12f1801bca3d480d67aaf7774f4c2a6359a3ca8eebe382c95c10c9704aa731",
+}
 
 
 def download_with_retry(url, attempts=4):
-    """Retry transient release-host errors without weakening checksum validation."""
     for attempt in range(attempts):
         try:
             with urllib.request.urlopen(url, timeout=45) as response:
                 return response.read()
-        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as exc:
+        except (urllib.error.URLError, TimeoutError) as exc:
             if isinstance(exc, urllib.error.HTTPError) and exc.code not in {429, 500, 502, 503, 504}:
                 raise
             if attempt == attempts - 1:
                 raise
             delay = 2 ** attempt
-            print(f"actionlint download temporarily unavailable ({type(exc).__name__}); retrying in {delay}s", flush=True)
+            print(f"actionlint download temporarily unavailable; retrying in {delay}s", flush=True)
             time.sleep(delay)
 
 
@@ -39,9 +43,7 @@ def main():
     name = f"actionlint_{VERSION}_{operating_system}_amd64.{extension}"
     base = f"https://github.com/rhysd/actionlint/releases/download/v{VERSION}/"
     archive = download_with_retry(base + name)
-    checksums = download_with_retry(base + f"actionlint_{VERSION}_checksums.txt").decode()
-    expected = next(line.split()[0] for line in checksums.splitlines() if line.split()[-1] == name)
-    if hashlib.sha256(archive).hexdigest() != expected:
+    if hashlib.sha256(archive).hexdigest() != RELEASE_SHA256[name]:
         raise RuntimeError("actionlint release checksum mismatch")
     with tempfile.TemporaryDirectory(prefix="ops-actionlint-") as directory:
         root = Path(directory)
