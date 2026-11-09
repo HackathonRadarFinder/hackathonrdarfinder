@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "packet_type": "review_only_college_hackathon_discovery",
+  "discovered_at": "2026-11-07T08:33:43+05:30",
+  "collection_method": "Official public pages surfaced by search and read-only inspection; no bulk crawling or form submission",
+  "duplicate_check": "Compared against 2026-11-06 PR #113 packet and GitHub default-branch keyword code search; no matching records found for these two titles. Production database and full directory not queried.",
+  "publication_allowed": false,
+  "restrictions": [
+    "No production writes or automatic publication",
+    "No permission to crawl inferred from domains",
+    "No participant personal data collected",
+    "Institution identity and AISHE IDs require review"
+  ],
+  "candidates": [
+    {
+      "title": "RSET Faculty AI Hackathon 2026",
+      "hosting_college": "Rajagiri School of Engineering & Technology (Autonomous)",
+      "state": "Kerala",
+      "district": null,
+      "start_date": "2026-11-19",
+      "end_date": "2026-11-21",
+      "registration_deadline": null,
+      "registration_url": "https://sunya.rajagiritech.ac.in/hackathon/",
+      "official_source_url": "https://sunya.rajagiritech.ac.in/hackathon/",
+      "discovered_at": "2026-11-07T08:33:43+05:30",
+      "institution_id": null,
+      "review_status": "pending",
+      "uncertainty": [
+        "College page explicitly identifies Kochi, Kerala; Ernakulam district inferred from Kochi geography rather than stated on event page, so district requires separate verification",
+        "Faculty-only event; not open to general students",
+        "Registration opened October 29; deadline not stated",
+        "Registration destination is event landing page; team registration appears through faculty-only app and may require access",
+        "AISHE identifier and duplication against live database unverified"
+      ]
+    },
+    {
+      "title": "KAINOS 2026–27 National Student Innovation & Entrepreneurship Challenge",
+      "hosting_college": "KIIT Deemed to be University (KSIEL, KIIT Alumni Cell, KIIT-NEST)",
+      "state": null,
+      "district": null,
+      "start_date": null,
+      "end_date": null,
+      "registration_deadline": null,
+      "registration_url": "https://sld.kiit.ac.in/kainos/",
+      "official_source_url": "https://sld.kiit.ac.in/kainos/",
+      "discovered_at": "2026-11-07T08:33:43+05:30",
+      "institution_id": null,
+      "review_status": "pending",
+      "uncertainty": [
+        "Multi-stage program runs November 2026–March 2027, but exact start/end dates are not announced",
+        "Page simultaneously shows registration calls-to-action and 'registrations open: date to be announced'; status requires confirmation",
+        "Registration deadline not stated",
+        "Khordha district not explicit on event page and requires independent validation",
+        "Registration link destination not independently resolved",
+        "AISHE ID and live database duplication unverified"
+      ]
+    }
+  ]
+}
