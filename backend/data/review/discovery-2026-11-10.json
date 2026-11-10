@@ -1,0 +1,68 @@
+{
+  "observed_at": "2026-11-10T08:19:18+05:30",
+  "mode": "review_only",
+  "production_before": {
+    "institutions": 54522,
+    "hackathons": 9,
+    "discovery_announcements": 0,
+    "discovery_sources": 0
+  },
+  "published_count": 0,
+  "production_duplicates_exact_title": 0,
+  "candidates": [
+    {
+      "title": "MNITJ Student Hackathon 2026",
+      "host": "Malaviya National Institute of Technology Jaipur Innovation & Incubation Centre (MIIC)",
+      "official_event_url": "https://miic.mnit.ac.in/events/detail/good_news_registration_deadline_extended_mnitj_student_hackathon_2026-1",
+      "registration_url": "https://forms.gle/BajzkL8ML4mcQcxt9",
+      "event_start_date": null,
+      "event_end_date": null,
+      "registration_deadline": "2026-12-05",
+      "registration_status": "deadline extended to 5 December 2026 per organizer announcement; form availability not independently confirmed",
+      "college_directory_match": null,
+      "review_status": "pending",
+      "publication_allowed": false,
+      "pending_reasons": [
+        "event dates missing",
+        "AISHE directory identity not verified",
+        "source publication permission not established",
+        "registration form destination/status not independently confirmed"
+      ],
+      "evidence": [
+        "https://miic.mnit.ac.in/",
+        "https://miic.mnit.ac.in/events/detail/good_news_registration_deadline_extended_mnitj_student_hackathon_2026-1"
+      ]
+    },
+    {
+      "title": "ATOMIC HACK INDIA 2026",
+      "host": "IIT Bombay Research Hub for Green Energy and Sustainability (GESH IITB) and JSC Engineering and Technical Center GET (ROSATOM subsidiary)",
+      "official_event_url": "https://vitap.ac.in/news/newsdetail/atomic-hack-india-2026",
+      "registration_url": null,
+      "event_start_date": "2026-12-04",
+      "event_end_date": "2026-12-06",
+      "registration_deadline": "2026-10-20",
+      "registration_status": "registration deadline passed; not open",
+      "college_directory_match": null,
+      "review_status": "pending",
+      "publication_allowed": false,
+      "pending_reasons": [
+        "announcement is a third-party university notice, not the organizer's direct event page",
+        "registration already closed",
+        "source publication permission not established",
+        "college identity not verified; host not necessarily VIT-AP",
+        "no direct official registration URL verified"
+      ],
+      "evidence": [
+        "https://vitap.ac.in/news/newsdetail/atomic-hack-india-2026"
+      ]
+    }
+  ],
+  "existing_record_notes": [
+    {
+      "title": "KAINOS 2026–27",
+      "url": "https://sld.kiit.ac.in/kainos/",
+      "note": "Official page now gives 16 Nov 2026 opening, 31 Dec deadline, 6 Mar 2027 finale; not in current production nine; prior review packet exists; do not create duplicate review candidate."
+    }
+  ],
+  "safety": "No production writes or source permission changes. No participant data collected."
+}
