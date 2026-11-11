@@ -1,0 +1,41 @@
+{
+  "observed_at": "2026-11-11T08:03:19+05:30",
+  "mode": "review_only",
+  "publication_allowed": false,
+  "production_snapshot": {
+    "hackathons": 9,
+    "institutions": 54522,
+    "discovery_sources": 0,
+    "discovery_runs": 0
+  },
+  "candidates": [
+    {
+      "title": "Make-A-Ton 9.0",
+      "host": "CITTIC, Cochin University of Science and Technology (CUSAT) × Odoo",
+      "official_event_url": "https://www.makeaton.in/",
+      "event_start": "2026-12-19",
+      "event_end": "2026-12-20",
+      "registration_deadline": "2026-10-25",
+      "registration_status": "closed (organizer page)",
+      "college_directory_match": null,
+      "review_status": "pending",
+      "source_evidence": [
+        {
+          "url": "https://www.makeaton.in/",
+          "facts": "Organizer site search snapshot describes 24-hour CUSAT Kochi final on 19–20 Dec 2026; applications opened 21 Sep and closed 25 Oct; shortlist announced 19 Nov."
+        }
+      ],
+      "publication_blockers": [
+        "Official organizer URL returned HTTP 502 when independently opened; current live page cannot be cross-checked.",
+        "Source permission for automated factual publication not recorded.",
+        "AISHE college-directory identity not independently confirmed.",
+        "No authorized production discovery source, run, or evidence/audit pipeline exists."
+      ],
+      "duplicate_check": "Exact title absent from nine production hackathon titles; historical editions and alternate names not authoritatively deduplicated."
+    }
+  ],
+  "notes": [
+    "Previously staged SAKEC, St Aloysius, KIIT KAINOS, and BPUT candidates were not duplicated.",
+    "No production writes or source-policy changes."
+  ]
+}
