@@ -1,0 +1,68 @@
+{
+  "observed_at": "2026-11-13T08:56:12+05:30",
+  "mode": "review_only",
+  "production_snapshot": {
+    "hackathons": 9,
+    "institutions": 54522,
+    "discovery_sources": 0,
+    "discovery_runs": 0,
+    "discovery_evidence": 0
+  },
+  "candidates": [
+    {
+      "title": "Mozilla CHRIST Human Scale AI Buildathon 2026",
+      "host": "CHRIST (Deemed to be University), Bangalore Bannerghatta Road Campus",
+      "official_event_url": "https://buildathon.christuniversity.in/",
+      "known_dates": {
+        "regional_online": "2026-11-21",
+        "regional_delhi": "2026-11-20 (tentative)",
+        "grand_finale": "January 2027 (exact dates unknown)"
+      },
+      "registration_deadline": null,
+      "registration_status": "Official page says registrations open; cutoff not verified",
+      "source_evidence": [
+        "https://buildathon.christuniversity.in/"
+      ],
+      "institution_id": null,
+      "review_status": "pending",
+      "publication_allowed": false,
+      "pending_reasons": [
+        "No exact grand finale date",
+        "No verified registration deadline",
+        "No authoritative college-directory identity match",
+        "No recorded publication authorization/source policy",
+        "Production discovery evidence and audited ingestion unavailable"
+      ]
+    },
+    {
+      "title": "13th Protocol: An AI Hackathon 2026",
+      "host": "Voyager Coding Club, KCC Institute of Technology & Management, Greater Noida; powered by HackIndia",
+      "official_event_url": "https://hackindia.org/2026/13th-protocol-an-ai-hackathon-2026",
+      "known_dates": {
+        "start": "2026-11-28",
+        "end": "2026-11-29",
+        "registration_deadline": "2026-11-18 23:00 IST"
+      },
+      "registration_status": "Open according to HackIndia event page as observed; confirm at time of publication",
+      "source_evidence": [
+        "https://hackindia.org/2026/13th-protocol-an-ai-hackathon-2026",
+        "https://hackindia.org/terms"
+      ],
+      "institution_id": null,
+      "review_status": "pending",
+      "publication_allowed": false,
+      "pending_reasons": [
+        "HackIndia terms protect website content and prohibit unauthorized use; no permission recorded for automated reuse",
+        "No verified college-directory identity match",
+        "No registered discovery source or audited ingestion",
+        "Secondary Unstop-derived listings disagree on deadline (17 vs 18 Nov); use organizer page only"
+      ]
+    }
+  ],
+  "deduplication": {
+    "production_title_matches_for_new_candidates": 0,
+    "existing_event_detected": "HackWithAditya 2026 (id 9) — excluded from new findings",
+    "historical_pr_exact_title_matches_for_new_candidates": 0
+  },
+  "production_changes": 0
+}
