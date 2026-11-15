@@ -1,0 +1,58 @@
+{
+  "observed_at": "2026-11-15T08:16:59+05:30",
+  "publication_allowed": false,
+  "review_status": "pending",
+  "candidates": [
+    {
+      "title": "CICADA Hackathon — CICADA 2026",
+      "host": "Atria Institute of Technology, Bengaluru",
+      "official_event_url": "https://cicada-2026.vercel.app/home",
+      "official_institution_url": "https://atria.edu/",
+      "event_date": null,
+      "possible_festival_dates": "19–21 November 2026 (search index only; live page currently says TBA)",
+      "registration_deadline": null,
+      "registration_status": "Website advertises registrations open; live registration destination and terms unverified",
+      "college_directory_match": {
+        "id": 2273,
+        "identifier": "AISHE:C-1264",
+        "name": "Atria Institute of Technology, BANGALORE",
+        "verification_status": "name/location consistent; official event-site affiliation not independently confirmed"
+      },
+      "evidence": [
+        {
+          "url": "https://cicada-2026.vercel.app/home",
+          "observation": "Current fetched page says dates TBA; CICADA Hackathon 24-hour event, campus Atria Institute of Technology; registration advertised open"
+        },
+        {
+          "url": "https://atria.edu/",
+          "observation": "Official institution website confirms institution identity"
+        },
+        {
+          "url": "https://atria.edu/assets/pdf/mandatory_disclosures/Annual_Report_23-24.pdf",
+          "observation": "Institution annual report documents prior CICADA event; does not confirm 2026 event"
+        }
+      ],
+      "blockers": [
+        "Official event-site ownership not independently established from atria.edu",
+        "Live page says dates TBA while search index reports 19–21 November; cannot safely publish dates",
+        "Registration destination/deadline not verified",
+        "No authorized source policy registered in production",
+        "No production discovery run/evidence/audited idempotent ingestion available",
+        "Historical canonical URL dedup and source permission checks incomplete"
+      ]
+    }
+  ],
+  "production_snapshot": {
+    "hackathons": 9,
+    "institutions": 54522,
+    "discovery_sources": 0,
+    "discovery_runs": 0,
+    "discovery_evidence": 0
+  },
+  "publication_audit": {
+    "action": "review_only",
+    "newly_published": 0,
+    "production_writes": 0,
+    "source_permissions_changed": 0
+  }
+}
