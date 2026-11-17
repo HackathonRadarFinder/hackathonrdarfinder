@@ -1,0 +1,67 @@
+{
+  "observed_at": "2026-11-17T08:47:49+05:30",
+  "status": "review_only",
+  "production_snapshot": {
+    "hackathons": 9,
+    "institutions": 54522,
+    "discovery_sources": 0,
+    "discovery_runs": 0,
+    "discovery_announcements": 0
+  },
+  "candidates": [
+    {
+      "title": "CodeVerse 2.0",
+      "host": "Metaversity – Metaverse Club, VIT Bhopal University (claimed by event page)",
+      "official_event_url": "https://codeverse-2-0-vfgn.onrender.com/index.html",
+      "event_dates": "2026-11-28 to 2026-11-29",
+      "registration_deadline": "2026-11-20",
+      "registration_status": "Registration advertised until 20 November; live acceptance not independently confirmed",
+      "evidence": [
+        "https://codeverse-2-0-vfgn.onrender.com/index.html"
+      ],
+      "college_directory_match": null,
+      "review_reasons": [
+        "Event site hosted on third-party domain; official university endorsement/domain ownership not independently verified",
+        "Source publication permission not recorded",
+        "Historical and canonical dedup not authoritative",
+        "No registered source or audited ingestion path"
+      ]
+    },
+    {
+      "title": "Singularity",
+      "host": "BLITZ, Computer Science Society, Keshav Mahavidyalaya, University of Delhi (third-party claim)",
+      "official_event_url": null,
+      "event_dates": "2026-11-17 (offline final claimed)",
+      "registration_deadline": "2026-11-10 (third-party claim)",
+      "registration_status": "Closed per third-party listing; no official confirmation",
+      "evidence": [
+        "https://www.hackathonradar.com/database/hackathon/singularity-2026",
+        "https://jamao.in/e/singularity"
+      ],
+      "college_directory_match": null,
+      "review_reasons": [
+        "Official organizer event URL unavailable",
+        "Event is today and registration closed; not an actionable new listing",
+        "Conflicting secondary descriptions of dates",
+        "No permission or audited ingestion"
+      ]
+    }
+  ],
+  "excluded": [
+    {
+      "title": "BPUT Hackathon 2026",
+      "reason": "Existing production ID 1; event ended 13 November 2026"
+    },
+    {
+      "title": "National AgriTech Hackathon 2026",
+      "reason": "Already staged in PR 141"
+    },
+    {
+      "title": "Protocol Zero",
+      "reason": "Already staged in PR 115"
+    }
+  ],
+  "published": 0,
+  "exact_title_matches_in_existing_public_db": 0,
+  "publication_gate": "Do not publish without authorized source, verified identity, idempotent dedup and audit/history."
+}
