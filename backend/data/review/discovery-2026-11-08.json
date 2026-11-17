@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "packet_type": "review_only_college_hackathon_discovery",
+  "discovered_at": "2026-11-08T08:39:27+05:30",
+  "collection_method": "Read-only public search and official event pages; no bulk crawling, registrations, or participant data",
+  "duplicate_check": "Compared title/source with review packets in PR #113 and #114 and inspected develop backend/data listing; no exact match among prior review packets. Live production DB and full institution directory not queried.",
+  "publication_allowed": false,
+  "crawling_permission_verified": false,
+  "restrictions": [
+    "Human review required before any publication",
+    "No third-party permission changes",
+    "No inference of crawling permission from official source domain",
+    "No participant personal data"
+  ],
+  "candidates": [
+    {
+      "title": "Protocol Zero: Boot | Hack | CTF",
+      "hosting_college": "Indian Institute of Technology Madras (CyStar), jointly organised with IIITDM Kancheepuram",
+      "state": null,
+      "district": null,
+      "start_date": "2027-01-10",
+      "end_date": "2027-02-21",
+      "registration_deadline": "2026-11-30T23:59:00+05:30",
+      "registration_url": "https://docs.google.com/forms/d/e/1FAIpQLScIUKY7BcVSWQyOEbNtY4tQQTVQLxMK6YQnpkg6khSlWYunyQ/viewform",
+      "official_source_url": "https://cystar.iitm.ac.in/protocol-zero-boot-hack-ctf/",
+      "discovered_at": "2026-11-08T08:39:27+05:30",
+      "institution_id": null,
+      "review_status": "pending",
+      "publication_allowed": false,
+      "uncertainty": [
+        "CRITICAL: Official linked registration form redirects to closed form titled Binary Clash 2025; no functioning current registration URL verified",
+        "Event page browser title says Binary Clash 360 while heading says Protocol Zero; verify event naming",
+        "Dates refer to six-week online hackathon; March 12–13 2027 is separate final CTF at Shiv Nadar University Chennai",
+        "Joint organiser/partner roles require review; IIT Madras official domain alone does not verify all collaborating institutions or grant crawling permission",
+        "State/district and AISHE directory IDs not independently verified"
+      ]
+    },
+    {
+      "title": "MFSS SUSTAIN-AI 2026 — AI for a Sustainable India",
+      "hosting_college": "Indian Institute of Technology Indore, Mehta Family School of Sustainability",
+      "state": "Madhya Pradesh",
+      "district": "Indore",
+      "start_date": "2026-12-07",
+      "end_date": "2026-12-07",
+      "registration_deadline": "2026-11-30",
+      "registration_url": "https://mfsos.iiti.ac.in/conclave_registration.php",
+      "official_source_url": "https://mfsos.iiti.ac.in/conclave_hackathon.php",
+      "discovered_at": "2026-11-08T08:39:27+05:30",
+      "institution_id": null,
+      "review_status": "pending",
+      "publication_allowed": false,
+      "uncertainty": [
+        "December 7 is on-campus final presentation date, not continuous hackathon start",
+        "Initial abstract submission closed November 5; November 30 registration is only for shortlisted/accepted teams and opens November 10",
+        "Official registration page currently says registration opens soon; do not imply general applications are open",
+        "AISHE identifier and live database duplicate status unverified",
+        "State and district supported by IIT Indore official conclave venue page; no crawl authorization inferred"
+      ]
+    }
+  ]
+}
