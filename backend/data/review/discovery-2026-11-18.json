@@ -1,0 +1,76 @@
+{
+  "observed_at": "2026-11-18T08:56:57+05:30",
+  "mode": "review_only",
+  "production_snapshot": {
+    "hackathons": 9,
+    "institutions": 54522,
+    "discovery_sources": 0,
+    "discovery_runs": 0,
+    "discovery_evidence": 0
+  },
+  "candidates": [
+    {
+      "title": "RCAI 2027 — Hackathon (exact standalone title unconfirmed)",
+      "host": "National Institute of Technology Calicut / RCAI 2027 organizing committee",
+      "official_event_url": "https://rcai2027.nitc.ac.in/creg.php",
+      "source_evidence": [
+        {
+          "url": "https://rcai2027.nitc.ac.in/creg.php",
+          "facts": "Hackathon team registration, maximum 10 NITC and 20 external teams; deadline 15 December 2026; NITC team fee INR 1500, external team fee INR 3000; colloquium 9–10 January 2027"
+        }
+      ],
+      "event_dates": null,
+      "related_colloquium_dates": "2027-01-09/2027-01-10",
+      "registration_deadline": "2026-12-15",
+      "registration_status": "Deadline advertised in future; live acceptance not tested",
+      "college_directory_match": null,
+      "publication_status": "pending",
+      "pending_reasons": [
+        "Standalone hackathon title and exact competition dates unconfirmed",
+        "College directory identity not verified",
+        "No authorized discovery source registered",
+        "No audited idempotent ingestion pathway",
+        "Historical canonical/edition duplicate validation incomplete"
+      ]
+    }
+  ],
+  "updates_to_existing_review": [
+    {
+      "title": "AVISHKAAR Season 4 – National Level Hackathon 2026",
+      "existing_review_pr": 143,
+      "host": "Aditya Institute of Technology and Management, Tekkali",
+      "official_event_url": "https://alumni.adityatekkali.edu.in/newsroom/news/AVISHKAR-SEASON-4-NATIONAL-LEVEL-HACKATHON.dz",
+      "source_published": "2026-11-13",
+      "virtual_round_date": "2026-11-27",
+      "physical_round_dates": "2026-12-24/2026-12-26",
+      "registration_deadline": null,
+      "registration_status": "Unverified",
+      "college_directory_match": null,
+      "publication_status": "pending",
+      "pending_reasons": [
+        "Registration deadline/status unverified",
+        "Institution directory match unverified",
+        "Source permission and audited ingestion not established"
+      ]
+    }
+  ],
+  "excluded": [
+    {
+      "title": "MFSS SUSTAIN-AI 2026",
+      "reason": "Already in production, ID 7"
+    },
+    {
+      "title": "National AgriTech Hackathon 2026",
+      "reason": "Already staged in PR 141"
+    }
+  ],
+  "publication_audit": {
+    "new_publications": 0,
+    "reason": "Fail-closed: missing authorization, identity and audit controls; no production writes performed"
+  },
+  "health": {
+    "render_ready": "Web checker inaccessible, not proof of downtime",
+    "cloudflare_api_ready": "Web checker inaccessible, not proof of downtime",
+    "supabase": "ACTIVE_HEALTHY"
+  }
+}
