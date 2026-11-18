@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "packet_type": "review_only_college_hackathon_discovery",
+  "discovered_at": "2026-11-09T08:30:46+05:30",
+  "collection_method": "Read-only public search and official institution event pages; no automated crawling, form submissions, or participant personal data",
+  "duplicate_check": "Compared exact event titles and source URLs against review packets in draft PRs #113, #114, #115 and develop backend/data listing. Neither candidate matched those packets. Live production database and full institution directory not accessible for deduplication.",
+  "publication_allowed": false,
+  "crawling_permission_verified": false,
+  "restrictions": [
+    "Do not publish without review",
+    "No crawling permission inferred from institution domain",
+    "No participant personal data collected",
+    "No production writes or third-party permission changes"
+  ],
+  "candidates": [
+    {
+      "title": "BPUT Hackathon 2026",
+      "hosting_college": "Biju Patnaik University of Technology",
+      "state": "Odisha",
+      "district": null,
+      "start_date": "2026-11-12",
+      "end_date": "2026-11-13",
+      "registration_deadline": "2026-09-21",
+      "registration_url": "https://hackathon.bput.ac.in/register",
+      "official_source_url": "https://hackathon.bput.ac.in/schedule",
+      "discovered_at": "2026-11-09T08:30:46+05:30",
+      "institution_id": null,
+      "review_status": "pending",
+      "publication_allowed": false,
+      "uncertainty": [
+        "Previously announced August 2026; newly discovered by this run, not newly announced",
+        "Registration closed September 21; upcoming November 12–13 grand finale only",
+        "Official source verifies Raurkela, Odisha; district not separately verified",
+        "University institution ID not checked against private directory",
+        "Registration URL is the official portal, not evidence registrations remain open"
+      ]
+    },
+    {
+      "title": "Lokmanya TechFest 2027 — State Level 24-Hour Hackathon",
+      "hosting_college": "Lokmanya Institute of Management and Computer Application – 581 (Lokmanya Group of Colleges)",
+      "state": "Gujarat",
+      "district": "Ahmedabad",
+      "start_date": "2027-02-01",
+      "end_date": "2027-02-01",
+      "registration_deadline": "2027-01-14",
+      "registration_url": "https://www.lokmanya.ac.in/",
+      "official_source_url": "https://www.lokmanya.ac.in/",
+      "discovered_at": "2026-11-09T08:30:46+05:30",
+      "institution_id": null,
+      "review_status": "pending",
+      "publication_allowed": false,
+      "uncertainty": [
+        "Official group homepage identifies Ahmedabad, Gujarat; hosting institute's precise campus and directory ID require review",
+        "February 1 is grand finale date; earlier competition stages not individually dated",
+        "Registration window January 1–14 2027, not yet open on discovery date",
+        "Direct registration form URL not independently resolved; landing page only",
+        "Sponsor claims on homepage not independently validated"
+      ]
+    }
+  ]
+}
