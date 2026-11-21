@@ -55,3 +55,19 @@ def test_organizer_raw_snapshots_use_the_persistent_collector_directory():
             directory = Settings.from_env().raw_data_dir
         assert directory == Path('/app/collector-data/raw')
         assert any(volume.split(':')[1] == '/app/collector-data' for volume in collector['volumes'])
+
+
+def test_production_workers_run_on_a_schedule_without_a_browser():
+    import yaml
+    root = Path(__file__).resolve().parents[2]
+    services = yaml.safe_load((root / 'docker-compose.production.yml').read_text(encoding='utf-8'))['services']
+    for name in ('collector', 'job-worker'):
+        worker = services[name]
+        assert 'profiles' not in worker and worker['restart'] == 'unless-stopped'
+        assert worker['environment']['DISCOVERY_ENABLED'] == 'true'
+        assert worker['environment']['COLLECTOR_RAW_DATA_DIR'] == '/app/collector-data/raw'
+        assert any(volume.split(':')[1] == '/app/collector-data' for volume in worker['volumes'])
+        assert worker['healthcheck']['test'][0] == 'CMD'
+    assert 'while true' in services['job-worker']['command'][-1]
+    assert services['job-worker']['environment']['INGESTION_INTERVAL_SECONDS'] == '${INGESTION_INTERVAL_SECONDS:-3600}'
+    assert services['backend']['environment']['WORKER_FRESHNESS_REQUIRED'] == 'true'
