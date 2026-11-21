@@ -55,6 +55,8 @@ app.include_router(dataset_import_router)
 app.include_router(personalized_router)
 from app.api.routes.institutions import router as institutions_router
 app.include_router(institutions_router)
+from app.api.routes.analytics import router as analytics_router
+app.include_router(analytics_router)
 # Versioned API routes
 app.include_router(
     api_router,
