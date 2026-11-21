@@ -5,6 +5,7 @@ import { useAuth } from './context/AuthContext';
 import { api, safeEventUrl } from './services/apiClient';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import ForgotPassword from './pages/auth/ForgotPassword';
 import { CompanyLogo } from './demo/CompanyLogo';
 import './index.css';
 import './App.css';
@@ -147,11 +148,39 @@ function EventDetails({ saved, toggle }) {
 
 function Bookmarks({ saved, toggle }) {
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState('hackathons');
   const resource = useResource(useCallback(signal => user ? api.saved(signal).then(rows => rows.filter(row => saved.includes(row.id))) : Promise.resolve([]), [user, saved]));
   return <section><h1>Saved events</h1><p>Saved to your account. Enable email reminders in Preferences.</p>
-    {!user && <Link to="/login">Sign in to view saved events</Link>}<Feedback resource={resource} />
-    {user && resource.data?.length === 0 && <p>No saved events yet.</p>}
-    <div className="platform-grid">{resource.data?.map(event => <EventCard key={event.id} event={event} saved toggle={toggle} />)}</div></section>;
+    {!user && <Link to="/login">Sign in to view saved events</Link>}
+    <div className="platform-tabs" role="tablist" aria-label="Saved items categories">
+      <button role="tab" id="saved-tab-hackathons" className="platform-tab" aria-selected={activeTab === 'hackathons'} aria-controls="saved-panel-hackathons" onClick={() => setActiveTab('hackathons')}>
+        Hackathons {user && resource.data ? <span className="platform-tab-badge">{resource.data.length}</span> : null}
+      </button>
+      <button role="tab" id="saved-tab-jobs" className="platform-tab" aria-selected={activeTab === 'jobs'} aria-controls="saved-panel-jobs" onClick={() => setActiveTab('jobs')}>
+        Jobs/Internships
+      </button>
+      <button role="tab" id="saved-tab-investors" className="platform-tab" aria-selected={activeTab === 'investors'} aria-controls="saved-panel-investors" onClick={() => setActiveTab('investors')}>
+        Investors
+      </button>
+    </div>
+    <div role="tabpanel" id="saved-panel-hackathons" aria-labelledby="saved-tab-hackathons" hidden={activeTab !== 'hackathons'}>
+      <Feedback resource={resource} />
+      {user && resource.data?.length === 0 && <p>No saved events yet.</p>}
+      <div className="platform-grid">{resource.data?.map(event => <EventCard key={event.id} event={event} saved toggle={toggle} />)}</div>
+    </div>
+    <div role="tabpanel" id="saved-panel-jobs" aria-labelledby="saved-tab-jobs" hidden={activeTab !== 'jobs'}>
+      <div className="platform-empty">
+        <h2>No saved jobs or internships yet</h2>
+        <p className="platform-muted">Explore upcoming tech opportunities, software engineering fellowships, and startup internships to save them here.</p>
+      </div>
+    </div>
+    <div role="tabpanel" id="saved-panel-investors" aria-labelledby="saved-tab-investors" hidden={activeTab !== 'investors'}>
+      <div className="platform-empty">
+        <h2>No saved investors yet</h2>
+        <p className="platform-muted">Bookmark venture capital funds, angel networks, and accelerator scouts to track your fundraising pipeline.</p>
+      </div>
+    </div>
+  </section>;
 }
 
 function DiscoveryCoverage() {
@@ -232,6 +261,7 @@ function Personalization() {
 
 function Preferences() {
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState('hackathons');
   const [message, setMessage] = useState(null);
   const notifications = useResource(useCallback(signal => user ? api.notifications(signal) : Promise.resolve([]), [user]));
   async function markRead(id) {
@@ -240,12 +270,67 @@ function Preferences() {
   }
   return <section><h1>Preferences and notifications</h1><p>Manage your interests and in-app notifications.</p>
     {!user && <Link to="/login">Sign in to manage preferences</Link>}
-    {user && <Personalization key={user.id} />}
-    {message && <p role="status">{message}</p>}
-    {user && <><h2>Account notifications</h2><Feedback resource={notifications} />
-      {notifications.data?.length === 0 && <p>No account notifications yet.</p>}
-      {notifications.data?.map(row => <article className="platform-card" key={row.id}><h3>{row.title}</h3><p>{row.message}</p>
-        {row.is_read ? <small>Read</small> : <button onClick={() => markRead(row.id)}>Mark as read</button>}</article>)}</>}
+    {user && <>
+      <div className="platform-tabs" role="tablist" aria-label="Preference categories">
+        <button role="tab" id="pref-tab-hackathons" className="platform-tab" aria-selected={activeTab === 'hackathons'} aria-controls="pref-panel-hackathons" onClick={() => setActiveTab('hackathons')}>
+          Hackathons
+        </button>
+        <button role="tab" id="pref-tab-jobs" className="platform-tab" aria-selected={activeTab === 'jobs'} aria-controls="pref-panel-jobs" onClick={() => setActiveTab('jobs')}>
+          Jobs/Internships
+        </button>
+        <button role="tab" id="pref-tab-investors" className="platform-tab" aria-selected={activeTab === 'investors'} aria-controls="pref-panel-investors" onClick={() => setActiveTab('investors')}>
+          Investors
+        </button>
+      </div>
+      <div role="tabpanel" id="pref-panel-hackathons" aria-labelledby="pref-tab-hackathons" hidden={activeTab !== 'hackathons'}>
+        <Personalization key={user.id} />
+        {message && <p role="status">{message}</p>}
+        <h2>Account notifications</h2><Feedback resource={notifications} />
+        {notifications.data?.length === 0 && <p>No account notifications yet.</p>}
+        {notifications.data?.map(row => <article className="platform-card" key={row.id}><h3>{row.title}</h3><p>{row.message}</p>
+          {row.is_read ? <small>Read</small> : <button onClick={() => markRead(row.id)}>Mark as read</button>}</article>)}
+      </div>
+      <div role="tabpanel" id="pref-panel-jobs" aria-labelledby="pref-tab-jobs" hidden={activeTab !== 'jobs'}>
+        <section aria-label="Job preferences">
+          <h2>Career & Internship Preferences</h2>
+          <p className="platform-muted">Configure role types, preferred locations, and hiring alerts for engineering jobs and internships.</p>
+          <form onSubmit={e => { e.preventDefault(); setMessage('Job preferences saved.'); }}>
+            <label>Target roles (e.g. Frontend, Fullstack, AI/ML)<input placeholder="Frontend Developer, ML Engineer" /></label>
+            <label>Work arrangement
+              <select defaultValue="all">
+                <option value="all">Any (Remote, Hybrid, In-Person)</option>
+                <option value="remote">Remote only</option>
+                <option value="hybrid">Hybrid</option>
+                <option value="in_person">In-person</option>
+              </select>
+            </label>
+            <label><input type="checkbox" defaultChecked />In-app new internship alerts</label>
+            <label><input type="checkbox" />Weekly summary email</label>
+            <button type="submit">Save job preferences</button>
+          </form>
+        </section>
+      </div>
+      <div role="tabpanel" id="pref-panel-investors" aria-labelledby="pref-tab-investors" hidden={activeTab !== 'investors'}>
+        <section aria-label="Investor preferences">
+          <h2>Investor & Fundraising Preferences</h2>
+          <p className="platform-muted">Specify startup stage and funding interests to receive curated investor matchmaking opportunities.</p>
+          <form onSubmit={e => { e.preventDefault(); setMessage('Investor preferences saved.'); }}>
+            <label>Stage focus
+              <select defaultValue="seed">
+                <option value="pre_seed">Pre-Seed / Idea</option>
+                <option value="seed">Seed</option>
+                <option value="series_a">Series A</option>
+                <option value="growth">Growth</option>
+              </select>
+            </label>
+            <label>Sector focus (comma separated)<input placeholder="AI/ML, Developer Tools, FinTech" /></label>
+            <label><input type="checkbox" defaultChecked />Notify when verified investors view demo submissions</label>
+            <label><input type="checkbox" />Pitch event reminders</label>
+            <button type="submit">Save investor preferences</button>
+          </form>
+        </section>
+      </div>
+    </>}
   </section>;
 }
 
@@ -286,6 +371,6 @@ export default function LivePlatform() {
       <nav id="platform-navigation" className={mobileOpen ? 'open' : ''} aria-label="Main navigation"><NavLink to="/explore">Explore</NavLink><NavLink to="/universities">Universities</NavLink><NavLink to="/saved">Saved events</NavLink><NavLink to="/predictions">Predictions</NavLink><NavLink to="/notifications">Preferences</NavLink><NavLink to="/admin">Admin</NavLink></nav>
       <div className="platform-session"><button aria-label={`Use ${dark ? 'light' : 'dark'} theme`} onClick={() => setDark(value => !value)}>{dark ? <Sun size={18} /> : <Moon size={18} />}</button>{user ? <><span>{user.name}</span><button disabled={isLoading} onClick={logout}>Sign out</button></> : <Link to="/login">Sign in</Link>}</div>
     </header><main id="platform-content" tabIndex={-1}><div className="platform-container">{authError && <p role="alert">{authError}</p>}{bookmarkError && <p role="alert">{bookmarkError}</p>}
-      <Routes><Route path="/" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/home" element={<Navigate replace to="/" />} /><Route path="/demo/*" element={<Navigate replace to="/explore" />} /><Route path="/explore" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/event/:id" element={<EventDetails saved={saved} toggle={toggle} />} /><Route path="/universities" element={<InstitutionDirectory />} /><Route path="/saved" element={<Bookmarks saved={saved} toggle={toggle} />} /><Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} /><Route path="/forgot-password" element={<section><h1>Password reset unavailable</h1><p>The current backend does not support password reset. No email has been sent.</p><Link to="/login">Return to sign in</Link></section>} /><Route path="/admin/*" element={<Admin />} /><Route path="/notifications" element={<Preferences key={user?.id || "guest"} />} /><Route path="/predictions" element={<Predictions />} /><Route path="*" element={<section><h1>Page not found</h1><Link to="/">Return to events</Link></section>} /></Routes>
+      <Routes><Route path="/" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/home" element={<Navigate replace to="/" />} /><Route path="/demo/*" element={<Navigate replace to="/explore" />} /><Route path="/explore" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/event/:id" element={<EventDetails saved={saved} toggle={toggle} />} /><Route path="/universities" element={<InstitutionDirectory />} /><Route path="/saved" element={<Bookmarks saved={saved} toggle={toggle} />} /><Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} /><Route path="/forgot-password" element={<ForgotPassword />} /><Route path="/admin/*" element={<Admin />} /><Route path="/notifications" element={<Preferences key={user?.id || "guest"} />} /><Route path="/predictions" element={<Predictions />} /><Route path="*" element={<section><h1>Page not found</h1><Link to="/">Return to events</Link></section>} /></Routes>
     </div></main><footer className="platform-footer">Hackathon Radar · Backend catalog and saved events.</footer></div>;
 }
