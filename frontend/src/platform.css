@@ -296,7 +296,8 @@
   border-color: var(--border-hover);
 }
 
-.platform-menu {
+.platform .platform-menu,
+.platform button.platform-menu {
   display: none;
 }
 
@@ -874,7 +875,8 @@
   .platform-session span {
     display: none;
   }
-  .platform-menu {
+  .platform .platform-menu,
+  .platform button.platform-menu {
     display: block;
     background: transparent;
     border: 1px solid var(--border);
