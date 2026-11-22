@@ -302,9 +302,44 @@ def evaluate(observations, review, now, cutoffs=None, *, neural=False, actual_ou
             'Insufficient temporal evidence or calibration' if not folds else 'Research evaluation requires independent approval']}
 
 
+def readiness_gates(report):
+    """Gates that must pass before any forecast could be published. Fails closed.
+
+    Only reports status and blocking reasons. It can never enable publication:
+    that needs a human approval flag evaluate() does not set.
+    """
+    reasons = []
+    dataset, folds = report['dataset'], report['folds']
+    if dataset['editions'] == 0:
+        reasons.append('no_valid_editions')
+    if dataset['recurring_series'] < 1:
+        reasons.append('no_recurring_series')
+    if not folds:
+        reasons.append('zero_valid_folds')
+    metrics = report['metrics'].values()
+    if folds and max((m['coverage_test_editions'] for m in metrics), default=0) < MIN_COVERAGE_TEST:
+        reasons.append(f'fewer_than_{MIN_COVERAGE_TEST}_calibrated_test_folds')
+    if folds and not any(m['date_window_coverage'] is not None and m['date_window_coverage'] >= TARGET_COVERAGE
+                         for m in report['metrics'].values()):
+        reasons.append('coverage_below_target_or_unmeasured')
+    if not report.get('actual_occurrence_labels'):
+        reasons.append('no_confirmed_actual_occurrence_labels')
+    if not report.get('publication_approved'):
+        reasons.append('no_human_publication_approval')
+    return {'status': 'research_only' if folds else 'insufficient_history',
+        'valid_folds': len(folds), 'editions': dataset['editions'],
+        'recurring_series': dataset['recurring_series'],
+        'min_calibration_samples_needed': MIN_CALIBRATION,
+        'public_predictions_allowed': False, 'blocking_reasons': reasons}
+
+
 def readiness(report):
+    gates = readiness_gates(report)
     return {'status': report['status'], 'reviewed_editions': report['dataset']['editions'],
         'recurring_series': report['dataset']['recurring_series'],
         'evaluated_editions': report['metrics']['existing_mean_gap']['held_out_editions'],
+        'valid_folds': gates['valid_folds'], 'min_calibration_samples': MIN_CALIBRATION,
+        'min_coverage_test_editions': MIN_COVERAGE_TEST, 'target_coverage': TARGET_COVERAGE,
+        'blocking_reasons': gates['blocking_reasons'],
         'public_predictions_enabled': False,
         'reason': 'More dated historical evidence and evaluated outcomes are required before forecasts can be published.'}

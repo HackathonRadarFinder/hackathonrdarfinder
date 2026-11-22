@@ -9,7 +9,7 @@ import sys
 import numpy as np
 import pandas as pd
 
-from ai.temporal_prediction import MIN_CALIBRATION, MIN_COVERAGE_TEST, TARGET_COVERAGE, timestamp
+from ai.temporal_prediction import readiness_gates, timestamp
 
 
 HORIZON_DAYS = 90
@@ -286,34 +286,8 @@ def ingest_historical_editions(rows, now=None):
 
 
 def prediction_readiness(report):
-    """Honest readiness verdict from temporal_prediction.evaluate(). Fails closed.
-
-    It can only say insufficient_history or research_only. Public forecasts stay
-    off: turning them on needs a publication-approval flag evaluate() never sets.
-    """
-    reasons = []
-    dataset, folds = report["dataset"], report["folds"]
-    if dataset["editions"] == 0:
-        reasons.append("no_valid_editions")
-    if dataset["recurring_series"] < 1:
-        reasons.append("no_recurring_series")
-    if not folds:
-        reasons.append("zero_valid_folds")
-    metrics = report["metrics"].values()
-    if folds and max((m["coverage_test_editions"] for m in metrics), default=0) < MIN_COVERAGE_TEST:
-        reasons.append(f"fewer_than_{MIN_COVERAGE_TEST}_calibrated_test_folds")
-    if folds and not any(m["date_window_coverage"] is not None and m["date_window_coverage"] >= TARGET_COVERAGE
-                         for m in report["metrics"].values()):
-        reasons.append("coverage_below_target_or_unmeasured")
-    if not report.get("actual_occurrence_labels"):
-        reasons.append("no_confirmed_actual_occurrence_labels")
-    if not report.get("publication_approved"):
-        reasons.append("no_human_publication_approval")
-    return {"status": "research_only" if folds else "insufficient_history",
-            "valid_folds": len(folds), "editions": dataset["editions"],
-            "recurring_series": dataset["recurring_series"],
-            "min_calibration_samples_needed": MIN_CALIBRATION,
-            "public_predictions_allowed": False, "blocking_reasons": reasons}
+    """Honest readiness verdict from temporal_prediction.evaluate(); fails closed (see readiness_gates)."""
+    return readiness_gates(report)
 
 
 def intake_main(input_path, out_dir):
