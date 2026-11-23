@@ -1,8 +1,15 @@
+from collections import Counter
+from datetime import datetime, timezone
+import hashlib
+import json
 from pathlib import Path
 import math
+import sys
 
 import numpy as np
 import pandas as pd
+
+from ai.temporal_prediction import readiness_gates, timestamp
 
 
 HORIZON_DAYS = 90
@@ -204,6 +211,102 @@ def build_training_dataset(source_path):
     return result
 
 
+# --- INT-05: historical editions with real, evidenced observation times --------
+# A historical edition is admitted only if it proves WHEN its dates were first
+# publicly visible (e.g. a web-archive capture). Bad rows are rejected and
+# counted with a reason; they are never repaired, defaulted to today, or backdated.
+
+OBSERVATION_METHODS = {"web_archive_capture", "official_announcement_page", "organizer_press_release"}
+REQUIRED_INTAKE_FIELDS = (
+    "title", "organization", "source", "url", "family", "edition", "start_date",
+    "observed_at", "observation_method", "evidence_url",
+)
+INTAKE_ADAPTER_VERSION = "history-intake-v1"
+INTAKE_SOURCE_ID = "reviewed-history-intake"
+
+
+def validate_historical_row(row, now):
+    """Return a rejection reason, or None if the row is acceptable."""
+    if not isinstance(row, dict):
+        return "not_an_object"
+    for field in REQUIRED_INTAKE_FIELDS:
+        value = row.get(field)
+        if value is None or (isinstance(value, str) and not value.strip()):
+            return f"missing_{field}"
+    if row["observation_method"] not in OBSERVATION_METHODS:
+        return "unknown_observation_method"
+    if not str(row["evidence_url"]).startswith("https://"):
+        return "evidence_url_not_https"
+    try:
+        started = timestamp(row["start_date"])
+        observed = timestamp(row["observed_at"])
+        collected = timestamp(row["collected_at"]) if row.get("collected_at") else observed
+    except (ValueError, TypeError):
+        return "unparseable_date"
+    if str(started.year) != str(row["edition"]):
+        return "edition_year_mismatch"
+    if observed > now or collected > now:
+        return "observation_in_future"
+    if observed < collected:
+        return "observed_before_collection"
+    if observed >= started:
+        return "observed_after_event_start"
+    return None
+
+
+def ingest_historical_editions(rows, now=None):
+    """Split rows into accepted observations, review entries and counted rejections."""
+    now = timestamp(now) if now is not None else datetime.now(timezone.utc).replace(tzinfo=None)
+    observations, review, rejected, seen = [], {}, [], set()
+    for row in rows:
+        reason = validate_historical_row(row, now)
+        if reason is None and row["url"] in seen:
+            reason = "duplicate_url"
+        if reason:
+            rejected.append({"url": row.get("url") if isinstance(row, dict) else None, "reason": reason})
+            continue
+        seen.add(row["url"])
+        observed = timestamp(row["observed_at"])
+        snapshot = {"title": row["title"], "organization": row["organization"], "source": row["source"],
+                    "url": row["url"], "start_date": timestamp(row["start_date"]).isoformat(),
+                    "scraped_at": observed.isoformat()}
+        # Hash of this intake record, not of the archived page itself.
+        digest = hashlib.sha256(json.dumps(
+            {**snapshot, "evidence_url": row["evidence_url"], "method": row["observation_method"]},
+            sort_keys=True).encode()).hexdigest()
+        observations.append({
+            "event_id": row["url"], "observed_at": observed.isoformat(), "checksum": digest,
+            "checksum_kind": "intake_record_hash", "document_url": row["evidence_url"],
+            "source_id": INTAKE_SOURCE_ID, "adapter_version": INTAKE_ADAPTER_VERSION,
+            "observation_method": row["observation_method"], "snapshot": snapshot})
+        review[row["url"]] = {"family": row["family"], "organization": row["organization"],
+                              "edition": str(row["edition"]), "title": row["title"], "source": row["source"]}
+    return {"observations": observations, "review_entries": review, "rejected": rejected,
+            "rejection_counts": dict(Counter(item["reason"] for item in rejected))}
+
+
+def prediction_readiness(report):
+    """Honest readiness verdict from temporal_prediction.evaluate(); fails closed (see readiness_gates)."""
+    return readiness_gates(report)
+
+
+def intake_main(input_path, out_dir):
+    rows = json.loads(Path(input_path).read_text(encoding="utf-8"))
+    if not isinstance(rows, list):
+        raise SystemExit("Input must be a JSON list of editions")
+    result = ingest_historical_editions(rows)
+    out = Path(out_dir)
+    out.mkdir(parents=True, exist_ok=False)  # never overwrite earlier output
+    (out / "observations.json").write_text(
+        json.dumps({"schema_version": 1, "observations": result["observations"]}, indent=2), encoding="utf-8")
+    (out / "families-fragment.json").write_text(json.dumps(result["review_entries"], indent=2), encoding="utf-8")
+    (out / "rejected.json").write_text(json.dumps(result["rejected"], indent=2), encoding="utf-8")
+    print(json.dumps({"accepted": len(result["observations"]), "rejected": len(result["rejected"]),
+                      "rejection_counts": result["rejection_counts"]}))
+    print("Next: review families-fragment.json, merge it into data/prediction-families-v1.json,")
+    print("then run workers.evaluate_predictions with --input observations.json")
+
+
 def main():
     if not SOURCE_PATH.exists():
         print(
@@ -257,4 +360,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) == 4 and sys.argv[1] == "intake":
+        intake_main(sys.argv[2], sys.argv[3])
+    else:
+        main()
