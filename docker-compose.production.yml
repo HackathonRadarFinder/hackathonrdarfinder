@@ -29,7 +29,10 @@ services:
     image: ${BACKEND_IMAGE:-hackathonradarfinder-backend:local}
     restart: unless-stopped
     env_file: ["${PRODUCTION_ENV_FILE:-.env.production}"]
-    environment: *application
+    environment:
+      <<: *application
+      WORKER_FRESHNESS_REQUIRED: "true"
+      WORKER_MAX_AGE_SECONDS: ${WORKER_MAX_AGE_SECONDS:-7200}
     depends_on:
       migrate: {condition: service_completed_successfully}
     security_opt: [no-new-privileges:true]
@@ -64,6 +67,34 @@ services:
       timeout: 5s
       retries: 4
       start_period: 60s
+    security_opt: [no-new-privileges:true]
+  job-worker:
+    # Hourly ingestion pass. Runs on its own schedule with no browser or API
+    # request involved; the shared discovery advisory lock prevents overlap
+    # with the collector service.
+    image: ${BACKEND_IMAGE:-hackathonradarfinder-backend:local}
+    restart: unless-stopped
+    env_file: ["${PRODUCTION_ENV_FILE:-.env.production}"]
+    environment:
+      <<: *application
+      DISCOVERY_ENABLED: "true"
+      COLLECTOR_SNAPSHOT_DIR: /app/collector-data
+      COLLECTOR_RAW_DATA_DIR: /app/collector-data/raw
+      COLLECTOR_HEARTBEAT: /tmp/job-worker-heartbeat
+      INGESTION_INTERVAL_SECONDS: ${INGESTION_INTERVAL_SECONDS:-3600}
+    command:
+      - sh
+      - -c
+      - 'while true; do python -m workers.discovery --allow-live || echo "ingestion pass failed; retrying next interval"; sleep "$$INGESTION_INTERVAL_SECONDS"; done'
+    volumes: [production_snapshots:/app/collector-data]
+    depends_on:
+      backend: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import os,pathlib,time; assert time.time()-float(pathlib.Path('/tmp/job-worker-heartbeat').read_text())<2*int(os.environ['INGESTION_INTERVAL_SECONDS'])+300"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
     security_opt: [no-new-privileges:true]
   in-app-reminders:
     profiles: [workers]
