@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, text
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
@@ -34,5 +35,15 @@ class Hackathon(Base):
     institution_id = Column(Integer, ForeignKey("institutions.id"), index=True)
     registration_url = Column(String(500))
     eligibility = Column(Text)
+
+    # --- BAC-02: v4.1 fields (all nullable/defaulted so old rows keep working) ---
+    category = Column(String(30), nullable=True, index=True)
+    tags = Column(JSONB, nullable=False, server_default=text("'[]'::jsonb"))
+    timezone = Column(String(64), nullable=True)
+    country = Column(String(100), nullable=True, index=True)
+    city = Column(String(100), nullable=True, index=True)
+    fees = Column(String(100), nullable=True)
+    lifecycle_state = Column(String(20), nullable=False, server_default="upcoming", index=True)
+    contacts = Column(JSONB, nullable=True)
 
     organization = relationship("Organization")

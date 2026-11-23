@@ -25,6 +25,14 @@ def get_events(
     start_from and start_to are inclusive UTC calendar dates (YYYY-MM-DD).
     Events with an unknown start date are excluded only when a date filter is supplied.
     A page beyond the matching results returns an empty data list.
+
+    v4.1 filters (BAC-02):
+    category (college, corporate, community, government, startup),
+    tag (events that include this technology tag),
+    lifecycle_state (upcoming, active, completed, cancelled),
+    country and city (case-insensitive exact match).
+    Missing organizer contact fields (name, designation, email, phone) are
+    returned as "unknown" and are never guessed.
     """
     if any(value is not None for value in query.model_dump().values()):
         return {"message": "Events fetched successfully", **event_service.get_event_page(db, query)}
@@ -49,4 +57,4 @@ def update_event(event_id: DatabaseId, event: EventCreate, db: Session = Depends
 @router.delete("/{event_id}", response_model=MessageResponse, dependencies=[Depends(require_admin)])
 def delete_event(event_id: DatabaseId, db: Session = Depends(get_db)):
     event_service.delete_event(db, event_id)
-    return {"message": "Event deleted successfully"}
+    return {"message": "Event deleted successfully"}    

@@ -1,5 +1,5 @@
 """Validated event writes with the legacy organization-name input retained."""
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timezone as dt_timezone
 import re
 from typing import Annotated, Literal
 
@@ -9,6 +9,27 @@ from app.schemas.hackathon import HackathonCreate
 from app.schemas.responses import DataResponse
 
 RequiredName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)]
+
+# --- BAC-02: v4.1 types -----------------------------------------------------
+CategoryType = Literal["college", "corporate", "community", "government", "startup"]
+LifecycleState = Literal["upcoming", "active", "completed", "cancelled"]
+Tag = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=50)]
+
+
+class OrganizerContact(BaseModel):
+    """Missing contact details are returned as "unknown", never guessed."""
+
+    name: str = "unknown"
+    designation: str = "unknown"
+    email: str = "unknown"
+    phone: str = "unknown"
+
+    @field_validator("name", "designation", "email", "phone", mode="before")
+    @classmethod
+    def fill_unknown(cls, value):
+        if value is None or (isinstance(value, str) and not value.strip()):
+            return "unknown"
+        return value.strip() if isinstance(value, str) else value
 
 
 class EventCreate(HackathonCreate):
@@ -24,6 +45,15 @@ class EventCreate(HackathonCreate):
     prize: str | None = Field(default=None, max_length=255)
     source: str | None = Field(default=None, max_length=100)
     url: HttpUrl | None = Field(default=None, max_length=500)
+    # --- BAC-02: v4.1 fields (all optional so old clients keep working) ---
+    category: CategoryType | None = None
+    tags: list[Tag] = Field(default_factory=list, max_length=20)
+    timezone: str | None = Field(default=None, max_length=64)
+    country: str | None = Field(default=None, max_length=100)
+    city: str | None = Field(default=None, max_length=100)
+    fees: str | None = Field(default=None, max_length=100)
+    lifecycle_state: LifecycleState = "upcoming"
+    contacts: OrganizerContact = Field(default_factory=OrganizerContact)
 
     @field_validator("start_date", "end_date", "registration_deadline", "scraped_at")
     @classmethod
@@ -32,7 +62,7 @@ class EventCreate(HackathonCreate):
         # offset-bearing inputs instead of silently discarding their offset.
         if value is not None and value.tzinfo is not None:
             try:
-                return value.astimezone(timezone.utc).replace(tzinfo=None)
+                return value.astimezone(dt_timezone.utc).replace(tzinfo=None)
             except OverflowError:
                 raise ValueError("Datetime is outside supported UTC range") from None
         return value
@@ -81,6 +111,25 @@ class EventResponse(BaseModel):
     source: str | None = None
     scraped_at: datetime | None = None
     acquisition: ProviderAttribution | None = None
+    # --- BAC-02: v4.1 fields ---
+    category: str | None = None
+    tags: list[str] = Field(default_factory=list)
+    timezone: str | None = None
+    country: str | None = None
+    city: str | None = None
+    fees: str | None = None
+    lifecycle_state: str | None = None
+    contacts: OrganizerContact = Field(default_factory=OrganizerContact)
+
+    @field_validator("tags", mode="before")
+    @classmethod
+    def tags_default(cls, value):
+        return [] if value is None else value
+
+    @field_validator("contacts", mode="before")
+    @classmethod
+    def contacts_default(cls, value):
+        return {} if value is None else value
 
 
 class EventListParams(BaseModel):
@@ -104,6 +153,12 @@ class EventListParams(BaseModel):
     deadline_to: date | None = None
     start_from: date | None = Field(default=None, description="Inclusive event start date in UTC (YYYY-MM-DD).")
     start_to: date | None = Field(default=None, description="Inclusive event start date in UTC (YYYY-MM-DD).")
+    # --- BAC-02: v4.1 filters ---
+    category: CategoryType | None = None
+    tag: Tag | None = None
+    lifecycle_state: LifecycleState | None = None
+    country: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)] | None = None
+    city: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)] | None = None
 
     @field_validator("start_from", "start_to", "deadline_from", "deadline_to", mode="before")
     @classmethod
