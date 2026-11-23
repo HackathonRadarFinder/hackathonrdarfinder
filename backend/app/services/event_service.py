@@ -1,7 +1,8 @@
+import json
 from datetime import datetime, time, timezone
 
 from fastapi import HTTPException
-from sqlalchemy import func, select, or_
+from sqlalchemy import Text, cast, func, select, or_
 from sqlalchemy.orm import Session
 
 from app.models.core import EventVersion, Prediction, SavedItem
@@ -88,8 +89,10 @@ def get_event_page(db: Session, query: EventListParams):
     if query.lifecycle_state is not None:
         filters.append(Hackathon.lifecycle_state == query.lifecycle_state)
     if query.tag is not None:
-        # `tags` is a JSONB list column; contains() matches events that include this tag.
-        filters.append(Hackathon.tags.contains([query.tag]))
+        # `tags` is a JSON list. Match the quoted tag inside its JSON text, which works
+        # on both PostgreSQL and SQLite and matches whole tags only (case-insensitive).
+        filters.append(cast(Hackathon.tags, Text).icontains(
+            json.dumps(query.tag, ensure_ascii=False), autoescape=True))
     if query.country is not None:
         filters.append(func.lower(Hackathon.country) == query.country.lower())
     if query.city is not None:

@@ -14,9 +14,18 @@ def event_digest(event):
     # Optional India directory fields did not exist in the original review contract.
     # Preserve old attestations only when these facts remain absent; any supplied
     # value is hashed and therefore requires a fresh factual review.
-    for field in ('state', 'institution_id', 'registration_url', 'eligibility'):
+    for field in ('state', 'institution_id', 'registration_url', 'eligibility',
+                  'category', 'timezone', 'country', 'city', 'fees'):
         if values.get(field) is None:
             values.pop(field, None)
+    # v4.1 (BAC-02) fields with defaults: only hash them when a real value is supplied,
+    # so existing review attestations stay valid.
+    if not values.get('tags'):
+        values.pop('tags', None)
+    if values.get('lifecycle_state') == 'upcoming':
+        values.pop('lifecycle_state', None)
+    if all(v == 'unknown' for v in (values.get('contacts') or {}).values()):
+        values.pop('contacts', None)
     if values.get('url'):
         values['url'] = clean_url(values['url'])
     return hashlib.sha256(json.dumps(values, sort_keys=True, ensure_ascii=False,

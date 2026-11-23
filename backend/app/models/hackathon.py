@@ -1,7 +1,10 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, text
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, JSON, text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from app.core.database import Base
+
+# JSONB on PostgreSQL, plain JSON elsewhere (the test-suite runs on SQLite).
+JsonType = JSON().with_variant(JSONB(), "postgresql")
 
 
 class Hackathon(Base):
@@ -38,12 +41,12 @@ class Hackathon(Base):
 
     # --- BAC-02: v4.1 fields (all nullable/defaulted so old rows keep working) ---
     category = Column(String(30), nullable=True, index=True)
-    tags = Column(JSONB, nullable=False, server_default=text("'[]'::jsonb"))
+    tags = Column(JsonType, nullable=False, server_default=text("'[]'"))
     timezone = Column(String(64), nullable=True)
     country = Column(String(100), nullable=True, index=True)
     city = Column(String(100), nullable=True, index=True)
     fees = Column(String(100), nullable=True)
     lifecycle_state = Column(String(20), nullable=False, server_default="upcoming", index=True)
-    contacts = Column(JSONB, nullable=True)
+    contacts = Column(JsonType, nullable=True)
 
     organization = relationship("Organization")
