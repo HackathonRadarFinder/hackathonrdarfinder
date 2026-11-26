@@ -45,10 +45,118 @@ function date(value, dayOnly = false) {
     : parsed.toLocaleString(undefined, { timeZoneName: 'short' });
 }
 
+
+const EVENT_CATEGORIES = ['college', 'corporate', 'community', 'government', 'startup', 'other'];
+const LIFECYCLE_STATES = ['upcoming', 'active', 'completed', 'cancelled'];
+
+function normalizeList(value) {
+  if (Array.isArray(value)) return value.flat(Infinity);
+  if (typeof value === 'string') return value.split(/[,;|\n]/);
+  return value == null ? [] : [value];
+}
+function normalizeLabel(value) {
+  if (value && typeof value === 'object') {
+    value = value.name ?? value.label ?? value.slug ?? value.value ?? '';
+  }
+  return String(value ?? '').trim();
+}
+function eventCategories(event) {
+  const values = normalizeList(event.categories ?? event.category ?? event.event_category);
+  return [...new Set(values.map(value => normalizeLabel(value).toLowerCase()).filter(value => EVENT_CATEGORIES.includes(value)))];
+}
+function eventTags(event) {
+  const values = normalizeList(event.tags ?? event.technology_tags ?? event.technologies);
+  const tags = values.map(normalizeLabel).filter(Boolean);
+  return [...new Map(tags.map(tag => [tag.toLowerCase(), tag])).values()];
+}
+function parseEventDate(value) {
+  if (!value) return null;
+  const timestamp = new Date(value).getTime();
+  return Number.isFinite(timestamp) ? timestamp : null;
+}
+function lifecycleState(event) {
+  const explicit = String(event.lifecycle_state ?? event.lifecycle_status ?? event.lifecycle ?? event.event_status ?? '').trim().toLowerCase();
+  if (LIFECYCLE_STATES.includes(explicit)) return explicit;
+  if (['canceled', 'cancelled'].includes(explicit) || event.cancelled === true || event.is_cancelled === true) return 'cancelled';
+  const now = Date.now();
+  const start = parseEventDate(event.start_date);
+  const end = parseEventDate(event.end_date);
+  if (end !== null && end < now) return 'completed';
+  if (start !== null && start <= now && (end === null || end >= now)) return 'active';
+  if (start !== null && start > now) return 'upcoming';
+  return 'unknown';
+}
+function readEventPath(event, path) {
+  return path.split('.').reduce((value, key) => value?.[key], event);
+}
+function contactField(event, paths) {
+  for (const path of paths) {
+    const raw = readEventPath(event, path);
+    const value = typeof raw === 'string' ? raw.trim()
+      : raw && typeof raw === 'object' ? String(raw.value ?? raw.email ?? raw.phone ?? raw.name ?? '').trim() : '';
+    if (value) {
+      const source = raw && typeof raw === 'object'
+        ? (raw.source_url ?? raw.evidence_url ?? raw.url ?? raw.source ?? '') : '';
+      return { value, source: String(source ?? '').trim() };
+    }
+  }
+  return { value: '', source: '' };
+}
+function contactProvenance(event, paths) {
+  const provenance = event?.contact_provenance ?? event?.field_provenance ?? event?.provenance ?? event?.contact_sources ?? {};
+  for (const path of paths) {
+    const fieldKey = path.split('.').at(-1);
+    const item = provenance?.[path] ?? provenance?.[fieldKey]
+      ?? event?.[`${fieldKey}_provenance`] ?? event?.[`${fieldKey}_source`];
+    if (typeof item === 'string' && item.trim()) return item.trim();
+    if (item && typeof item === 'object') {
+      const source = item.source_url ?? item.evidence_url ?? item.url ?? item.source ?? item.method ?? item.label ?? '';
+      if (typeof source === 'string' && source.trim()) return source.trim();
+    }
+  }
+  return '';
+}
+function EventTaxonomy({ event }) {
+  const categories = eventCategories(event);
+  const tags = eventTags(event);
+  const status = lifecycleState(event);
+  return <div className="event-taxonomy" aria-label="Event category, tags and lifecycle">
+    <div className="event-badges">
+      {(categories.length ? categories : ['unknown']).map(category => <span className={`event-category${category === 'unknown' ? ' event-category-unknown' : ''}`} key={category}>{category}</span>)}
+      <span className={`event-lifecycle event-lifecycle-${status}`}>{status}</span>
+    </div>
+    {tags.length > 0 && <div className="event-tags" aria-label="Event tags">{tags.map(tag => <span key={tag.toLowerCase()}>{tag.startsWith('#') ? tag : `#${tag}`}</span>)}</div>}
+  </div>;
+}
+function OrganizerContacts({ event }) {
+  const fields = [
+    { label: 'Contact person', paths: ['contact_person_name', 'organizer_contact_name', 'contact_name', 'organizer_contact.person_name', 'organizer_contact.name'] },
+    { label: 'Designation', paths: ['contact_person_designation', 'organizer_contact_designation', 'contact_designation', 'organizer_contact.designation'] },
+    { label: 'Public business email', paths: ['public_business_email', 'organizer_public_email', 'organizer_email', 'contact_email', 'public_email', 'organizer_contact.public_business_email', 'organizer_contact.email'] },
+    { label: 'Public business phone', paths: ['public_business_phone', 'organizer_public_phone', 'organizer_phone', 'contact_phone', 'public_phone', 'organizer_contact.public_business_phone', 'organizer_contact.phone'] }
+  ];
+  return <section className="organizer-contact" aria-label="Organizer public contact details">
+    <h2>Organizer public contact</h2>
+    <p className="platform-muted">Only publicly provided professional contact details are displayed.</p>
+    {fields.map(field => {
+      const contact = contactField(event, field.paths);
+      const provenance = contactProvenance(event, field.paths);
+      const source = contact.source || provenance;
+      const safeSource = safeEventUrl(source);
+      return <div className="organizer-contact-row" key={field.label}>
+        <strong>{field.label}</strong>
+        <span>{contact.value || 'Unknown'}</span>
+        <small>Source: {safeSource ? <a href={safeSource} target="_blank" rel="noopener noreferrer">View source</a> : source || 'Unknown'}</small>
+      </div>;
+    })}
+  </section>;
+}
+
 export function EventCard({ event, saved, toggle, organization }) {
   return <article className="platform-card">
     <div className="platform-card-top"><span className="platform-org"><CompanyLogo name={organization || ''} size={24} />{organization || 'Organization not provided'}</span>
       <button aria-label={`${saved ? 'Remove' : 'Add'} saved event for ${event.title}`} aria-pressed={saved} onClick={() => toggle(event.id)}><Bookmark size={18} fill={saved ? 'currentColor' : 'none'} /></button></div>
+    <EventTaxonomy event={event} />
     <h2><Link to={`/event/${event.id}`}>{event.title}</Link></h2>
     <p>{event.description || 'No description provided.'}</p>
     <dl><div><dt>Mode</dt><dd>{event.mode || 'Not provided'}</dd></div><div><dt>Location</dt><dd>{event.location || 'Not provided'}</dd></div>
@@ -61,15 +169,30 @@ export function EventCard({ event, saved, toggle, organization }) {
 }
 
 function Explore({ saved, toggle }) {
-  const [filters, setFilters] = useState({ q: '', location: '', mode: '', organizationId: '', state: '', institutionId: new URLSearchParams(window.location.search).get('institutionId') || '', startFrom: '', startTo: '', deadlineFrom: '', deadlineTo: '', period: '', sort: 'id', pageSize: 12 });
+  const [filters, setFilters] = useState({ q: '', location: '', mode: '', organizationId: '', state: '', institutionId: new URLSearchParams(window.location.search).get('institutionId') || '', startFrom: '', startTo: '', deadlineFrom: '', deadlineTo: '', period: '', category: '', lifecycle: '', technologyTags: [], sort: 'id', pageSize: 12 });
   const [draft, setDraft] = useState(filters);
   const [collegeSearch, setCollegeSearch] = useState('');
+  const [technologyTagSearch, setTechnologyTagSearch] = useState('');
+  const [technologyTagOpen, setTechnologyTagOpen] = useState(false);
   const [page, setPage] = useState(1);
   const organizations = useResource(api.organizations);
   const resource = useResource(useCallback(signal => api.events({ ...filters, page }, signal), [filters, page]));
   const institutions = useResource(useCallback(signal => api.institutions(draft.state, collegeSearch, signal), [draft.state, collegeSearch]));
   const names = new Map((organizations.data || []).map(org => [org.id, org.name]));
   const result = resource.data;
+  const availableTechnologyTags = [...new Map(
+    (result?.data || []).flatMap(eventTags).map(tag => [tag.toLowerCase(), tag])
+  ).values()].sort((a, b) => a.localeCompare(b));
+  const filteredTechnologyTags = availableTechnologyTags.filter(tag =>
+    tag.toLowerCase().includes(technologyTagSearch.trim().toLowerCase())
+  );
+  const visibleEvents = result?.data.filter(event =>
+    (!filters.category || eventCategories(event).includes(filters.category)) &&
+    (!filters.lifecycle || lifecycleState(event) === filters.lifecycle) &&
+    (!filters.technologyTags.length || eventTags(event).some(tag =>
+      filters.technologyTags.some(selected => selected.toLowerCase() === tag.toLowerCase())
+    ))
+  ) || [];
   return <><section className="platform-hero"><span className="platform-eyebrow">HACKATHON RADAR</span><h1>Find your next<br /><em>building opportunity.</em></h1><p>Explore events from the backend catalog. Clear filters, real dates, and a place to keep your next idea.</p></section>
     <div className="platform-explore"><aside className="platform-filter"><h2>Explore events</h2>
       <form onSubmit={event => { event.preventDefault(); setPage(1); setFilters({ ...draft }); }}>
@@ -87,14 +210,83 @@ function Explore({ saved, toggle }) {
         <label>Registration deadline on or after (UTC)<input type="date" value={draft.deadlineFrom} max={draft.deadlineTo || undefined} onChange={event => setDraft({ ...draft, deadlineFrom: event.target.value })} /></label>
         <label>Registration deadline on or before (UTC)<input type="date" value={draft.deadlineTo} min={draft.deadlineFrom || undefined} onChange={event => setDraft({ ...draft, deadlineTo: event.target.value })} /></label>
         <label>Event period<select value={draft.period} onChange={event => setDraft({ ...draft, period: event.target.value })}><option value="">All dates</option><option value="upcoming">Upcoming or ongoing</option><option value="past">Past</option></select></label>
+        <label>Event category<select value={draft.category} onChange={event => setDraft({ ...draft, category: event.target.value })}><option value="">All categories</option>{EVENT_CATEGORIES.map(category => <option key={category} value={category}>{category[0].toUpperCase() + category.slice(1)}</option>)}</select></label>
+        <label>Lifecycle status<select value={draft.lifecycle} onChange={event => setDraft({ ...draft, lifecycle: event.target.value })}><option value="">All lifecycle states</option>{LIFECYCLE_STATES.map(status => <option key={status} value={status}>{status[0].toUpperCase() + status.slice(1)}</option>)}</select></label>
+        <div className="technology-tag-filter"><span>Technology tags</span>
+          <div className="technology-tag-picker" style={{ position: 'relative' }}>
+            <button
+              type="button"
+              className="technology-tag-toggle"
+              aria-expanded={technologyTagOpen}
+              aria-controls="technology-tag-options"
+              onClick={() => {
+                setTechnologyTagOpen(open => !open);
+                setTechnologyTagSearch('');
+              }}
+              style={{ width: '100%', textAlign: 'left' }}
+            >
+              {draft.technologyTags.length
+                ? `${draft.technologyTags.length} technology selected`
+                : 'All technologies'}
+              <span style={{ float: 'right' }}>{technologyTagOpen ? '\u25B2' : '\u25BC'}</span>
+            </button>
+            {technologyTagOpen && (
+              <div
+                className="technology-tag-options"
+                id="technology-tag-options"
+                style={{ padding: '10px', border: '1px solid currentColor', borderRadius: '6px', marginTop: '6px' }}
+              >
+                <input
+                  type="search"
+                  aria-label="Search technology tags"
+                  placeholder="Search technologies..."
+                  value={technologyTagSearch}
+                  onChange={event => setTechnologyTagSearch(event.target.value)}
+                  style={{ width: '100%', marginBottom: '8px' }}
+                />
+                <div style={{ maxHeight: '220px', overflowY: 'auto' }}>
+                  {filteredTechnologyTags.map(tag => (
+                    <label key={tag.toLowerCase()} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '5px 0' }}>
+                      <input
+                        type="checkbox"
+                        checked={draft.technologyTags.some(selected => selected.toLowerCase() === tag.toLowerCase())}
+                        onChange={event => {
+                          const selected = event.target.checked
+                            ? [...draft.technologyTags, tag]
+                            : draft.technologyTags.filter(item => item.toLowerCase() !== tag.toLowerCase());
+                          setDraft({ ...draft, technologyTags: selected });
+                        }}
+                      />
+                      <span>{tag}</span>
+                    </label>
+                  ))}
+                  {filteredTechnologyTags.length === 0 && (
+                    <p role="status">No matching technologies found.</p>
+                  )}
+                </div>
+                {draft.technologyTags.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setDraft({ ...draft, technologyTags: [] })}
+                  >
+                    Clear selections
+                  </button>
+                )}
+                <button type="button" onClick={() => setTechnologyTagOpen(false)}>
+                  Done
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
         <label>Sort events<select value={draft.sort} onChange={event => setDraft({ ...draft, sort: event.target.value })}><option value="id">Catalog order</option><option value="title">Title</option><option value="start_date">Start date</option><option value="deadline">Registration deadline</option></select></label>
         {organizations.error && <p role="alert">Organization filters could not load. <button type="button" onClick={organizations.retry}>Retry</button></p>}
         <label>Events per page<select value={draft.pageSize} onChange={event => setDraft({ ...draft, pageSize: Number(event.target.value) })}><option>12</option><option>24</option><option>48</option></select></label>
-        <button className="platform-primary" type="submit">Apply filters</button><button type="button" onClick={() => { const cleared = { q: '', location: '', mode: '', organizationId: '', state: '', institutionId: '', startFrom: '', startTo: '', deadlineFrom: '', deadlineTo: '', period: '', sort: 'id', pageSize: 12 }; setCollegeSearch(''); setDraft(cleared); setFilters(cleared); setPage(1); }}>Reset</button>
+        <button className="platform-primary" type="submit">Apply filters</button><button type="button" onClick={() => { const cleared = { q: '', location: '', mode: '', organizationId: '', state: '', institutionId: '', startFrom: '', startTo: '', deadlineFrom: '', deadlineTo: '', period: '', category: '', lifecycle: '', technologyTags: [], sort: 'id', pageSize: 12 }; setCollegeSearch(''); setTechnologyTagSearch(''); setTechnologyTagOpen(false); setDraft(cleared); setFilters(cleared); setPage(1); }}>Reset</button>
       </form><p className="platform-muted">The catalog includes historical events. Use start dates to narrow upcoming results. Dates filter by UTC calendar day; events without start dates are excluded when filtering. Choose a sort order above; dates without published values appear last.</p>
     </aside><section aria-label="Event results" aria-busy={resource.loading}><Feedback resource={resource} />
-      {result && <><p role="status">{result.total} events · page {result.page}</p>{!result.data.length && <div className="platform-empty"><h2>No events found</h2><p>Try another location or reset your filters.</p></div>}
-        <div className="platform-grid">{result.data.map(event => <EventCard key={event.id} event={event} saved={saved.includes(event.id)} toggle={toggle} organization={names.get(event.organization_id)} />)}</div>
+      {result && <><p role="status">{visibleEvents.length} matching events on this page · {result.total} catalog events before category, lifecycle and technology-tag filters · page {result.page}</p>{!visibleEvents.length && <div className="platform-empty"><h2>No events found</h2><p>Try another location or reset your filters.</p></div>}
+        <div className="platform-grid">{visibleEvents.map(event => <EventCard key={event.id} event={event} saved={saved.includes(event.id)} toggle={toggle} organization={names.get(event.organization_id)} />)}</div>
         <nav className="platform-pagination" aria-label="Event pages"><button disabled={page <= 1 || resource.loading} onClick={() => setPage(value => value - 1)}>Previous</button><span>Page {page} of {Math.max(1, Math.ceil(result.total / result.page_size))}</span><button disabled={page * result.page_size >= result.total || resource.loading} onClick={() => setPage(value => value + 1)}>Next</button></nav></>}
     </section></div></>;
 }
@@ -127,8 +319,9 @@ function EventDetails({ saved, toggle }) {
   const link = safeEventUrl(event?.url);
   const registrationLink = safeEventUrl(event?.registration_url);
   return <section className="platform-detail"><Link to="/explore">← Back to events</Link><Feedback resource={resource} />{event && <>
-    <span className="platform-eyebrow">EVENT DETAILS</span><h1>{event.title}</h1><p className="platform-description">{event.description || 'No description provided.'}</p>
+    <span className="platform-eyebrow">EVENT DETAILS</span><h1>{event.title}</h1><EventTaxonomy event={event} /><p className="platform-description">{event.description || 'No description provided.'}</p>
     <dl><div><dt>Starts</dt><dd>{date(event.start_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Ends</dt><dd>{date(event.end_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Registration deadline</dt><dd>{date(event.registration_deadline)}</dd></div><div><dt>Location / mode</dt><dd>{event.location || 'Not provided'} / {event.mode || 'Not provided'}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div><div><dt>Source</dt><dd>{event.source || 'Not provided'}</dd></div><div><dt>State</dt><dd>{event.state || 'Not provided'}</dd></div><div><dt>Eligibility</dt><dd>{event.eligibility || 'Not provided'}</dd></div></dl>
+    <OrganizerContacts event={event} />
     <small>Last source update: {date(event.scraped_at)}</small>
     <ProviderCredit acquisition={event.acquisition} />
     <button onClick={() => toggle(event.id)} aria-pressed={saved.includes(event.id)}>{saved.includes(event.id) ? 'Remove saved event' : 'Save to account'}</button>
@@ -182,6 +375,7 @@ function Bookmarks({ saved, toggle }) {
     </div>
   </section>;
 }
+
 
 function DiscoveryCoverage() {
   const resource = useResource(api.discoveryCoverage);
@@ -372,5 +566,5 @@ export default function LivePlatform() {
       <div className="platform-session"><button aria-label={`Use ${dark ? 'light' : 'dark'} theme`} onClick={() => setDark(value => !value)}>{dark ? <Sun size={18} /> : <Moon size={18} />}</button>{user ? <><span>{user.name}</span><button disabled={isLoading} onClick={logout}>Sign out</button></> : <Link to="/login">Sign in</Link>}</div>
     </header><main id="platform-content" tabIndex={-1}><div className="platform-container">{authError && <p role="alert">{authError}</p>}{bookmarkError && <p role="alert">{bookmarkError}</p>}
       <Routes><Route path="/" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/home" element={<Navigate replace to="/" />} /><Route path="/demo/*" element={<Navigate replace to="/explore" />} /><Route path="/explore" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/event/:id" element={<EventDetails saved={saved} toggle={toggle} />} /><Route path="/universities" element={<InstitutionDirectory />} /><Route path="/saved" element={<Bookmarks saved={saved} toggle={toggle} />} /><Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} /><Route path="/forgot-password" element={<ForgotPassword />} /><Route path="/admin/*" element={<Admin />} /><Route path="/notifications" element={<Preferences key={user?.id || "guest"} />} /><Route path="/predictions" element={<Predictions />} /><Route path="*" element={<section><h1>Page not found</h1><Link to="/">Return to events</Link></section>} /></Routes>
-    </div></main><footer className="platform-footer">Hackathon Radar · Backend catalog and saved events.</footer></div>;
+    </div></main><footer className="platform-footer">Hackathon Radar · Backend catalog and saved events. </footer></div>;
 }
