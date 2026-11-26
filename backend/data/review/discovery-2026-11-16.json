@@ -1,0 +1,84 @@
+{
+  "observed_at": "2026-11-16T08:45:51+05:30",
+  "production_snapshot": {
+    "hackathons": 9,
+    "institutions": 54522,
+    "discovery_sources": 0,
+    "discovery_runs": 0,
+    "discovery_evidence": 0,
+    "discovery_announcements": 0
+  },
+  "publication_attempted": false,
+  "publication_count": 0,
+  "notes": "Review-only; official public announcements were read via search, not unauthorized scraping. No production mutations, source-policy changes, or participant data.",
+  "candidates": [
+    {
+      "title": "AVISHKAAR – Season IV",
+      "host": "Aditya Institute of Technology and Management (AITAM), Tekkali, Andhra Pradesh",
+      "official_event_url": "https://www.adityatekkali.edu.in/index.php",
+      "official_evidence_urls": [
+        "https://www.adityatekkali.edu.in/index.php",
+        "https://mail.adityatekkali.edu.in/"
+      ],
+      "known_dates": "December 2026 (month only); 24-hour virtual and 48-hour physical hackathon; exact dates unverified",
+      "registration_deadline": null,
+      "registration_status": "Unknown — no current verified registration link/deadline",
+      "institution_match": null,
+      "source_permission_verified": false,
+      "duplicate_check": "No exact title among nine production hackathons; historical/canonical checks incomplete",
+      "status": "pending",
+      "pending_reasons": [
+        "Exact dates and deadline not verified",
+        "Direct edition-specific official event page and registration link missing",
+        "Institution AISHE identity not verified",
+        "Source authorization and audited publication ingestion unavailable"
+      ]
+    },
+    {
+      "title": "iTech Ideathon 2026–27",
+      "host": "PSG Institute of Technology and Applied Research, Coimbatore, Tamil Nadu",
+      "official_event_url": "https://sdc.psgitech.ac.in/itechideathon27/",
+      "official_evidence_urls": [
+        "https://sdc.psgitech.ac.in/itechideathon27/",
+        "https://sdc.psgitech.ac.in/itechideathon27/timeline.php"
+      ],
+      "known_dates": "Two-day innovation hackathon scheduled January 2027 (exact days unspecified); program runs October 2026–May 2027",
+      "registration_deadline": null,
+      "registration_status": "Official website offers student account/team registration; current submission window and deadline not verified",
+      "institution_match": {
+        "identifier": "AISHE:C-50605",
+        "name": "PSG INSTITUTE OF TECHNOLOGY AND APPLIED RESEARCH",
+        "state": "Tamil Nadu",
+        "district": "Coimbatore",
+        "note": "Name/location match in production directory; event linkage through institution-operated sdc.psgitech.ac.in domain"
+      },
+      "source_permission_verified": false,
+      "duplicate_check": "No exact title among nine production hackathons; historical/canonical checks incomplete",
+      "status": "pending",
+      "pending_reasons": [
+        "Exact hackathon dates and registration deadline missing",
+        "Confirm whether institute-internal ideathon is in scope for public portal",
+        "Source publication authorization not recorded",
+        "Audited publication ingestion and historical dedup not operational"
+      ]
+    }
+  ],
+  "excluded": [
+    {
+      "title": "BPUT Hackathon 2026",
+      "reason": "Already in production (id 1) and ended 13 November 2026"
+    },
+    {
+      "title": "SSETC Hackathon 2026",
+      "reason": "Already in production (id 4)"
+    },
+    {
+      "title": "National AgriTech Hackathon 2026",
+      "reason": "Already staged in PR #141; avoid duplicate review PR"
+    }
+  ],
+  "health": {
+    "render_ready": "unconfirmed: web checker could not access endpoint",
+    "cloudflare_api_ready": "unconfirmed: web checker could not access endpoint"
+  }
+}
