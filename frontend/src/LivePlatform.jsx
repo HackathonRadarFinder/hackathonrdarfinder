@@ -18,6 +18,7 @@ import { useAuth } from './context/AuthContext';
 import { api, safeEventUrl } from './services/apiClient';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import ForgotPassword from './pages/auth/ForgotPassword';
 import { CompanyLogo } from './demo/CompanyLogo';
 import './index.css';
 import './App.css';
@@ -554,6 +555,34 @@ export default function LivePlatform() {
   const isExploreRoute = location.pathname === '/' || location.pathname === '/explore';
 
   useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined'
+      || CSS.supports('(animation-timeline: view()) and (animation-range: entry)')
+      || !window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+      return undefined;
+    }
+    const root = document.querySelector('.platform');
+    const nodes = document.querySelectorAll('.radar-reveal');
+    if (!root || !nodes.length) return undefined;
+    root.classList.add('radar-io-ready');
+    const observer = new IntersectionObserver(
+      entries => {
+        for (const entry of entries) {
+          if (entry.isIntersecting || entry.boundingClientRect.top < window.innerHeight) {
+            entry.target.classList.add('is-revealed');
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -32px 0px' },
+    );
+    nodes.forEach(node => observer.observe(node));
+    return () => {
+      observer.disconnect();
+      root.classList.remove('radar-io-ready');
+    };
+  }, [location.pathname]);
+
+  useEffect(() => {
     if (!user) return;
     const controller = new AbortController();
     api.saved(controller.signal).then(rows => {
@@ -577,10 +606,10 @@ export default function LivePlatform() {
   return <div className={`platform ${dark ? 'platform-dark' : ''}`}><a className="platform-skip" href="#platform-content">Skip to content</a>
     <header className="platform-header"><Link className="platform-brand" to="/"><BrainCircuit size={26} />Hackathon <strong>Radar</strong></Link>
       <button className="platform-menu" aria-expanded={mobileOpen} aria-controls="platform-navigation" onClick={() => setMobileOpenKey(mobileOpen ? null : location.key)}>Menu</button>
-      <nav id="platform-navigation" className={mobileOpen ? 'open' : ''} aria-label="Main navigation"><NavLink to="/explore">Explore</NavLink><NavLink to="/universities">Universities</NavLink><NavLink to="/saved">Saved events</NavLink><NavLink to="/predictions">Predictions</NavLink><NavLink to="/notifications">Preferences</NavLink><NavLink to="/admin">Admin</NavLink><a href="/demo/">Design demo</a></nav>
-      <div className="platform-session"><button aria-label={`Use ${dark ? 'light' : 'dark'} theme`} onClick={() => setDark(value => !value)}>{dark ? <Sun size={18} /> : <Moon size={18} />}</button>{user ? <><span>{user.name}</span><button disabled={isLoading} onClick={logout}>Sign out</button></> : <Link to="/login">Sign in</Link>}</div>
+      <nav id="platform-navigation" className={mobileOpen ? 'open' : ''} aria-label="Main navigation"><NavLink to="/explore">Explore</NavLink><NavLink to="/universities">Universities</NavLink><NavLink to="/saved">Saved events</NavLink><NavLink to="/predictions">Predictions</NavLink><NavLink to="/notifications">Preferences</NavLink><NavLink to="/admin">Admin</NavLink></nav>
+      <div className="platform-session"><button type="button" aria-label={`Use ${dark ? 'light' : 'dark'} theme`} onClick={() => setDark(value => !value)}>{dark ? <Sun size={18} /> : <Moon size={18} />}</button>{user ? <><span>{user.name}</span><button type="button" disabled={isLoading} onClick={logout}>Sign out</button></> : <Link to="/login">Sign in</Link>}</div>
     </header><main id="platform-content" tabIndex={-1}><div className={`platform-container ${isExploreRoute ? 'platform-container--bleed' : ''}`}>{(authError || bookmarkError) && <div className={isExploreRoute ? 'radar-inner' : undefined}>{authError && <p role="alert">{authError}</p>}{bookmarkError && <p role="alert">{bookmarkError}</p>}</div>}
-      <Routes><Route path="/" element={<Explore saved={saved} toggle={toggle} user={user} />} /><Route path="/home" element={<Navigate replace to="/" />} /><Route path="/explore" element={<Explore saved={saved} toggle={toggle} user={user} />} /><Route path="/event/:id" element={<EventDetails saved={saved} toggle={toggle} />} /><Route path="/universities" element={<InstitutionDirectory />} /><Route path="/saved" element={<Bookmarks saved={saved} toggle={toggle} />} /><Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} /><Route path="/forgot-password" element={<section><h1>Password reset unavailable</h1><p>The current backend does not support password reset. No email has been sent.</p><Link to="/login">Return to sign in</Link></section>} /><Route path="/admin/*" element={<Admin />} /><Route path="/notifications" element={<Preferences key={user?.id || "guest"} />} /><Route path="/predictions" element={<Predictions />} /><Route path="*" element={<section><h1>Page not found</h1><Link to="/">Return to events</Link></section>} /></Routes>
+      <Routes><Route path="/" element={<Explore saved={saved} toggle={toggle} user={user} />} /><Route path="/home" element={<Navigate replace to="/" />} /><Route path="/demo/*" element={<Navigate replace to="/explore" />} /><Route path="/explore" element={<Explore saved={saved} toggle={toggle} user={user} />} /><Route path="/event/:id" element={<EventDetails saved={saved} toggle={toggle} />} /><Route path="/universities" element={<InstitutionDirectory />} /><Route path="/saved" element={<Bookmarks saved={saved} toggle={toggle} />} /><Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} /><Route path="/forgot-password" element={<ForgotPassword />} /><Route path="/admin/*" element={<Admin />} /><Route path="/notifications" element={<Preferences key={user?.id || "guest"} />} /><Route path="/predictions" element={<Predictions />} /><Route path="*" element={<section><h1>Page not found</h1><Link to="/">Return to events</Link></section>} /></Routes>
     </div></main>
     <footer className="platform-footer">
       <div className="radar-footer-inner">
@@ -608,7 +637,7 @@ export default function LivePlatform() {
           <h4>Operations</h4>
           <ul>
             <li><Link to="/admin">Administration</Link></li>
-            <li><a href="/demo/">Fictional design demo</a></li>
+            <li><Link to="/forgot-password">Reset password</Link></li>
           </ul>
         </div>
       </div>

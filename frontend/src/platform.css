@@ -262,10 +262,25 @@
         from { box-shadow: 0 0 0 rgba(0, 0, 0, 0); }
         to { box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06); }
       }
+      @keyframes header-scroll-progress {
+        from { transform: scaleX(0); }
+        to { transform: scaleX(1); }
+      }
       .platform-header {
         animation: header-elevate auto linear both;
         animation-timeline: scroll(block root);
         animation-range: 0px 120px;
+      }
+      .platform-header::after {
+        content: "";
+        position: absolute;
+        inset: auto 0 0;
+        height: 2px;
+        background: var(--accent-text);
+        transform-origin: 0 50%;
+        animation: header-scroll-progress auto linear both;
+        animation-timeline: scroll(block root);
+        pointer-events: none;
       }
     }
   }
@@ -1026,15 +1041,97 @@
     margin-bottom: 2rem;
   }
 
-  /* ─── 10. Scroll-Driven & Reveal Animations ───────────────────────────────── */
+  /* ─── 10. Scroll-Driven & Apple-Style Reveal Animations ───────────────────── */
+  .platform-cta-primary svg,
+  .radar-feature-card a svg {
+    transition: transform 0.22s var(--ease-smooth);
+  }
+
+  @media (hover: hover) {
+    .platform-cta-primary:hover svg,
+    .radar-feature-card a:hover svg {
+      transform: translateX(4px);
+    }
+
+    .radar-step-card,
+    .radar-trust-card {
+      transition: transform 0.28s var(--ease-smooth), box-shadow 0.28s var(--ease-smooth), border-color 0.2s ease;
+    }
+
+    .radar-step-card:hover,
+    .radar-trust-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--border-hover);
+    }
+  }
+
+  .platform a.platform-cta-primary:active,
+  .platform a.platform-cta-secondary:active,
+  .platform button.platform-primary:active,
+  .platform button.radar-chip:active {
+    transform: scale(0.98);
+  }
+
   @media (prefers-reduced-motion: no-preference) {
+    @keyframes radar-hero-rise {
+      from {
+        opacity: 0.01;
+        transform: translateY(22px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes radar-stage-enter {
+      from {
+        opacity: 0.01;
+        transform: translateY(28px) scale(0.975);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .platform-hero-copy .platform-eyebrow {
+      animation: radar-hero-rise 0.65s var(--ease-smooth) 0ms both;
+    }
+
+    .platform-hero-copy h1 {
+      animation: radar-hero-rise 0.75s var(--ease-smooth) 80ms both;
+    }
+
+    .platform-hero-copy > p {
+      animation: radar-hero-rise 0.75s var(--ease-smooth) 160ms both;
+    }
+
+    .radar-hero-actions {
+      animation: radar-hero-rise 0.75s var(--ease-smooth) 240ms both;
+    }
+
+    .radar-hero-stage {
+      animation: radar-stage-enter 0.9s var(--ease-smooth) 300ms both;
+    }
+
     @supports ((animation-timeline: view()) and (animation-range: entry)) {
       @keyframes radar-entry-reveal {
         entry 0% {
-          transform: translateY(18px);
+          transform: translateY(24px) scale(0.985);
         }
         entry 100% {
-          transform: translateY(0);
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes radar-stage-parallax {
+        exit 0% {
+          transform: translateY(0) scale(1);
+        }
+        exit 100% {
+          transform: translateY(-14px) scale(0.975);
         }
       }
 
@@ -1043,12 +1140,18 @@
         animation-timeline: view();
         animation-range: entry 0% entry 35%;
       }
+
+      .radar-device-frame {
+        animation: radar-stage-parallax linear both;
+        animation-timeline: view();
+        animation-range: exit 0% exit 90%;
+      }
     }
 
     @supports not ((animation-timeline: view()) and (animation-range: entry)) {
       .radar-io-ready .radar-reveal {
-        transform: translateY(16px);
-        transition: transform 0.55s var(--ease-smooth);
+        transform: translateY(18px);
+        transition: transform 0.65s var(--ease-smooth);
       }
 
       .radar-io-ready .radar-reveal.is-revealed {
