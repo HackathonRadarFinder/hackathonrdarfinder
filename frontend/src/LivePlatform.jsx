@@ -1,10 +1,24 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, NavLink, Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom';
-import { Bookmark, BrainCircuit, ExternalLink, Moon, Sun } from 'lucide-react';
+import {
+  ArrowRight,
+  Bookmark,
+  BrainCircuit,
+  CheckCircle2,
+  Compass,
+  ExternalLink,
+  GraduationCap,
+  History,
+  Moon,
+  ShieldCheck,
+  Sparkles,
+  Sun,
+} from 'lucide-react';
 import { useAuth } from './context/AuthContext';
 import { api, safeEventUrl } from './services/apiClient';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import ForgotPassword from './pages/auth/ForgotPassword';
 import { CompanyLogo } from './demo/CompanyLogo';
 import './index.css';
 import './App.css';
@@ -59,8 +73,57 @@ export function EventCard({ event, saved, toggle, organization }) {
   </article>;
 }
 
-function Explore({ saved, toggle }) {
-  const [filters, setFilters] = useState({ q: '', location: '', mode: '', organizationId: '', state: '', institutionId: new URLSearchParams(window.location.search).get('institutionId') || '', startFrom: '', startTo: '', deadlineFrom: '', deadlineTo: '', period: '', sort: 'id', pageSize: 12 });
+function RadarHeroArtwork() {
+  return (
+    <svg
+      className="radar-svg-artwork"
+      viewBox="0 0 240 240"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <circle cx="120" cy="120" r="102" stroke="currentColor" strokeOpacity="0.14" strokeWidth="1.5" />
+      <circle cx="120" cy="120" r="72" stroke="currentColor" strokeOpacity="0.2" strokeWidth="1.5" strokeDasharray="4 4" />
+      <circle cx="120" cy="120" r="42" stroke="currentColor" strokeOpacity="0.28" strokeWidth="1.5" />
+      <line x1="18" y1="120" x2="222" y2="120" stroke="currentColor" strokeOpacity="0.12" strokeWidth="1" />
+      <line x1="120" y1="18" x2="120" y2="222" stroke="currentColor" strokeOpacity="0.12" strokeWidth="1" />
+      <g className="radar-sweep-ring">
+        <path d="M120 120 L120 18 A102 102 0 0 1 208 69 Z" fill="url(#radarSweepGrad)" />
+        <line x1="120" y1="120" x2="120" y2="18" stroke="#0066cc" strokeWidth="2" strokeLinecap="round" />
+      </g>
+      <circle cx="156" cy="76" r="5" fill="#0066cc" />
+      <circle cx="156" cy="76" r="10" stroke="#0066cc" strokeOpacity="0.3" strokeWidth="1.5" />
+      <circle cx="78" cy="148" r="4" fill="#4da6ff" />
+      <circle cx="168" cy="156" r="4" fill="#0066cc" />
+      <circle cx="120" cy="120" r="6" fill="#0066cc" />
+      <defs>
+        <linearGradient id="radarSweepGrad" x1="120" y1="18" x2="208" y2="120" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#0066cc" stopOpacity="0.28" />
+          <stop offset="1" stopColor="#0066cc" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+const initialExploreFilters = () => ({
+  q: '',
+  location: '',
+  mode: '',
+  organizationId: '',
+  state: '',
+  institutionId: new URLSearchParams(window.location.search).get('institutionId') || '',
+  startFrom: '',
+  startTo: '',
+  deadlineFrom: '',
+  deadlineTo: '',
+  period: '',
+  sort: 'id',
+  pageSize: 12,
+});
+
+function Explore({ saved, toggle, user }) {
+  const [filters, setFilters] = useState(initialExploreFilters);
   const [draft, setDraft] = useState(filters);
   const [collegeSearch, setCollegeSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -69,33 +132,269 @@ function Explore({ saved, toggle }) {
   const institutions = useResource(useCallback(signal => api.institutions(draft.state, collegeSearch, signal), [draft.state, collegeSearch]));
   const names = new Map((organizations.data || []).map(org => [org.id, org.name]));
   const result = resource.data;
-  return <><section className="platform-hero"><span className="platform-eyebrow">HACKATHON RADAR</span><h1>Find your next<br /><em>building opportunity.</em></h1><p>Explore events from the backend catalog. Clear filters, real dates, and a place to keep your next idea.</p><a href="/demo/">Explore the design demo →</a></section>
-    <div className="platform-explore"><aside className="platform-filter"><h2>Explore events</h2>
-      <form onSubmit={event => { event.preventDefault(); setPage(1); setFilters({ ...draft }); }}>
-        <label>Search<input value={draft.q} maxLength={255} placeholder="Title or description" onChange={event => setDraft({ ...draft, q: event.target.value })} /></label>
-        <label>Location<input value={draft.location} maxLength={255} placeholder="City or region" onChange={event => setDraft({ ...draft, location: event.target.value })} /></label>
-        <label>State or union territory<input value={draft.state} maxLength={100} placeholder="Exact state name" onChange={event => setDraft({ ...draft, state: event.target.value, institutionId: '' })} /></label>
-        <label>Find a college<input value={collegeSearch} maxLength={255} placeholder="Institution name" onChange={event => { setCollegeSearch(event.target.value); setDraft({ ...draft, institutionId: '' }); }} /></label>
-        <label>College or university<select value={draft.institutionId} onChange={event => setDraft({ ...draft, institutionId: event.target.value })}><option value="">All institutions</option>{(institutions.data?.data || []).map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select></label>
-        {institutions.data?.total > 100 && <p>Showing the first 100 institutions. Narrow by state and institution name.</p>}
-        {institutions.error && <p role="alert">Institution directory could not load. <button type="button" onClick={institutions.retry}>Retry directory</button></p>}
-        <label>Mode<input value={draft.mode} maxLength={50} placeholder="Online, hybrid…" onChange={event => setDraft({ ...draft, mode: event.target.value })} /></label>
-        <label>Organization<select value={draft.organizationId} onChange={event => setDraft({ ...draft, organizationId: event.target.value })}><option value="">All organizations</option>{(organizations.data || []).map(org => <option key={org.id} value={org.id}>{org.name}</option>)}</select></label>
-        <label>Starts on or after (UTC)<input type="date" value={draft.startFrom} max={draft.startTo || undefined} onChange={event => setDraft({ ...draft, startFrom: event.target.value })} /></label>
-        <label>Starts on or before (UTC)<input type="date" value={draft.startTo} min={draft.startFrom || undefined} onChange={event => setDraft({ ...draft, startTo: event.target.value })} /></label>
-        <label>Registration deadline on or after (UTC)<input type="date" value={draft.deadlineFrom} max={draft.deadlineTo || undefined} onChange={event => setDraft({ ...draft, deadlineFrom: event.target.value })} /></label>
-        <label>Registration deadline on or before (UTC)<input type="date" value={draft.deadlineTo} min={draft.deadlineFrom || undefined} onChange={event => setDraft({ ...draft, deadlineTo: event.target.value })} /></label>
-        <label>Event period<select value={draft.period} onChange={event => setDraft({ ...draft, period: event.target.value })}><option value="">All dates</option><option value="upcoming">Upcoming or ongoing</option><option value="past">Past</option></select></label>
-        <label>Sort events<select value={draft.sort} onChange={event => setDraft({ ...draft, sort: event.target.value })}><option value="id">Catalog order</option><option value="title">Title</option><option value="start_date">Start date</option><option value="deadline">Registration deadline</option></select></label>
-        {organizations.error && <p role="alert">Organization filters could not load. <button type="button" onClick={organizations.retry}>Retry</button></p>}
-        <label>Events per page<select value={draft.pageSize} onChange={event => setDraft({ ...draft, pageSize: Number(event.target.value) })}><option>12</option><option>24</option><option>48</option></select></label>
-        <button className="platform-primary" type="submit">Apply filters</button><button type="button" onClick={() => { const cleared = { q: '', location: '', mode: '', organizationId: '', state: '', institutionId: '', startFrom: '', startTo: '', deadlineFrom: '', deadlineTo: '', period: '', sort: 'id', pageSize: 12 }; setCollegeSearch(''); setDraft(cleared); setFilters(cleared); setPage(1); }}>Reset</button>
-      </form><p className="platform-muted">The catalog includes historical events. Use start dates to narrow upcoming results. Dates filter by UTC calendar day; events without start dates are excluded when filtering. Choose a sort order above; dates without published values appear last.</p>
-    </aside><section aria-label="Event results" aria-busy={resource.loading}><Feedback resource={resource} />
-      {result && <><p role="status">{result.total} events · page {result.page}</p>{!result.data.length && <div className="platform-empty"><h2>No events found</h2><p>Try another location or reset your filters.</p></div>}
-        <div className="platform-grid">{result.data.map(event => <EventCard key={event.id} event={event} saved={saved.includes(event.id)} toggle={toggle} organization={names.get(event.organization_id)} />)}</div>
-        <nav className="platform-pagination" aria-label="Event pages"><button disabled={page <= 1 || resource.loading} onClick={() => setPage(value => value - 1)}>Previous</button><span>Page {page} of {Math.max(1, Math.ceil(result.total / result.page_size))}</span><button disabled={page * result.page_size >= result.total || resource.loading} onClick={() => setPage(value => value + 1)}>Next</button></nav></>}
-    </section></div></>;
+
+  function applyQuickFilter(patch) {
+    const next = { ...draft, ...patch };
+    setDraft(next);
+    setFilters(next);
+    setPage(1);
+  }
+
+  return <>
+    <section className="platform-hero">
+      <div className="radar-inner">
+        <div className="platform-hero-copy">
+          <span className="platform-eyebrow">HACKATHON RADAR</span>
+          <h1>Find Your Next<br /><em>Big Hackathon.</em></h1>
+          <p>Discover verified hackathons, university directories, and calibrated event timelines — with real deadlines and source provenance.</p>
+          <div className="radar-hero-actions">
+            <a className="platform-cta-primary" href="#explore-catalog">Explore Hackathons <ArrowRight size={16} /></a>
+            <Link className="platform-cta-secondary" to="/predictions">View calibrated forecasts</Link>
+          </div>
+        </div>
+
+        <div className="radar-hero-stage">
+          <div className="radar-device-frame">
+            <div className="radar-device-chrome">
+              <div className="radar-chrome-dots" aria-hidden="true">
+                <span /><span /><span />
+              </div>
+              <span>Hackathon Radar · Live Catalog</span>
+              <span>{result ? `${result.total} indexed events` : 'Syncing catalog'}</span>
+            </div>
+            <div className="radar-device-body">
+              <div>
+                <span className="platform-eyebrow">LIVE DISCOVERY PREVIEW</span>
+                <h2>Clarity from first announcement to submission.</h2>
+                <p className="platform-muted">Filter by mode, state, institution, or UTC date window — with source provenance on every listing.</p>
+                {result?.data?.length > 0 && (
+                  <ul className="radar-preview-list" aria-label="Featured live events">
+                    {result.data.slice(0, 3).map(item => (
+                      <li key={item.id}>
+                        <Link to={`/event/${item.id}`}>
+                          <span>{item.title}</span>
+                          <small>{item.mode || 'Mode TBD'} · {item.location || 'Location TBD'}</small>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                <div className="radar-stage-metrics">
+                  <div className="radar-stage-stat">
+                    <strong>{result ? result.total : '—'}</strong>
+                    <span>Indexed events</span>
+                  </div>
+                  <div className="radar-stage-stat">
+                    <strong>{organizations.data ? organizations.data.length : '—'}</strong>
+                    <span>Host organizations</span>
+                  </div>
+                  <div className="radar-stage-stat">
+                    <strong>{saved.length}</strong>
+                    <span>Saved to account</span>
+                  </div>
+                  <div className="radar-stage-stat">
+                    <strong>{result ? result.page_size : filters.pageSize}</strong>
+                    <span>Events per page</span>
+                  </div>
+                </div>
+              </div>
+              <div className="radar-stage-visual">
+                <RadarHeroArtwork />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="explore-catalog" className="radar-band">
+      <div className="radar-inner">
+        <div className="radar-band-header">
+          <span className="platform-eyebrow">LIVE CATALOG</span>
+          <h2>Explore events</h2>
+          <p className="radar-band-lead">Filter verified announcements by location, college, mode, or UTC calendar window.</p>
+        </div>
+
+        <div className="radar-quick-chips" role="group" aria-label="Quick event filters">
+          <button
+            type="button"
+            className="radar-chip"
+            aria-pressed={!filters.period && !filters.mode}
+            onClick={() => applyQuickFilter({ period: '', mode: '' })}
+          >
+            All events
+          </button>
+          <button
+            type="button"
+            className="radar-chip"
+            aria-pressed={filters.period === 'upcoming'}
+            onClick={() => applyQuickFilter({ period: filters.period === 'upcoming' ? '' : 'upcoming' })}
+          >
+            Upcoming
+          </button>
+          <button
+            type="button"
+            className="radar-chip"
+            aria-pressed={filters.mode.toLowerCase() === 'online'}
+            onClick={() => applyQuickFilter({ mode: filters.mode.toLowerCase() === 'online' ? '' : 'online' })}
+          >
+            Online
+          </button>
+          <button
+            type="button"
+            className="radar-chip"
+            aria-pressed={filters.mode.toLowerCase() === 'hybrid'}
+            onClick={() => applyQuickFilter({ mode: filters.mode.toLowerCase() === 'hybrid' ? '' : 'hybrid' })}
+          >
+            Hybrid
+          </button>
+        </div>
+
+        <div className="platform-explore">
+          <aside className="platform-filter"><h2>Filter catalog</h2>
+            <form onSubmit={event => { event.preventDefault(); setPage(1); setFilters({ ...draft }); }}>
+              <label>Search<input value={draft.q} maxLength={255} placeholder="Title or description" onChange={event => setDraft({ ...draft, q: event.target.value })} /></label>
+              <label>Location<input value={draft.location} maxLength={255} placeholder="City or region" onChange={event => setDraft({ ...draft, location: event.target.value })} /></label>
+              <label>State or union territory<input value={draft.state} maxLength={100} placeholder="Exact state name" onChange={event => setDraft({ ...draft, state: event.target.value, institutionId: '' })} /></label>
+              <label>Find a college<input value={collegeSearch} maxLength={255} placeholder="Institution name" onChange={event => { setCollegeSearch(event.target.value); setDraft({ ...draft, institutionId: '' }); }} /></label>
+              <label>College or university<select value={draft.institutionId} onChange={event => setDraft({ ...draft, institutionId: event.target.value })}><option value="">All institutions</option>{(institutions.data?.data || []).map(row => <option key={row.id} value={row.id}>{row.name}</option>)}</select></label>
+              {institutions.data?.total > 100 && <p>Showing the first 100 institutions. Narrow by state and institution name.</p>}
+              {institutions.error && <p role="alert">Institution directory could not load. <button type="button" onClick={institutions.retry}>Retry directory</button></p>}
+              <label>Mode<input value={draft.mode} maxLength={50} placeholder="Online, hybrid…" onChange={event => setDraft({ ...draft, mode: event.target.value })} /></label>
+              <label>Organization<select value={draft.organizationId} onChange={event => setDraft({ ...draft, organizationId: event.target.value })}><option value="">All organizations</option>{(organizations.data || []).map(org => <option key={org.id} value={org.id}>{org.name}</option>)}</select></label>
+              <label>Starts on or after (UTC)<input type="date" value={draft.startFrom} max={draft.startTo || undefined} onChange={event => setDraft({ ...draft, startFrom: event.target.value })} /></label>
+              <label>Starts on or before (UTC)<input type="date" value={draft.startTo} min={draft.startFrom || undefined} onChange={event => setDraft({ ...draft, startTo: event.target.value })} /></label>
+              <label>Registration deadline on or after (UTC)<input type="date" value={draft.deadlineFrom} max={draft.deadlineTo || undefined} onChange={event => setDraft({ ...draft, deadlineFrom: event.target.value })} /></label>
+              <label>Registration deadline on or before (UTC)<input type="date" value={draft.deadlineTo} min={draft.deadlineFrom || undefined} onChange={event => setDraft({ ...draft, deadlineTo: event.target.value })} /></label>
+              <label>Event period<select value={draft.period} onChange={event => setDraft({ ...draft, period: event.target.value })}><option value="">All dates</option><option value="upcoming">Upcoming or ongoing</option><option value="past">Past</option></select></label>
+              <label>Sort events<select value={draft.sort} onChange={event => setDraft({ ...draft, sort: event.target.value })}><option value="id">Catalog order</option><option value="title">Title</option><option value="start_date">Start date</option><option value="deadline">Registration deadline</option></select></label>
+              {organizations.error && <p role="alert">Organization filters could not load. <button type="button" onClick={organizations.retry}>Retry</button></p>}
+              <label>Events per page<select value={draft.pageSize} onChange={event => setDraft({ ...draft, pageSize: Number(event.target.value) })}><option>12</option><option>24</option><option>48</option></select></label>
+              <button className="platform-primary" type="submit">Apply filters</button><button type="button" onClick={() => { const cleared = { q: '', location: '', mode: '', organizationId: '', state: '', institutionId: '', startFrom: '', startTo: '', deadlineFrom: '', deadlineTo: '', period: '', sort: 'id', pageSize: 12 }; setCollegeSearch(''); setDraft(cleared); setFilters(cleared); setPage(1); }}>Reset</button>
+            </form><p className="platform-muted">The catalog includes historical events. Use start dates to narrow upcoming results. Dates filter by UTC calendar day; events without start dates are excluded when filtering. Choose a sort order above; dates without published values appear last.</p>
+          </aside>
+          <section aria-label="Event results" aria-busy={resource.loading}><Feedback resource={resource} />
+            {result && <>
+              <div className="radar-results-bar">
+                <p role="status" className="radar-results-count">{result.total} events · page {result.page}</p>
+              </div>
+              {!result.data.length && <div className="platform-empty"><h2>No events found</h2><p>Try another location or reset your filters.</p></div>}
+              <div className="platform-grid">{result.data.map(event => <EventCard key={event.id} event={event} saved={saved.includes(event.id)} toggle={toggle} organization={names.get(event.organization_id)} />)}</div>
+              <nav className="platform-pagination" aria-label="Event pages"><button disabled={page <= 1 || resource.loading} onClick={() => setPage(value => value - 1)}>Previous</button><span>Page {page} of {Math.max(1, Math.ceil(result.total / result.page_size))}</span><button disabled={page * result.page_size >= result.total || resource.loading} onClick={() => setPage(value => value + 1)}>Next</button></nav>
+            </>}
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section className="radar-band radar-band-dark radar-reveal">
+      <div className="radar-inner">
+        <div className="radar-band-header radar-band-header--center">
+          <span className="platform-eyebrow">PLATFORM CAPABILITIES</span>
+          <h2>Engineered for precision discovery.</h2>
+          <p className="radar-band-lead">Every surface of Hackathon Radar is built around verified event records, institutional coverage, and transparent timelines.</p>
+        </div>
+        <div className="radar-feature-grid">
+          <article className="radar-feature-card">
+            <div className="radar-feature-icon"><Compass size={22} /></div>
+            <h3>Verified Catalog</h3>
+            <p>Filter hackathons by mode, city, organization, and UTC date windows with full source attribution.</p>
+            <a href="#explore-catalog">Explore catalog <ArrowRight size={15} /></a>
+          </article>
+          <article className="radar-feature-card">
+            <div className="radar-feature-icon"><GraduationCap size={22} /></div>
+            <h3>University Directory</h3>
+            <p>Search indexed colleges and universities by state and jump straight to campus-affiliated events.</p>
+            <Link to="/universities">Browse universities <ArrowRight size={15} /></Link>
+          </article>
+          <article className="radar-feature-card">
+            <div className="radar-feature-icon"><Sparkles size={22} /></div>
+            <h3>Calibrated Forecasts</h3>
+            <p>Inspect recurring series predictions with confidence bands and historical evidence links.</p>
+            <Link to="/predictions">View predictions <ArrowRight size={15} /></Link>
+          </article>
+          <article className="radar-feature-card">
+            <div className="radar-feature-icon"><Bookmark size={22} /></div>
+            <h3>Saved &amp; Tailored</h3>
+            <p>Bookmark events to your account, set your interests, and receive in-app deadline reminders.</p>
+            <Link to="/saved">Open saved events <ArrowRight size={15} /></Link>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section className="radar-band radar-band-muted radar-reveal">
+      <div className="radar-inner">
+        <div className="radar-band-header">
+          <span className="platform-eyebrow">HOW IT WORKS</span>
+          <h2>Three steps from signal to submission.</h2>
+          <p className="radar-band-lead">A clean, deterministic workflow that keeps your team focused on building.</p>
+        </div>
+        <div className="radar-steps-grid">
+          <article className="radar-step-card">
+            <span className="radar-step-num">01</span>
+            <h3>Filter by what fits</h3>
+            <p>Narrow the live catalog by location, state, college, participation mode, or upcoming registration deadlines.</p>
+          </article>
+          <article className="radar-step-card">
+            <span className="radar-step-num">02</span>
+            <h3>Inspect provenance</h3>
+            <p>Review stored snapshots, version history, and direct organizer links before committing your team’s time.</p>
+          </article>
+          <article className="radar-step-card">
+            <span className="radar-step-num">03</span>
+            <h3>Save &amp; get matched</h3>
+            <p>Bookmark events and configure discovery preferences to surface relevant hackathons and in-app reminders.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section className="radar-band radar-reveal">
+      <div className="radar-inner">
+        <div className="radar-band-header radar-band-header--center">
+          <span className="platform-eyebrow">TRUST &amp; GOVERNANCE</span>
+          <h2>Transparent by design.</h2>
+          <p className="radar-band-lead">Every event and forecast follows strict verification and privacy standards.</p>
+        </div>
+        <div className="radar-trust-grid">
+          <article className="radar-trust-card">
+            <div className="radar-trust-icon"><CheckCircle2 size={24} /></div>
+            <h3>Human-Reviewed Intake</h3>
+            <p>Only reviewed and validated announcements enter the public catalog, with clear organizer attribution.</p>
+          </article>
+          <article className="radar-trust-card">
+            <div className="radar-trust-icon"><History size={24} /></div>
+            <h3>Versioned Snapshots</h3>
+            <p>Track when an event was observed and what fields changed across revisions with full auditability.</p>
+          </article>
+          <article className="radar-trust-card">
+            <div className="radar-trust-icon"><ShieldCheck size={24} /></div>
+            <h3>In-Memory Sessions</h3>
+            <p>Authentication tokens stay in memory rather than local storage, and backend permissions are checked on every request.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section className="radar-band radar-band-muted radar-reveal">
+      <div className="radar-inner">
+        <div className="radar-closing-cta">
+          <span className="platform-eyebrow">GET STARTED</span>
+          <h2>Ready to find your next build?</h2>
+          <p>Jump back into the live catalog, explore university directories, or sign in to save your shortlist.</p>
+          <div className="radar-hero-actions">
+            {user ? (
+              <Link className="platform-cta-primary" to="/saved">View saved events <ArrowRight size={16} /></Link>
+            ) : (
+              <Link className="platform-cta-primary" to="/register">Create free account <ArrowRight size={16} /></Link>
+            )}
+            <Link className="platform-cta-secondary" to="/universities">Explore universities</Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  </>;
 }
 
 function InstitutionDirectory() {
@@ -105,8 +404,8 @@ function InstitutionDirectory() {
   const resource = useResource(useCallback(signal => api.institutions(filters.state, filters.q, signal, page, 25), [filters, page]));
   const result = resource.data;
   return <section aria-label="University directory"><h1>University directory</h1><p>Browse the stored institution directory. Directory entries do not imply permission to collect from their websites.</p>
-    <form onSubmit={event => {event.preventDefault();setFilters({...draft});setPage(1);}}><label>University name search<input maxLength={255} value={draft.q} onChange={event => setDraft({...draft,q:event.target.value})} /></label><label>Directory state<input maxLength={100} value={draft.state} placeholder="Exact state or union territory" onChange={event => setDraft({...draft,state:event.target.value})} /></label><button type="submit">Search universities</button><button type="button" onClick={() => {const empty={state:'',q:''};setDraft(empty);setFilters(empty);setPage(1);}}>Reset directory</button></form>
-    <Feedback resource={resource} />{result && <><p role="status">{result.total} institutions | page {page}</p>{!result.data.length && <p>No institutions match these filters.</p>}<div className="platform-grid">{result.data.map(row => <article className="platform-card" key={row.id}><h2>{row.name}</h2><p>{row.state}{row.city ? ` | ${row.city}` : ''}</p><p>{row.category} | {row.identifier}</p>{safeEventUrl(row.website) && <a href={safeEventUrl(row.website)} target="_blank" rel="noopener noreferrer">Institution website</a>}{safeEventUrl(row.source_url) && <p><a href={safeEventUrl(row.source_url)} target="_blank" rel="noopener noreferrer">Directory source</a></p>}<Link to={`/?institutionId=${row.id}`}>View college hackathons</Link><small>Directory verified: {date(row.last_verified_at, true)}</small></article>)}</div><nav aria-label="Directory pages" className="platform-pagination"><button disabled={page<=1 || resource.loading} onClick={() => setPage(value => value-1)}>Previous institutions</button><span>Page {page} of {Math.max(1,Math.ceil(result.total/25))}</span><button disabled={page*25>=result.total || resource.loading} onClick={() => setPage(value => value+1)}>Next institutions</button></nav></>}
+    <form className="platform-inline-form" onSubmit={event => {event.preventDefault();setFilters({...draft});setPage(1);}}><label>University name search<input maxLength={255} value={draft.q} onChange={event => setDraft({...draft,q:event.target.value})} /></label><label>Directory state<input maxLength={100} value={draft.state} placeholder="Exact state or union territory" onChange={event => setDraft({...draft,state:event.target.value})} /></label><button className="platform-primary" type="submit">Search universities</button><button type="button" onClick={() => {const empty={state:'',q:''};setDraft(empty);setFilters(empty);setPage(1);}}>Reset directory</button></form>
+    <Feedback resource={resource} />{result && <><p role="status">{result.total} institutions | page {page}</p>{!result.data.length && <p>No institutions match these filters.</p>}<div className="platform-grid">{result.data.map(row => <article className="platform-card" key={row.id}><h2>{row.name}</h2><p>{row.state}{row.city ? ` | ${row.city}` : ''}</p><p>{row.category} | {row.identifier}</p>{safeEventUrl(row.website) && <a href={safeEventUrl(row.website)} target="_blank" rel="noopener noreferrer">Institution website</a>}{safeEventUrl(row.source_url) && <p><a href={safeEventUrl(row.source_url)} target="_blank" rel="noopener noreferrer">Directory source</a></p>}<Link className="platform-action" to={`/?institutionId=${row.id}`}>View college hackathons →</Link><small>Directory verified: {date(row.last_verified_at, true)}</small></article>)}</div><nav aria-label="Directory pages" className="platform-pagination"><button disabled={page<=1 || resource.loading} onClick={() => setPage(value => value-1)}>Previous institutions</button><span>Page {page} of {Math.max(1,Math.ceil(result.total/25))}</span><button disabled={page*25>=result.total || resource.loading} onClick={() => setPage(value => value+1)}>Next institutions</button></nav></>}
   </section>;
 }
 
@@ -122,9 +421,11 @@ function EventDetails({ saved, toggle }) {
     <dl><div><dt>Starts</dt><dd>{date(event.start_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Ends</dt><dd>{date(event.end_date, event.description?.includes('Date precision: day'))}</dd></div><div><dt>Registration deadline</dt><dd>{date(event.registration_deadline)}</dd></div><div><dt>Location / mode</dt><dd>{event.location || 'Not provided'} / {event.mode || 'Not provided'}</dd></div><div><dt>Prize</dt><dd>{event.prize || 'Not provided'}</dd></div><div><dt>Source</dt><dd>{event.source || 'Not provided'}</dd></div><div><dt>State</dt><dd>{event.state || 'Not provided'}</dd></div><div><dt>Eligibility</dt><dd>{event.eligibility || 'Not provided'}</dd></div></dl>
     <small>Last source update: {date(event.scraped_at)}</small>
     <ProviderCredit acquisition={event.acquisition} />
-    <button onClick={() => toggle(event.id)} aria-pressed={saved.includes(event.id)}>{saved.includes(event.id) ? 'Remove saved event' : 'Save to account'}</button>
-    {link ? <a className="platform-action" href={link} target="_blank" rel="noopener noreferrer">Visit organizer website <ExternalLink size={16} /></a> : <p>No valid organizer link is available.</p>}
-    {registrationLink && <a className="platform-action" href={registrationLink} target="_blank" rel="noopener noreferrer">Registration information <ExternalLink size={16} /></a>}
+    <div className="platform-detail-actions">
+      <button className="platform-primary" onClick={() => toggle(event.id)} aria-pressed={saved.includes(event.id)}>{saved.includes(event.id) ? 'Remove saved event' : 'Save to account'}</button>
+      {link ? <a className="platform-action" href={link} target="_blank" rel="noopener noreferrer">Visit organizer website <ExternalLink size={16} /></a> : <p>No valid organizer link is available.</p>}
+      {registrationLink && <a className="platform-action" href={registrationLink} target="_blank" rel="noopener noreferrer">Registration information <ExternalLink size={16} /></a>}
+    </div>
     <p className="platform-muted">Source observed: {date(event.scraped_at)}. This is a stored snapshot; check the organizer for changes.</p>
     <section aria-label="Discovery history"><h2>Discovery and update history</h2><Feedback resource={discovery} />
       {discovery.data && <>{discovery.data.evidence.length === 0 && <p>No automated discovery evidence is recorded for this event.</p>}
@@ -141,8 +442,8 @@ function Bookmarks({ saved, toggle }) {
   const { user } = useAuth();
   const resource = useResource(useCallback(signal => user ? api.saved(signal).then(rows => rows.filter(row => saved.includes(row.id))) : Promise.resolve([]), [user, saved]));
   return <section><h1>Saved events</h1><p>Saved to your account. Enable email reminders in Preferences.</p>
-    {!user && <Link to="/login">Sign in to view saved events</Link>}<Feedback resource={resource} />
-    {user && resource.data?.length === 0 && <p>No saved events yet.</p>}
+    {!user && <Link className="platform-cta-primary" to="/login">Sign in to view saved events</Link>}<Feedback resource={resource} />
+    {user && resource.data?.length === 0 && <div className="platform-empty"><h2>No saved events yet</h2><p>Bookmark any event from the catalog to track it here.</p></div>}
     <div className="platform-grid">{resource.data?.map(event => <EventCard key={event.id} event={event} saved toggle={toggle} />)}</div></section>;
 }
 
@@ -153,7 +454,7 @@ function DiscoveryCoverage() {
   return <section aria-label="Discovery coverage"><h2>Discovery coverage and failures</h2><p>Source coverage does not measure hackathon coverage. Only reviewed announcements enter the public catalog.</p><Feedback resource={resource} />
     {resource.data && <><dl>{Object.entries(labels).map(([key, label]) => <div key={key}><dt>{label}</dt><dd>{resource.data[key]}</dd></div>)}</dl><p>Last successful collection: {date(resource.data.last_successful_collection)}</p></>}
     <h3>Recent collection runs</h3><Feedback resource={runs} />{runs.data?.length === 0 && <p>No collection runs recorded.</p>}
-    <ul>{runs.data?.slice(0, 20).map(run => <li key={run.id}>{run.source_key || run.source_id}: {run.status} ? {date(run.started_at)}{run.error_code ? ` ? ${run.error_code}` : ''}</li>)}</ul>
+    <ul>{runs.data?.slice(0, 20).map(run => <li key={run.id}>{run.source_key || run.source_id}: {run.status} · {date(run.started_at)}{run.error_code ? ` · ${run.error_code}` : ''}</li>)}</ul>
   </section>;
 }
 
@@ -161,7 +462,7 @@ function Admin() {
   const { user } = useAuth();
   const resource = useResource(useCallback(signal => user ? api.admin(signal) : Promise.reject(new Error('Sign in to request admin access.')), [user]));
   return <section><h1>Administration</h1>{['administrator', 'source_manager'].includes(user?.role) && <DiscoveryCoverage />}<p>The backend checks current permissions on every request.</p><Feedback resource={resource} />
-    {!user && <Link to="/login">Sign in</Link>}{resource.data && <><div className="platform-grid">{Object.entries(resource.data.stats).map(([key, value]) => <article className="platform-card" key={key}><h2>{value}</h2><p>{key.replaceAll('_', ' ')}</p></article>)}</div>
+    {!user && <Link className="platform-cta-primary" to="/login">Sign in</Link>}{resource.data && <><div className="platform-grid">{Object.entries(resource.data.stats).map(([key, value]) => <article className="platform-card" key={key}><h2>{value}</h2><p>{key.replaceAll('_', ' ')}</p></article>)}</div>
       <h2>Users</h2><div className="platform-table" tabIndex={0} role="region" aria-label="User accounts table"><table><thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Roles</th></tr></thead><tbody>{resource.data.users.map(user => <tr key={user.id}><td>{user.name}</td><td>{user.email}</td><td>{user.status}</td><td>{user.roles.join(', ')}</td></tr>)}</tbody></table></div>
       <h2>Organizations</h2><ul>{resource.data.organizations.map(org => <li key={org.id}>{org.name}</li>)}</ul>
       <p className="platform-muted">Use the administration tools below to manage records, review announcements, and inspect audit history.</p></>}
@@ -197,7 +498,7 @@ function ProfileEditor() {
     catch (error) { setMessage(error.message); }
     finally { setBusy(false); }
   }
-  return <form onSubmit={submit} aria-label="Account profile"><label>Display name<input value={name} required minLength={1} maxLength={100} onChange={event => setName(event.target.value)} /></label><button disabled={busy || !name.trim()}>{busy ? 'Saving name...' : 'Update display name'}</button>{message && <p role="status">{message}</p>}</form>;
+  return <form className="platform-inline-form" onSubmit={submit} aria-label="Account profile"><label>Display name<input value={name} required minLength={1} maxLength={100} onChange={event => setName(event.target.value)} /></label><button className="platform-primary" disabled={busy || !name.trim()}>{busy ? 'Saving name...' : 'Update display name'}</button>{message && <p role="status">{message}</p>}</form>;
 }
 
 function Personalization() {
@@ -214,11 +515,11 @@ function Personalization() {
     catch (error) { setMessage(error.message); }
     finally { setBusy(false); }
   }
-  return <section aria-label="Personalization"><h2>Your account and interests</h2><ProfileEditor /><p>{user?.name} ? {user?.email}</p><Feedback resource={resource} />
-    {values && <form onSubmit={submit}>{Object.entries({preferred_location:'Preferred city or location',preferred_mode:'Preferred mode',interests:'Interests (comma separated)'}).map(([key,label]) => <label key={key}>{label}<input value={values[key]} maxLength={key === 'interests' ? 255 : key === 'preferred_mode' ? 50 : 100} onChange={event => setDraft({...values,[key]:event.target.value})} /></label>)}<label><input type="checkbox" checked={values.in_app_reminders} onChange={event => setDraft({...values,in_app_reminders:event.target.checked})} />In-app saved-event reminders</label><button disabled={busy}>Save discovery preferences</button></form>}
+  return <section aria-label="Personalization"><h2>Your account and interests</h2><ProfileEditor /><p>{user?.name} · {user?.email}</p><Feedback resource={resource} />
+    {values && <form className="platform-inline-form" onSubmit={submit}>{Object.entries({preferred_location:'Preferred city or location',preferred_mode:'Preferred mode',interests:'Interests (comma separated)'}).map(([key,label]) => <label key={key}>{label}<input value={values[key]} maxLength={key === 'interests' ? 255 : key === 'preferred_mode' ? 50 : 100} onChange={event => setDraft({...values,[key]:event.target.value})} /></label>)}<label><input type="checkbox" checked={values.in_app_reminders} onChange={event => setDraft({...values,in_app_reminders:event.target.checked})} />In-app saved-event reminders</label><button className="platform-primary" disabled={busy}>Save discovery preferences</button></form>}
     {message && <p role="status">{message}</p>}<h2>Recommended for you</h2><p>Matches use stated preferences and saved events. Relevance scores are rules, not prediction probabilities.</p><Feedback resource={recommendations} />
     {recommendations.data?.data.length === 0 && <p>No matching upcoming events yet. Add interests or save events to improve matching.</p>}
-    {recommendations.data?.data.map(({event,reasons}) => <article className="platform-card" key={event.id}><h3><Link to={`/event/${event.id}`}>{event.title}</Link></h3><p>{reasons.join(' ? ')}</p></article>)}
+    <div className="platform-grid">{recommendations.data?.data.map(({event,reasons}) => <article className="platform-card" key={event.id}><h3><Link to={`/event/${event.id}`}>{event.title}</Link></h3><p>{reasons.join(' · ')}</p></article>)}</div>
   </section>;
 }
 
@@ -231,13 +532,13 @@ function Preferences() {
     catch (error) { setMessage(error.message); }
   }
   return <section><h1>Preferences and notifications</h1><p>Manage your interests and in-app notifications.</p>
-    {!user && <Link to="/login">Sign in to manage preferences</Link>}
+    {!user && <Link className="platform-cta-primary" to="/login">Sign in to manage preferences</Link>}
     {user && <Personalization key={user.id} />}
     {message && <p role="status">{message}</p>}
     {user && <><h2>Account notifications</h2><Feedback resource={notifications} />
       {notifications.data?.length === 0 && <p>No account notifications yet.</p>}
-      {notifications.data?.map(row => <article className="platform-card" key={row.id}><h3>{row.title}</h3><p>{row.message}</p>
-        {row.is_read ? <small>Read</small> : <button onClick={() => markRead(row.id)}>Mark as read</button>}</article>)}</>}
+      <div className="platform-grid">{notifications.data?.map(row => <article className="platform-card" key={row.id}><h3>{row.title}</h3><p>{row.message}</p>
+        {row.is_read ? <small>Read</small> : <button className="platform-primary" onClick={() => markRead(row.id)}>Mark as read</button>}</article>)}</div></>}
   </section>;
 }
 
@@ -251,6 +552,36 @@ export default function LivePlatform() {
   const saved = savedState.userId === user?.id ? savedState.ids : [];
   const [bookmarkError, setBookmarkError] = useState(null);
   const [saving, setSaving] = useState(false);
+  const isExploreRoute = location.pathname === '/' || location.pathname === '/explore';
+
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined'
+      || CSS.supports('(animation-timeline: view()) and (animation-range: entry)')
+      || !window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+      return undefined;
+    }
+    const root = document.querySelector('.platform');
+    const nodes = document.querySelectorAll('.radar-reveal');
+    if (!root || !nodes.length) return undefined;
+    root.classList.add('radar-io-ready');
+    const observer = new IntersectionObserver(
+      entries => {
+        for (const entry of entries) {
+          if (entry.isIntersecting || entry.boundingClientRect.top < window.innerHeight) {
+            entry.target.classList.add('is-revealed');
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -32px 0px' },
+    );
+    nodes.forEach(node => observer.observe(node));
+    return () => {
+      observer.disconnect();
+      root.classList.remove('radar-io-ready');
+    };
+  }, [location.pathname]);
+
   useEffect(() => {
     if (!user) return;
     const controller = new AbortController();
@@ -275,9 +606,44 @@ export default function LivePlatform() {
   return <div className={`platform ${dark ? 'platform-dark' : ''}`}><a className="platform-skip" href="#platform-content">Skip to content</a>
     <header className="platform-header"><Link className="platform-brand" to="/"><BrainCircuit size={26} />Hackathon <strong>Radar</strong></Link>
       <button className="platform-menu" aria-expanded={mobileOpen} aria-controls="platform-navigation" onClick={() => setMobileOpenKey(mobileOpen ? null : location.key)}>Menu</button>
-      <nav id="platform-navigation" className={mobileOpen ? 'open' : ''} aria-label="Main navigation"><NavLink to="/explore">Explore</NavLink><NavLink to="/universities">Universities</NavLink><NavLink to="/saved">Saved events</NavLink><NavLink to="/predictions">Predictions</NavLink><NavLink to="/notifications">Preferences</NavLink><NavLink to="/admin">Admin</NavLink><a href="/demo/">Design demo</a></nav>
-      <div className="platform-session"><button aria-label={`Use ${dark ? 'light' : 'dark'} theme`} onClick={() => setDark(value => !value)}>{dark ? <Sun size={18} /> : <Moon size={18} />}</button>{user ? <><span>{user.name}</span><button disabled={isLoading} onClick={logout}>Sign out</button></> : <Link to="/login">Sign in</Link>}</div>
-    </header><main id="platform-content" tabIndex={-1}><div className="platform-container">{authError && <p role="alert">{authError}</p>}{bookmarkError && <p role="alert">{bookmarkError}</p>}
-      <Routes><Route path="/" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/home" element={<Navigate replace to="/" />} /><Route path="/explore" element={<Explore saved={saved} toggle={toggle} />} /><Route path="/event/:id" element={<EventDetails saved={saved} toggle={toggle} />} /><Route path="/universities" element={<InstitutionDirectory />} /><Route path="/saved" element={<Bookmarks saved={saved} toggle={toggle} />} /><Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} /><Route path="/forgot-password" element={<section><h1>Password reset unavailable</h1><p>The current backend does not support password reset. No email has been sent.</p><Link to="/login">Return to sign in</Link></section>} /><Route path="/admin/*" element={<Admin />} /><Route path="/notifications" element={<Preferences key={user?.id || "guest"} />} /><Route path="/predictions" element={<Predictions />} /><Route path="*" element={<section><h1>Page not found</h1><Link to="/">Return to events</Link></section>} /></Routes>
-    </div></main><footer className="platform-footer">Hackathon Radar · Backend catalog and saved events. <a href="/demo/">Fictional design demo</a></footer></div>;
+      <nav id="platform-navigation" className={mobileOpen ? 'open' : ''} aria-label="Main navigation"><NavLink to="/explore">Explore</NavLink><NavLink to="/universities">Universities</NavLink><NavLink to="/saved">Saved events</NavLink><NavLink to="/predictions">Predictions</NavLink><NavLink to="/notifications">Preferences</NavLink><NavLink to="/admin">Admin</NavLink></nav>
+      <div className="platform-session"><button type="button" aria-label={`Use ${dark ? 'light' : 'dark'} theme`} onClick={() => setDark(value => !value)}>{dark ? <Sun size={18} /> : <Moon size={18} />}</button>{user ? <><span>{user.name}</span><button type="button" disabled={isLoading} onClick={logout}>Sign out</button></> : <Link to="/login">Sign in</Link>}</div>
+    </header><main id="platform-content" tabIndex={-1}><div className={`platform-container ${isExploreRoute ? 'platform-container--bleed' : ''}`}>{(authError || bookmarkError) && <div className={isExploreRoute ? 'radar-inner' : undefined}>{authError && <p role="alert">{authError}</p>}{bookmarkError && <p role="alert">{bookmarkError}</p>}</div>}
+      <Routes><Route path="/" element={<Explore saved={saved} toggle={toggle} user={user} />} /><Route path="/home" element={<Navigate replace to="/" />} /><Route path="/demo/*" element={<Navigate replace to="/explore" />} /><Route path="/explore" element={<Explore saved={saved} toggle={toggle} user={user} />} /><Route path="/event/:id" element={<EventDetails saved={saved} toggle={toggle} />} /><Route path="/universities" element={<InstitutionDirectory />} /><Route path="/saved" element={<Bookmarks saved={saved} toggle={toggle} />} /><Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} /><Route path="/forgot-password" element={<ForgotPassword />} /><Route path="/admin/*" element={<Admin />} /><Route path="/notifications" element={<Preferences key={user?.id || "guest"} />} /><Route path="/predictions" element={<Predictions />} /><Route path="*" element={<section><h1>Page not found</h1><Link to="/">Return to events</Link></section>} /></Routes>
+    </div></main>
+    <footer className="platform-footer">
+      <div className="radar-footer-inner">
+        <div className="radar-footer-col">
+          <Link className="platform-brand" to="/"><BrainCircuit size={22} />Hackathon <strong>Radar</strong></Link>
+          <p className="platform-muted">Verified hackathon discovery, university directories, and calibrated event timelines.</p>
+        </div>
+        <div className="radar-footer-col">
+          <h4>Platform</h4>
+          <ul>
+            <li><Link to="/explore">Explore catalog</Link></li>
+            <li><Link to="/universities">University directory</Link></li>
+            <li><Link to="/predictions">Predictions</Link></li>
+          </ul>
+        </div>
+        <div className="radar-footer-col">
+          <h4>Account</h4>
+          <ul>
+            <li><Link to="/saved">Saved events</Link></li>
+            <li><Link to="/notifications">Preferences</Link></li>
+            <li><Link to="/login">Sign in</Link></li>
+          </ul>
+        </div>
+        <div className="radar-footer-col">
+          <h4>Operations</h4>
+          <ul>
+            <li><Link to="/admin">Administration</Link></li>
+            <li><Link to="/forgot-password">Reset password</Link></li>
+          </ul>
+        </div>
+      </div>
+      <div className="radar-footer-bottom">
+        <span>Hackathon Radar · Backend catalog and saved events.</span>
+        <span>All listed dates are verified against stored organizer snapshots.</span>
+      </div>
+    </footer></div>;
 }
