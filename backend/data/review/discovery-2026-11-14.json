@@ -1,0 +1,67 @@
+{
+  "observation_date": "2026-11-14",
+  "observed_at": "2026-11-14T08:34:52+05:30",
+  "publication_allowed": false,
+  "review_status": "pending",
+  "production_snapshot": {
+    "hackathons": 9,
+    "institutions": 54522,
+    "discovery_sources": 0,
+    "discovery_runs": 0,
+    "discovery_evidence": 0
+  },
+  "candidates": [
+    {
+      "title": "National AgriTech Hackathon 2026",
+      "host": "RJ E-Nest, R.V.R. & J.C. College of Engineering (Autonomous), Guntur, Andhra Pradesh",
+      "official_event_url": "https://www.chemistry.rvrjc.ac.in/rjenest/agritechhackathon.html",
+      "alternate_official_url": "https://ftp.rvrjcce.ac.in/rjenest/agritechhackathon.html",
+      "event_date": "2026-12-23",
+      "registration_deadline": "2026-11-30",
+      "registration_status": "Application/prototype submission advertised; actual registration portal status not independently verified",
+      "institution_match": {
+        "id": 15195,
+        "aishe_code": "C-32672",
+        "name": "R.V.R. & J.C. College of Engineering",
+        "state": "Andhra Pradesh",
+        "district": "Guntur",
+        "match_basis": "Exact college name and Guntur district in production AISHE directory; host identity consistent with official college-domain announcement",
+        "website_verified_at": null
+      },
+      "evidence": [
+        {
+          "url": "https://ftp.rvrjcce.ac.in/rjenest/agritechhackathon.html",
+          "fact": "30 Nov 2026 application deadline; 5 Dec finalist announcement; 23 Dec hackathon at R.V.R. & J.C. College of Engineering; fees and eligibility"
+        },
+        {
+          "url": "https://www.chemistry.rvrjc.ac.in/rjenest/agritechhackathon.html",
+          "fact": "2026 event title and 23 Dec 2026 date; college incubator organizer"
+        }
+      ],
+      "duplicate_check": "No exact-title match among nine current production hackathons; historical and canonical URL checks not completed",
+      "pending_reasons": [
+        "No registered authorized discovery source or documented publication permission in production",
+        "No durable ingestion/publication audit pathway active; discovery_evidence and discovery_runs empty",
+        "Official page body references National AgriTech Hackathon 2025 despite 2026 title; verify edition before publication",
+        "Registration destination and live status not verified",
+        "Authoritative canonical URL and cross-edition duplicate checks not completed"
+      ]
+    }
+  ],
+  "excluded": [
+    {
+      "title": "BPUT Hackathon 2026",
+      "reason": "Finale ended 13 November 2026; existing production ID 1"
+    },
+    {
+      "title": "HackWithAditya 2026",
+      "reason": "Already in production ID 9"
+    },
+    {
+      "title": "Protocol Zero: Boot | Hack | CTF",
+      "reason": "Already staged in PR #115; not a new candidate"
+    }
+  ],
+  "newly_published": 0,
+  "production_writes": false
+}
