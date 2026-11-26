@@ -1,0 +1,68 @@
+{
+  "observed_at": "2026-11-19T08:13:12+05:30",
+  "mode": "review_only",
+  "production_snapshot": {
+    "hackathons": 9,
+    "institutions": 54522,
+    "discovery_sources": 0,
+    "discovery_runs": 0,
+    "discovery_evidence": 0,
+    "discovery_announcements": 0
+  },
+  "candidates": [
+    {
+      "title": "SAKEC – CHIPMONK HACKATHON 2.0",
+      "host": "Shah & Anchor Kutchhi Engineering College, EXTC / IIC / Students Council with MonkTech9",
+      "official_event_url": "https://www.sakec.ac.in/iete-sakec/sakec-chipmonk-hackathon-2-0-6th-february-2026/",
+      "source_evidence": [
+        {
+          "url": "https://www.sakec.ac.in/iete-sakec/sakec-chipmonk-hackathon-2-0-6th-february-2026/",
+          "facts": "Body lists registration 3–13 Nov 2026; project submission 5 Dec 2026; finalist announcement 15 Dec 2026; final evaluation 6 Feb 2027. Page heading instead says 6 February 2026."
+        }
+      ],
+      "event_dates": "2027-02-06 (body; conflicts with heading 2026-02-06)",
+      "registration_deadline": "2026-11-13",
+      "registration_status": "Closed based on published deadline",
+      "college_directory_match": null,
+      "publication_status": "pending",
+      "pending_reasons": [
+        "Contradictory edition/year in official heading and schedule",
+        "College-directory match not verified",
+        "Source publication permission not registered",
+        "Canonical edition/historical duplicate check and audited ingestion unavailable"
+      ]
+    }
+  ],
+  "existing_event_updates": [
+    {
+      "title": "ATLAS Hackathon 2026 — Prompt to Product",
+      "production_id": 6,
+      "official_event_url": "https://atlasuniversity.edu.in/atlas-hackathon-2026/index.html",
+      "registration_deadline": "2026-11-25",
+      "registration_status": "Registration advertised through 25 November; live acceptance not independently tested",
+      "round_1": "2026-11-28",
+      "finale": "2026-12-15",
+      "action": "Do not insert duplicate; update only through audited authorized pathway"
+    }
+  ],
+  "excluded": [
+    {
+      "title": "BPUT Hackathon 2026",
+      "reason": "Already in production, event ended 13 Nov"
+    },
+    {
+      "title": "ATLAS Hackathon 2026",
+      "reason": "Already in production ID 6"
+    }
+  ],
+  "publication_audit": {
+    "new_publications": 0,
+    "production_writes": 0,
+    "reason": "No registered discovery source, permission evidence or auditable idempotent publication pathway"
+  },
+  "health": {
+    "supabase": "ACTIVE_HEALTHY",
+    "render_ready": "Web checker inaccessible",
+    "cloudflare_api_ready": "Web checker inaccessible"
+  }
+}
