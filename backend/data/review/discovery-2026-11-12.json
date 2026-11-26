@@ -1,0 +1,82 @@
+{
+  "observed_at": "2026-11-12T08:20:56+05:30",
+  "production_snapshot": {
+    "hackathons": 9,
+    "institutions": 54522,
+    "discovery_sources": 0,
+    "discovery_runs": 0,
+    "discovery_evidence": 0
+  },
+  "new_publications": 0,
+  "duplicates_in_production_by_title": 0,
+  "candidates": [
+    {
+      "title": "VIHAAN X",
+      "host": "IEEE Student Branch, Delhi Technological University (DTU)",
+      "official_event_url": "https://vihaan.ieeedtu.in/",
+      "event_dates": null,
+      "registration_deadline": null,
+      "registration_status": "Unconfirmed on official page; secondary listings conflict on closing dates",
+      "source_evidence": [
+        {
+          "url": "https://vihaan.ieeedtu.in/",
+          "observation": "Official organizer page confirms event name, host, 24-hour format and separate hardware/software tracks; no explicit dated schedule in accessible text"
+        },
+        {
+          "url": "https://hackloop.tech/hackathons/vihaan-x-hardware-track",
+          "observation": "Secondary listing says hardware event Nov 15, registration closed Nov 7; cannot treat as official verified fact"
+        },
+        {
+          "url": "https://jamao.in/e/vihaan-x-software-track",
+          "observation": "Secondary aggregator labels Nov 15 as entry closing date, not event date; inconsistent"
+        }
+      ],
+      "college_directory_match": null,
+      "review_status": "pending",
+      "publication_allowed": false,
+      "pending_reasons": [
+        "Exact event dates and deadline not confirmed on official page",
+        "Source publication authorization/policy not recorded",
+        "Institution match not verified in directory",
+        "No registered production discovery source or audit pipeline"
+      ]
+    },
+    {
+      "title": "Hack Paradise 2026",
+      "host": "Programmers' Paradise Technical Society (PPTS), University Teaching Department, Chhattisgarh Swami Vivekanand Technical University (CSVTU), Bhilai",
+      "official_event_url": null,
+      "event_dates": null,
+      "registration_deadline": "2026-11-17 (secondary-source claim only)",
+      "registration_status": "Unverified; secondary listings indicate deadline Nov 17",
+      "source_evidence": [
+        {
+          "url": "https://jamao.in/e/hack-paradise",
+          "observation": "Secondary listing associates Hack Paradise with CSVTU; event date not published there"
+        },
+        {
+          "url": "https://www.aspirova.org/opportunity/chhattisgarh-swami-vivekanand-technical-university-csvtu-bhilai-chhattisgarh-hac-f0677c13",
+          "observation": "Secondary listing says offline hackathon Nov 28 and submission Nov 17"
+        },
+        {
+          "url": "https://www.nextknock.in/hackathons/hack-paradise-b2114000",
+          "observation": "Secondary listing cites Unstop, Nov 17 deadline, prize pool inconsistent with other aggregators"
+        }
+      ],
+      "college_directory_match": null,
+      "review_status": "pending",
+      "publication_allowed": false,
+      "pending_reasons": [
+        "Direct official organizer event URL not independently established",
+        "Event date and prizes conflict across secondary sources",
+        "Source permission and authoritative college identity unverified",
+        "No registered production discovery source or audit pipeline"
+      ]
+    }
+  ],
+  "health": {
+    "render_backend": "not independently verifiable via web fetch",
+    "render_frontend_proxy": "not independently verifiable via web fetch",
+    "cloudflare_api": "not independently verifiable via web fetch"
+  },
+  "notes": "Review-only. Do not merge or publish until missing fields, source permissions, institution identity, historical deduplication and audited idempotent publication are verified. No participant personal data collected. No DB writes."
+}
