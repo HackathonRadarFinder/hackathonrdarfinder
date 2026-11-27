@@ -160,6 +160,7 @@ def update_alias_verification(
 
     alias.verification_status = status
 
+
 # --------------------------------------------------
 # 2. Name normalization
 # --------------------------------------------------
@@ -308,7 +309,8 @@ def find_candidates(
 
 def find_alias_matches(
     new_name: str,
-    aliases: list[Alias]
+    aliases: list[EntityAlias],
+    entity_type: EntityType | None = None
 ) -> list[dict]:
 
     normalized_name = normalize_name(new_name)
@@ -318,11 +320,16 @@ def find_alias_matches(
         return []
 
     for alias in aliases:
-        if normalized_name == normalize_name(alias.alias_name):
+        if entity_type and alias.entity_type != entity_type:
+            continue
+
+        if normalized_name == normalize_name(alias.alias_normalized):
             matches.append({
                 "entity_id": alias.entity_id,
-                "matched_alias": alias.alias_name,
+                "entity_type": alias.entity_type,
+                "matched_alias": alias.alias_normalized,
                 "match_type": "exact_alias",
+                "verification_status": alias.verification_status,
             })
 
     return matches
@@ -335,7 +342,7 @@ def find_alias_matches(
 def resolve_entity(
     new_name: str,
     entities: list[Entity],
-    aliases: list[Alias],
+    aliases: list[EntityAlias],
     entity_type: EntityType = "investor",
     attributes: dict | None = None
 ) -> dict:
@@ -370,8 +377,24 @@ def resolve_entity(
             }],
         }
 
+    if len(exact_matches) > 1:
+        return {
+            "status": "ambiguous_match",
+            "matches": [
+                {
+                    "entity_id": entity.id,
+                    "entity_name": entity.name,
+                }
+                for entity in exact_matches
+            ],
+        }
+
     # Exact known alias
-    alias_matches = find_alias_matches(new_name, aliases)
+    alias_matches = find_alias_matches(
+        new_name,
+        aliases,
+        entity_type=entity_type
+    )
 
     valid_alias_matches = [
         match for match in alias_matches
@@ -389,8 +412,25 @@ def resolve_entity(
         }
 
     if len(matched_ids) == 1:
+        statuses = {
+            match["verification_status"]
+            for match in valid_alias_matches
+        }
+
+        if "disputed" in statuses:
+            return {
+                "status": "needs_more_evidence",
+                "matches": valid_alias_matches,
+            }
+
+        if "verified" in statuses:
+            return {
+                "status": "exact_alias_match",
+                "matches": valid_alias_matches,
+            }
+
         return {
-            "status": "exact_alias_match",
+            "status": "needs_more_evidence",
             "matches": valid_alias_matches,
         }
 

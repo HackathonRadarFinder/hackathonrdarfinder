@@ -32,10 +32,14 @@ ENTITIES = [
            "https://blueridge.example", "India"),
 ]
 
+
 ALIASES = [
-    Alias("INV001", "Accel"),
-    Alias("INV001", "Accel India"),
-    Alias("INV002", "Sequoia"),
+    EntityAlias("ALIAS001", "investor", "INV001", "accel",
+                "verified"),
+    EntityAlias("ALIAS002", "investor", "INV001", "accel india",
+                "verified"),
+    EntityAlias("ALIAS003", "investor", "INV002", "sequoia",
+                "verified"),
 ]
 
 
@@ -68,8 +72,10 @@ def test_exact_alias_match():
 
 def test_ambiguous_alias():
     aliases = [
-        Alias("INV001", "Accel"),
-        Alias("INV002", "Accel"),
+        EntityAlias("ALIAS001", "investor", "INV001", "accel",
+                    "verified"),
+        EntityAlias("ALIAS002", "investor", "INV002", "accel",
+                    "verified"),
     ]
 
     result = resolve_entity("Accel", ENTITIES, aliases)
@@ -520,3 +526,41 @@ def test_multiple_claims_with_same_value_can_be_latest():
         claim.status == "latest_confirmed"
         for claim in claims
     )
+
+
+def test_unverified_alias_needs_more_evidence():
+    aliases = [
+        EntityAlias("ALIAS001", "investor", "INV001", "accel",
+                    "unverified"),
+    ]
+
+    result = resolve_entity("Accel", ENTITIES, aliases)
+
+    assert result["status"] == "needs_more_evidence"
+
+
+def test_disputed_alias_needs_more_evidence():
+    aliases = [
+        EntityAlias("ALIAS001", "investor", "INV001", "accel",
+                    "disputed"),
+    ]
+
+    result = resolve_entity("Accel", ENTITIES, aliases)
+
+    assert result["status"] == "needs_more_evidence"
+
+
+def test_alias_for_different_entity_types_is_ignored():
+    aliases = [
+        EntityAlias("ALIAS001", "fund", "FUND001", "accel",
+                    "verified"),
+    ]
+
+    result = resolve_entity(
+        "Accel",
+        ENTITIES,
+        aliases,
+        entity_type="investor"
+    )
+
+    assert result["status"] != "exact_alias_match"
