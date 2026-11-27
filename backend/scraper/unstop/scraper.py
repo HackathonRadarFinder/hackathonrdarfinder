@@ -125,6 +125,24 @@ def normalise(item: Any, scraped_at: str) -> Optional[dict[str, Any]]:
         "url": url,
         "source": SOURCE,
         "scraped_at": scraped_at,
+        "contacts": {
+            "contact_name": {
+                "value": "unknown",
+                "source_field": "unknown",
+            },
+            "contact_designation": {
+                "value": "unknown",
+                "source_field": "unknown",
+            },
+            "contact_email": {
+                "value": "unknown",
+                "source_field": "unknown",
+            },
+            "contact_phone": {
+                "value": "unknown",
+                "source_field": "unknown",
+            },
+        },
     }
 
 

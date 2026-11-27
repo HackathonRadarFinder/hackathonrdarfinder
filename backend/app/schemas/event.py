@@ -10,6 +10,16 @@ from app.schemas.responses import DataResponse
 
 RequiredName = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=255)]
 
+class ContactField(BaseModel):
+    value: str = "unknown"
+    source_field: str = "unknown"
+
+
+class OrganizerContacts(BaseModel):
+    contact_name: ContactField = Field(default_factory=ContactField)
+    contact_designation: ContactField = Field(default_factory=ContactField)
+    contact_email: ContactField = Field(default_factory=ContactField)
+    contact_phone: ContactField = Field(default_factory=ContactField)
 
 class EventCreate(HackathonCreate):
     state: str | None = Field(default=None, max_length=100)
@@ -24,6 +34,7 @@ class EventCreate(HackathonCreate):
     prize: str | None = Field(default=None, max_length=255)
     source: str | None = Field(default=None, max_length=100)
     url: HttpUrl | None = Field(default=None, max_length=500)
+    contacts: OrganizerContacts | None = None
 
     @field_validator("start_date", "end_date", "registration_deadline", "scraped_at")
     @classmethod
@@ -81,7 +92,7 @@ class EventResponse(BaseModel):
     source: str | None = None
     scraped_at: datetime | None = None
     acquisition: ProviderAttribution | None = None
-
+    contacts: OrganizerContacts | None = None
 
 class EventListParams(BaseModel):
     """Any supported query parameter opts into pagination; omitted values default later."""

@@ -69,7 +69,11 @@ def test_raw_normalization():
     assert event.description == "Build together" and event.location == "Online"
     assert event.start_date == datetime(2026, 10, 12, 4, 30)
     assert event.scraped_at == datetime(2026, 10, 12, 4, 30)
-
+    assert event.contacts is not None
+assert event.contacts.contact_name.value == "unknown"
+assert event.contacts.contact_designation.value == "unknown"
+assert event.contacts.contact_email.value == "unknown"
+assert event.contacts.contact_phone.value == "unknown"
 
 @pytest.mark.parametrize("changes", [
     {"http_status": 500}, {"status": "blocked"}, {"url": "https://unstop.com.evil.test/api/public/opportunity/search-result"},
