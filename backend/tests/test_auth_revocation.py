@@ -1,3 +1,4 @@
+
 from datetime import datetime, timedelta, timezone
 import importlib
 import subprocess
@@ -7,6 +8,8 @@ from pathlib import Path
 
 import jwt
 import pytest
+from alembic.config import Config
+from alembic.script import ScriptDirectory
 from sqlalchemy import create_engine, inspect, select, text
 
 from app.api import deps
@@ -42,7 +45,9 @@ def test_revocation_survives_cleared_memory_and_connections(client):
         assert record.expires_at.replace(tzinfo=timezone.utc).timestamp() == payload['exp']
         assert record.revoked_at is not None
         assert db.scalars(select(RevokedToken)).all() == [record]
-        assert set(RevokedToken.__table__.columns.keys()) == {'jti', 'expires_at', 'revoked_at'}
+        assert set(RevokedToken.__table__.columns.keys()) == {
+            'jti', 'expires_at', 'revoked_at'
+        }
     finally:
         iterator.close()
 
@@ -64,23 +69,36 @@ def test_revocation_survives_cleared_memory_and_connections(client):
 ])
 def test_reject_invalid_jwt_claims(client, change):
     payload = {
-        'sub': str(uuid.uuid4()), 'role': 'user', 'jti': str(uuid.uuid4()),
+        'sub': str(uuid.uuid4()),
+        'role': 'user',
+        'jti': str(uuid.uuid4()),
         'type': 'access',
-        'exp': int((datetime.now(timezone.utc) + timedelta(minutes=10)).timestamp()),
+        'exp': int(
+            (datetime.now(timezone.utc) + timedelta(minutes=10)).timestamp()
+        ),
     }
+
     if change.startswith('missing_'):
         payload.pop(change.removeprefix('missing_'))
     else:
         updates = {
-            'refresh_type': ('type', 'refresh'), 'invalid_sub': ('sub', 'invalid'),
-            'empty_jti': ('jti', ''), 'long_jti': ('jti', 'a' * 37),
-            'string_exp': ('exp', str(payload['exp'])), 'boolean_exp': ('exp', True),
+            'refresh_type': ('type', 'refresh'),
+            'invalid_sub': ('sub', 'invalid'),
+            'empty_jti': ('jti', ''),
+            'long_jti': ('jti', 'a' * 37),
+            'string_exp': ('exp', str(payload['exp'])),
+            'boolean_exp': ('exp', True),
         }
         if change in updates:
             key, value = updates[change]
             payload[key] = value
-    token = jwt.encode(payload, '' if change == 'unsigned' else settings.SECRET_KEY,
-                       algorithm='none' if change == 'unsigned' else 'HS256')
+
+    token = jwt.encode(
+        payload,
+        '' if change == 'unsigned' else settings.SECRET_KEY,
+        algorithm='none' if change == 'unsigned' else 'HS256',
+    )
+
     assert client.get('/auth/me', headers={
         'Authorization': f'Bearer {token}',
     }).status_code == 401
@@ -94,24 +112,38 @@ def test_migration_roundtrip_isolated_database(tmp_path, monkeypatch):
 
     def migrate(*args):
         result = subprocess.run(
-            [sys.executable, '-m', 'alembic', *args], cwd=backend,
-            capture_output=True, text=True,
+            [sys.executable, '-m', 'alembic', *args],
+            cwd=backend,
+            capture_output=True,
+            text=True,
         )
         assert result.returncode == 0, result.stderr
 
     migrate('upgrade', 'head')
+
     engine = create_engine(url)
     try:
         assert 'revoked_tokens' in inspect(engine).get_table_names()
         assert 'email_deliveries' in inspect(engine).get_table_names()
+
         with engine.connect() as connection:
-            assert connection.scalar(text('SELECT version_num FROM alembic_version')) == 'a16c6d0cc596'
+            migrations = ScriptDirectory.from_config(
+                Config(str(backend / 'alembic.ini'))
+            )
+            assert connection.scalar(
+                text('SELECT version_num FROM alembic_version')
+            ) == migrations.get_current_head()
+
         columns = inspect(engine).get_columns('revoked_tokens')
-        assert {column['name'] for column in columns} == {'jti', 'expires_at', 'revoked_at'}
+        assert {column['name'] for column in columns} == {
+            'jti', 'expires_at', 'revoked_at'
+        }
         assert all(not column['nullable'] for column in columns)
     finally:
         engine.dispose()
+
     migrate('downgrade', 'e5a6b09ae2ec')
+
     engine = create_engine(url)
     try:
         assert 'revoked_tokens' not in inspect(engine).get_table_names()
@@ -119,6 +151,7 @@ def test_migration_roundtrip_isolated_database(tmp_path, monkeypatch):
         assert 'users' in inspect(engine).get_table_names()
     finally:
         engine.dispose()
+
     migrate('upgrade', 'head')
 
 
@@ -129,34 +162,52 @@ def test_migration_roundtrip_isolated_database(tmp_path, monkeypatch):
 def test_rbac_uses_database_role_not_signed_claim(client, role):
     response = register_user(client)
     assert response.status_code == 201
+
     iterator = app.dependency_overrides[get_db]()
     db = next(iterator)
     try:
         user = db.scalar(select(User))
         assigned_role = db.scalar(select(Role).where(Role.name == role))
+
         if assigned_role is None:
             assigned_role = Role(name=role)
+
         user.roles = [assigned_role]
         db.commit()
     finally:
         iterator.close()
+
     # A signed administrator claim cannot elevate a database role.
     from app.core.security import create_access_token
+
     token = create_access_token(response.json()['id'], 'administrator')
     headers = {'Authorization': f'Bearer {token}'}
+
     for path, required_role in [
-        ('admin-only', 'administrator'), ('reviewer-only', 'reviewer'),
-        ('source-manager-only', 'source_manager'), ('data-scientist-only', 'data_scientist'),
+        ('admin-only', 'administrator'),
+        ('reviewer-only', 'reviewer'),
+        ('source-manager-only', 'source_manager'),
+        ('data-scientist-only', 'data_scientist'),
     ]:
         expected = 200 if role in {'administrator', required_role} else 403
-        assert client.get(f'/auth/{path}', headers=headers).status_code == expected
+        assert client.get(
+            f'/auth/{path}', headers=headers
+        ).status_code == expected
 
 
 def test_existing_module_endpoints_preserved(client):
-    for path in ['/events/', '/organizations/', '/predictions/',
-                 '/admin/status', '/health', '/api/v1/health']:
+    for path in [
+        '/events/',
+        '/organizations/',
+        '/predictions/',
+        '/admin/status',
+        '/health',
+        '/api/v1/health',
+    ]:
         assert client.get(path).status_code == 200
-    # Account notices now contain private database records, rather than a public placeholder.
+
+    # Account notices now contain private database records,
+    # rather than a public placeholder.
     assert client.get('/notifications/').status_code == 401
 
 
@@ -166,12 +217,19 @@ def test_concurrent_duplicate_logout_is_safe(client):
 
     assert register_user(client).status_code == 201
     token = login_token(client)
-    payload = TokenPayload(**jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256']))
+
+    payload = TokenPayload(
+        **jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+    )
+
     # Simulate two requests that both validated before either committed.
     for _ in range(2):
         iterator = app.dependency_overrides[get_db]()
         db = next(iterator)
         try:
-            assert logout(payload, db)['message'].startswith('Successfully logged out')
+            assert logout(
+                payload, db
+            )['message'].startswith('Successfully logged out')
         finally:
             iterator.close()
+

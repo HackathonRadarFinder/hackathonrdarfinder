@@ -17,6 +17,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.api.routes import (
     events,
     organizations,
+    investors,
     predictions,
     auth,
     notifications,
@@ -43,6 +44,7 @@ app = FastAPI(
 # Preserve all existing API routes
 app.include_router(events.router)
 app.include_router(organizations.router)
+app.include_router(investors.router)
 app.include_router(predictions.router)
 app.include_router(auth.router)
 app.include_router(notifications.router)

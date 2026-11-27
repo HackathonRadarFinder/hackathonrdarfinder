@@ -43,6 +43,12 @@
 .platform button.auth-submit-btn:hover:not(:disabled) { background:#4338ca; }
 .platform .auth-input-wrapper input[type="password"],.platform .auth-input-wrapper input:has(+ .auth-password-toggle-btn) { padding-right:64px; }
 .platform button.auth-password-toggle-btn { border:0; background:transparent; min-height:44px; min-width:44px; padding:8px; right:4px; }
+.platform-tabs { display:flex; gap:8px; border-bottom:2px solid var(--border); margin:24px 0 28px; overflow-x:auto; }
+.platform-tab { background:transparent; border:none; border-bottom:2px solid transparent; border-radius:0; padding:10px 18px; font-size:15px; font-weight:500; color:var(--text-muted); cursor:pointer; margin-bottom:-2px; white-space:nowrap; transition:color .15s ease,border-color .15s ease; }
+.platform-tab:hover { color:var(--text-main); }
+.platform-tab[aria-selected="true"] { color:var(--accent); border-bottom-color:var(--accent); font-weight:600; }
+.platform-tab-badge { display:inline-block; font-size:11px; padding:2px 7px; border-radius:12px; background:var(--border); color:var(--text-muted); margin-left:6px; }
+.platform-tab[aria-selected="true"] .platform-tab-badge { background:var(--accent); color:#fff; }
 .platform h1,.platform h2,.platform p,.platform-org { overflow-wrap:anywhere; }
 .platform-session { min-width:0; max-width:100%; }
 .platform-session span { max-width:240px; overflow-wrap:anywhere; }
