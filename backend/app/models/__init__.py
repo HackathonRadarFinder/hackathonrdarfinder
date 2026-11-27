@@ -21,3 +21,4 @@ from app.models.email_delivery import EmailDelivery
 from app.models.discovery import DiscoverySource, DiscoveryRun, DiscoveryLock, DiscoveryEvent, DiscoveryEvidence
 
 from app.models.institution import Institution, Announcement
+from app.models.investor import Fund, Investment, Investor, Startup
