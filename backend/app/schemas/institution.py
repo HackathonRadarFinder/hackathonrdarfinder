@@ -32,6 +32,7 @@ class DirectoryRecord(BaseModel):
     district: str | None = Field(default=None, max_length=150)
     city: str | None = Field(default=None, max_length=150)
     category: str = Field(min_length=1, max_length=100)
+    university: str | None = Field(default=None, max_length=255)
     website: str | None = Field(default=None, max_length=500)
     website_evidence_url: str | None = Field(default=None, max_length=500)
     website_verified_at: datetime | None = None

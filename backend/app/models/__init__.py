@@ -22,3 +22,10 @@ from app.models.discovery import DiscoverySource, DiscoveryRun, DiscoveryLock, D
 
 from app.models.institution import Institution, Announcement
 from app.models.investor import Fund, Investment, Investor, Startup
+
+# v4.1 tables (INT-01). Imported so Base.metadata, Alembic and the drift checks see them.
+from app.models.provenance import SourceEvidence, EntityAlias, EntityAliasSource, EntityClaim
+from app.models.job import Employer, Job
+from app.models.ingest_run import IngestRun
+from app.models.contact import Contact
+from app.models.alert import Alert

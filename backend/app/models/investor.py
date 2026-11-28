@@ -1,7 +1,8 @@
 """Individuals, fund affiliations, and investments disclosed by public sources."""
 from sqlalchemy import (
-    CheckConstraint, Column, ForeignKey, Integer, Numeric, String, Table,
+    CheckConstraint, Column, Date, DateTime, ForeignKey, Index, Integer, JSON, Numeric, String, Table, Uuid,
 )
+from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 
 from app.core.database import Base
@@ -17,9 +18,23 @@ investor_funds = Table(
 
 class Investor(Base):
     __tablename__ = "investors"
+    __table_args__ = (Index("ix_investors_normalized_name", "normalized_name"), Index("ix_investors_country", "country"))
 
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
+    # v4.1 additions (INT-01). All nullable: NULL means "unknown", never guessed.
+    normalized_name = Column(String(255))
+    website = Column(String(500))
+    source_url = Column(String(500))
+    created_at = Column(DateTime, default=func.now())
+    last_updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    merged_into_id = Column(ForeignKey("investors.id", name="fk_investors_merged_into_id"))  # set when a duplicate is merged into another record
+    country = Column(String(100))
+    region = Column(String(100))
+    city = Column(String(150))
+    contact_channels = Column(JSON)  # public channels only
+    industries = Column(JSON)
+    stages = Column(JSON)
 
     funds = relationship("Fund", secondary=investor_funds, back_populates="investors",
                          order_by="Fund.id")
@@ -27,20 +42,43 @@ class Investor(Base):
 
 class Fund(Base):
     __tablename__ = "funds"
+    __table_args__ = (Index("ix_funds_normalized_name", "normalized_name"), Index("ix_funds_country", "country"))
 
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
+    # v4.1 additions (INT-01). All nullable: NULL means "unknown", never guessed.
+    normalized_name = Column(String(255))
+    website = Column(String(500))
+    source_url = Column(String(500))
+    created_at = Column(DateTime, default=func.now())
+    last_updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    merged_into_id = Column(ForeignKey("funds.id", name="fk_funds_merged_into_id"))  # set when a duplicate is merged into another record
+    country = Column(String(100))
+    region = Column(String(100))
+    city = Column(String(150))
+    contact_channels = Column(JSON)  # public channels only
+    industries = Column(JSON)
+    stages = Column(JSON)
+    kind = Column(String(20))  # firm or fund
 
     investors = relationship("Investor", secondary=investor_funds, back_populates="funds")
 
 
 class Startup(Base):
     __tablename__ = "startups"
+    __table_args__ = (Index("ix_startups_normalized_name", "normalized_name"),)
 
     id = Column(Integer, primary_key=True)
     name = Column(String(255), nullable=False)
     industry = Column(String(255))
     country = Column(String(255))
+    # v4.1 additions (INT-01). All nullable: NULL means "unknown", never guessed.
+    normalized_name = Column(String(255))
+    website = Column(String(500))
+    source_url = Column(String(500))
+    created_at = Column(DateTime, default=func.now())
+    last_updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    merged_into_id = Column(ForeignKey("startups.id", name="fk_startups_merged_into_id"))  # set when a duplicate is merged into another record
 
 
 class Investment(Base):
@@ -62,6 +100,7 @@ class Investment(Base):
             "NULLIF(TRIM(round_source_url), '') IS NOT NULL)",
             name="ck_investments_sourced_round",
         ),
+        Index("ix_investments_announced_on", "announced_on"),
     )
 
     id = Column(Integer, primary_key=True)
@@ -75,6 +114,11 @@ class Investment(Base):
     round_amount = Column(Numeric(20, 4))
     round_currency = Column(String(3))
     round_source_url = Column(String(2048))
+    # v4.1 additions (INT-01)
+    announced_on = Column(Date)
+    co_investors = Column(JSON)
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    source_evidence_id = Column(Uuid(as_uuid=True), ForeignKey("source_evidence.id", name="fk_investments_source_evidence_id"))
 
     startup = relationship("Startup")
     fund = relationship("Fund")

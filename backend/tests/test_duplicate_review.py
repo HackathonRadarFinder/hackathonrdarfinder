@@ -16,6 +16,7 @@ from app.models.organization import Organization
 from app.models.core import User, Source, SavedItem, Prediction, EventVersion, AuditLog
 from app.models.discovery import DiscoveryRun, DiscoveryEvidence, DiscoveryEvent
 from app.models.email_delivery import EmailDelivery
+from app.models.contact import Contact
 from app.models.institution import Announcement
 from app.schemas.user import TokenPayload
 from app.services.duplicate_review import candidate_pairs, merge_reviewed, review_token, merged_alias_id, MergeConflict
@@ -74,7 +75,8 @@ def test_explicit_merge_preserves_all_relations_and_history(db):
         Announcement(source_id=source.id, fingerprint='b'*64, payload={}, evidence={}, observed_at=NOW,
             last_seen_at=NOW, status='approved', hackathon_id=b.id),
         EmailDelivery(user_id=other.id, hackathon_id=b.id, kind='upcoming', event_at=NOW,
-            next_attempt_at=NOW, status='accepted', attempts=1)])
+            next_attempt_at=NOW, status='accepted', attempts=1),
+        Contact(hackathon_id=b.id, name='Organizer')])
     db.commit()
     removed = b.id
     result = merge_reviewed(db, a.id, b.id, review_token(a, b), admin.id, 'Reviewed official same-edition evidence')
@@ -83,7 +85,7 @@ def test_explicit_merge_preserves_all_relations_and_history(db):
     assert result['survivor_id'] == a.id
     assert a.description == 'Preserved source details'
     assert db.scalar(select(func.count()).select_from(SavedItem)) == 2
-    for model in (SavedItem, Prediction, EventVersion, DiscoveryEvent, DiscoveryEvidence, Announcement, EmailDelivery):
+    for model in (SavedItem, Prediction, EventVersion, DiscoveryEvent, DiscoveryEvidence, Announcement, EmailDelivery, Contact):
         assert set(db.scalars(select(model.hackathon_id))) == {a.id}
     versions = db.scalars(select(EventVersion).order_by(EventVersion.version_number)).all()
     assert len({v.version_number for v in versions}) == len(versions) == 4

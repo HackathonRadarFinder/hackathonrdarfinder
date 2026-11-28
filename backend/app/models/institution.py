@@ -1,11 +1,12 @@
 """Directory facts and unpublished announcements, separate from public events."""
 import uuid
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, JSON, String, Text, UniqueConstraint, Uuid
+from sqlalchemy import Column, DateTime, ForeignKey, Index, Integer, JSON, String, Text, UniqueConstraint, Uuid
 from app.core.database import Base
 
 
 class Institution(Base):
     __tablename__ = 'institutions'
+    __table_args__ = (Index('ix_institutions_district', 'district'), Index('ix_institutions_state_district', 'state', 'district'))
     id = Column(Integer, primary_key=True)
     identifier = Column(String(120), unique=True, nullable=False)
     name = Column(String(255), nullable=False)
@@ -13,6 +14,7 @@ class Institution(Base):
     district = Column(String(150))
     city = Column(String(150))
     category = Column(String(100), nullable=False)
+    university = Column(String(255))  # affiliating university, when the source states one
     website = Column(String(500))
     website_verified_at = Column(DateTime)
     event_urls = Column(JSON, nullable=False, default=list)

@@ -19,7 +19,8 @@ def import_directory(db, body):
         Institution.identifier.in_([item.identifier for item in body.records])).with_for_update())}
     sources = None
     for item in body.records:
-        values = item.model_dump(mode='json')
+        # A missing university is left out so checksums of already imported rows stay identical (no false 'updated').
+        values = {key: value for key, value in item.model_dump(mode='json').items() if not (key == 'university' and value is None)}
         checksum = hashlib.sha256(json.dumps(values, sort_keys=True).encode()).hexdigest()
         row = existing.get(item.identifier)
         verified = item.verified_at.astimezone(timezone.utc).replace(tzinfo=None)
@@ -44,7 +45,7 @@ def import_directory(db, body):
                 if source.config.get('institution_id') == row.id:
                     source.enabled = False
             row.permission_status = 'awaiting_permission'
-        for key in ('name', 'state', 'district', 'city', 'category', 'website', 'event_urls'):
+        for key in ('name', 'state', 'district', 'city', 'category', 'university', 'website', 'event_urls'):
             setattr(row, key, getattr(item, key))
         row.website_verified_at = item.website_verified_at.astimezone(timezone.utc).replace(tzinfo=None) if item.website_verified_at else None
         row.last_verified_at = verified
