@@ -361,7 +361,9 @@ def collect(approval: dict, seeds: Path, out: Path, *, discover: bool, max_pages
             if offline:
                 # Local fixture test mode: filenames are based on exact URL hashes.
                 fixture = offline / (hashlib.sha256(url.encode()).hexdigest()[:16] + ".html")
-                html = fixture.read_text(encoding="utf-8")
+                # Preserve source line endings: read_text() normalizes CRLF and
+                # would hash different bytes from the evidence file on Windows.
+                html = fixture.read_bytes().decode("utf-8")
             else:
                 html = client.fetch(url)
             row = parse_event(url, html)

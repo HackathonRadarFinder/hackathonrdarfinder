@@ -91,6 +91,22 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  const confirmPasswordReset = useCallback(async (email, code, newPassword) => {
+    setIsLoading(true);
+    setAuthError(null);
+    setAuthSuccess(null);
+    try {
+      const result = await authService.confirmPasswordReset(email, code, newPassword);
+      setAuthSuccess(result.message);
+      return { success: true };
+    } catch (err) {
+      setAuthError(err?.message || 'Unable to reset password.');
+      return { success: false };
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   /**
    * Log out current user
    */
@@ -116,6 +132,7 @@ export function AuthProvider({ children }) {
     login,
     register,
     forgotPassword,
+    confirmPasswordReset,
     logout,
     clearMessages,
   };

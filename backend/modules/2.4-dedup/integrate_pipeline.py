@@ -9,10 +9,48 @@ Outputs master_events.json, uncertain_pairs.json, and a SQLite master database.
 
 import argparse
 import json
+import os
+import tempfile
+from contextlib import contextmanager
 from pathlib import Path
 
 from dedup import map_record, cluster, merge_group, to_iso, FIELD_MAP
 from master_db import save_master
+
+
+@contextmanager
+def publish_outputs(outputs):
+    """Stage complete UTF-8 files, replace under the DB writer lock, undo on error.
+
+    No truncated JSON is visible. A crash between file renames and DB commit can
+    still leave stale exports: rerun from SQLite/input after operator recovery.
+    These exports are review artifacts, never an automatic publication feed.
+    """
+    staged, installed, previous = {}, [], {}
+    try:
+        for path, value in outputs.items():
+            previous[path] = path.read_bytes() if path.exists() else None
+            with tempfile.NamedTemporaryFile(dir=path.parent, prefix='.radar-', delete=False) as file:
+                staged[path] = Path(file.name)
+                file.write(json.dumps(value, indent=2, ensure_ascii=False).encode('utf-8'))
+                file.flush()
+                os.fsync(file.fileno())
+        for path, temporary in staged.items():
+            os.replace(temporary, path)
+            installed.append(path)
+        yield
+    except BaseException:
+        for path in reversed(installed):
+            if previous[path] is None:
+                path.unlink(missing_ok=True)
+            else:
+                # Reuse the already-owned temporary path for atomic restoration.
+                staged[path].write_bytes(previous[path])
+                os.replace(staged[path], path)
+        raise
+    finally:
+        for temporary in staged.values():
+            temporary.unlink(missing_ok=True)
 
 
 def read_events(path):
@@ -95,18 +133,10 @@ def run_pipeline(input_dir, output_dir, db_path, include_expired=False):
     master_path = output_dir / "master_events.json"
     review_path = output_dir / "uncertain_pairs.json"
 
-    # Persist before publishing output artifacts; a failed merge must not look successful.
-    stats = save_master(master, db_path=str(db_path))
-
-    master_path.write_text(
-        json.dumps(master, indent=2, ensure_ascii=False),
-        encoding="utf-8",
-    )
-
-    review_path.write_text(
-        json.dumps(uncertain, indent=2, ensure_ascii=False),
-        encoding="utf-8",
-    )
+    # Serialize output replacement with identity resolution. Late conflicts,
+    # file errors and failed commits preserve the prior batch and artifacts.
+    stats = save_master(master, db_path=str(db_path), publication=lambda staged:
+                        publish_outputs({master_path: staged, review_path: uncertain}))
 
     return {
         "input": len(events),

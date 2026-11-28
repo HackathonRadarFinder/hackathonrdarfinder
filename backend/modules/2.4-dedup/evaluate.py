@@ -1,102 +1,93 @@
+"""Evaluate dedup.py against labeled pairs.
+
+Run:  python evaluate.py labeled_pairs_20.csv
+"""
 import csv
+import sys
 from pathlib import Path
-from dedup import are_duplicates
+from dedup import compare, map_record
+
+REQUIRED = [
+    "registration_link_1", "title_1", "organizer_1", "start_date_1", "location_1",
+    "registration_link_2", "title_2", "organizer_2", "start_date_2", "location_2",
+    "is_duplicate",
+]
+TRUE_VALUES = ("1", "true", "yes")
+FALSE_VALUES = ("0", "false", "no")
+
+
+def build_event(row, n):
+    return {
+        "registration_link": row.get(f"registration_link_{n}", ""),
+        "title": row.get(f"title_{n}", ""),
+        "organizer": row.get(f"organizer_{n}", ""),
+        "start_date": row.get(f"start_date_{n}", ""),
+        "location": row.get(f"location_{n}", ""),
+    }
 
 
 def evaluate_pairs(csv_file):
     path = Path(csv_file)
-
     if not path.exists():
-        print(f"Error: CSV file not found: {csv_file}")
-        return
+        sys.exit(f"Error: CSV file not found: {csv_file}")
 
-    total = 0
-    correct = 0
-    false_positives = 0
-    false_negatives = 0
-    invalid_rows = 0
+    tp = tn = fp = fn = uncertain = invalid = 0
 
-    with path.open("r", encoding="utf-8-sig", newline="") as file:
-        reader = csv.DictReader(file)
-
-        required_columns = [
-            "registration_link_1",
-            "title_1",
-            "organizer_1",
-            "start_date_1",
-            "location_1",
-            "registration_link_2",
-            "title_2",
-            "organizer_2",
-            "start_date_2",
-            "location_2",
-            "is_duplicate",
-        ]
-
+    with path.open("r", encoding="utf-8-sig", newline="") as f:
+        reader = csv.DictReader(f)
         if not reader.fieldnames:
-            print("Error: CSV file is empty or has no header.")
-            return
-
-        missing_columns = [
-            column for column in required_columns
-            if column not in reader.fieldnames
-        ]
-
-        if missing_columns:
-            print("Error: Missing CSV columns:")
-            for column in missing_columns:
-                print(f"- {column}")
-            return
+            sys.exit("Error: CSV file is empty or has no header.")
+        missing = [c for c in REQUIRED if c not in reader.fieldnames]
+        if missing:
+            sys.exit("Error: Missing CSV columns: " + ", ".join(missing))
 
         for row_number, row in enumerate(reader, start=2):
             actual = (row.get("is_duplicate") or "").strip().lower()
-
-            if actual not in ("1", "0", "true", "false", "yes", "no"):
-                invalid_rows += 1
+            if actual not in TRUE_VALUES + FALSE_VALUES:
+                invalid += 1
                 print(f"Invalid label: CSV row {row_number}")
                 continue
 
-            event1 = {
-                "registration_link": row.get("registration_link_1", ""),
-                "title": row.get("title_1", ""),
-                "organizer": row.get("organizer_1", ""),
-                "start_date": row.get("start_date_1", ""),
-                "location": row.get("location_1", ""),
-            }
+            actual_dup = actual in TRUE_VALUES
+            e1, e2 = build_event(row, 1), build_event(row, 2)
+            label, reason, score = compare(map_record(e1, 0), map_record(e2, 1))
+            predicted_dup = label == "duplicate"
 
-            event2 = {
-                "registration_link": row.get("registration_link_2", ""),
-                "title": row.get("title_2", ""),
-                "organizer": row.get("organizer_2", ""),
-                "start_date": row.get("start_date_2", ""),
-                "location": row.get("location_2", ""),
-            }
+            if label == "uncertain":
+                uncertain += 1
 
-            actual_duplicate = actual in ("1", "true", "yes")
-            predicted_duplicate = are_duplicates(event1, event2)
-
-            total += 1
-
-            if actual_duplicate == predicted_duplicate:
-                correct += 1
-            elif predicted_duplicate:
-                false_positives += 1
-                print(f"False positive: CSV row {row_number}")
+            if actual_dup and predicted_dup:
+                tp += 1
+            elif not actual_dup and not predicted_dup:
+                tn += 1
             else:
-                false_negatives += 1
-                print(f"False negative: CSV row {row_number}")
+                kind = "FALSE POSITIVE" if predicted_dup else "FALSE NEGATIVE"
+                if predicted_dup:
+                    fp += 1
+                else:
+                    fn += 1
+                print(f"{kind} (row {row_number}, predicted={label}, reason={reason})")
+                print(f"   A: {e1['title']} | {e1['start_date']} | {e1['location']}")
+                print(f"   B: {e2['title']} | {e2['start_date']} | {e2['location']}")
 
-    accuracy = correct / total * 100 if total else 0
+    total = tp + tn + fp + fn
+    if total == 0:
+        sys.exit("No valid rows evaluated.")
+
+    accuracy = (tp + tn) / total * 100
+    precision = tp / (tp + fp) * 100 if (tp + fp) else 0.0
+    recall = tp / (tp + fn) * 100 if (tp + fn) else 0.0
+    f1 = 2 * precision * recall / (precision + recall) if (precision + recall) else 0.0
 
     print("\n===== DEDUPLICATION EVALUATION =====")
-    print(f"Evaluated pairs: {total}")
-    print(f"Correct predictions: {correct}")
-    print(f"Incorrect predictions: {total - correct}")
-    print(f"False positives: {false_positives}")
-    print(f"False negatives: {false_negatives}")
-    print(f"Invalid rows skipped: {invalid_rows}")
-    print(f"Accuracy: {accuracy:.2f}%")
+    print(f"Evaluated pairs : {total}   (invalid skipped: {invalid})")
+    print(f"TP={tp}  TN={tn}  FP={fp}  FN={fn}")
+    print(f"Uncertain pairs : {uncertain}  (counted as not-duplicate)")
+    print(f"Accuracy        : {accuracy:.2f}%")
+    print(f"Precision       : {precision:.2f}%")
+    print(f"Recall          : {recall:.2f}%")
+    print(f"F1 score        : {f1:.2f}%")
 
 
 if __name__ == "__main__":
-    evaluate_pairs("labeled_pairs_20.csv")
+    evaluate_pairs(sys.argv[1] if len(sys.argv) > 1 else "labeled_pairs_20.csv")

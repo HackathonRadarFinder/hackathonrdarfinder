@@ -1,0 +1,45 @@
+name: Production health alert
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    # Set the repository variable RENDER_BACKEND_URL (for example
+    # https://your-service.onrender.com) to enable this check.
+    if: vars.RENDER_BACKEND_URL != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Probe /ready and /api/v1/health
+        env:
+          BACKEND_URL: ${{ vars.RENDER_BACKEND_URL }}
+        run: |
+          set -u
+          failed=0
+          for path in /ready /api/v1/health; do
+            code=$(curl -sS -o body.json -w '%{http_code}' --max-time 60 --retry 2 --retry-delay 10 "${BACKEND_URL%/}${path}" || true)
+            echo "${path} -> HTTP ${code:-000}"
+            cat body.json 2>/dev/null || true
+            echo
+            [ "${code:-000}" = "200" ] || failed=1
+          done
+          exit "$failed"
+      - name: Notify maintainers
+        if: failure()
+        env:
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ -z "${ALERT_WEBHOOK_URL}" ]; then
+            echo "ALERT_WEBHOOK_URL is not set; the failed run itself is the alert."
+            exit 0
+          fi
+          message="Production health check failed: ${RUN_URL}"
+          curl -fsS --max-time 30 -X POST -H 'Content-Type: application/json' \
+            -d "{\"text\":\"${message}\",\"content\":\"${message}\"}" "${ALERT_WEBHOOK_URL}"

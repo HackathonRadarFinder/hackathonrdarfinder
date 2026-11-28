@@ -1,4 +1,5 @@
 import { lazy } from 'react';
-const Root = lazy(() => window.location.pathname === '/demo' || window.location.pathname.startsWith('/demo/')
-  ? import('./DemoPlatform.jsx') : import('./App.jsx'));
+// Production entrypoint is always the real backend-backed portal.
+// The fictional design demo is not part of the public application bundle.
+const Root = lazy(() => import('./App.jsx'));
 export default Root;

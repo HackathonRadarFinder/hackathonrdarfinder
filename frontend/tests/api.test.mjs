@@ -137,9 +137,17 @@ test('registration whitelists regular-account fields and authenticates through b
   client.clearSession();
 });
 
-test('unsupported reset never fabricates an email or calls an invented endpoint', async () => {
-  const client = createApiClient('/api', () => { assert.fail('No request expected'); });
-  await assert.rejects(client.forgotPassword('a@example.com'), /No email was sent/);
+test('unconfigured OTP reset reports backend failure and never claims email delivery', async () => {
+  let called = 0;
+  const client = createApiClient('/api', async (url, options) => {
+    called++;
+    assert.equal(url, '/api/auth/password-reset/request');
+    assert.deepEqual(JSON.parse(options.body), { email: 'a@example.com' });
+    assert.equal(options.headers.Authorization, undefined);
+    return bad(503, 'Email password reset is not configured.');
+  });
+  await assert.rejects(client.forgotPassword('a@example.com'), /not configured/);
+  assert.equal(called, 1);
 });
 
 test('request cancellation stays abortable', async () => {
@@ -183,4 +191,55 @@ test('late profile response cannot restore a logged-out account',async()=>{
   resolveUpdate(ok({...original,name:'After'}));
   await assert.rejects(update,/session ended/);
   assert.equal(lastUser,null);
+});
+
+test('college filter choices use the published facets endpoint and state-scoped districts', async () => {
+  const paths = [];
+  const client = createApiClient('/api', async (url, options) => {
+    paths.push(url);
+    assert.equal(options.headers.Authorization, undefined);
+    return ok({ states: ['Uttar Pradesh'], districts: ['Ghaziabad'] });
+  });
+  const choices = await client.institutionFilters('Uttar Pradesh');
+  assert.deepEqual(choices, { states: ['Uttar Pradesh'], districts: ['Ghaziabad'] });
+  const url = new URL(paths[0], 'http://localhost');
+  assert.equal(url.pathname, '/api/institutions/facets');
+  assert.equal(url.searchParams.get('state'), 'Uttar Pradesh');
+});
+
+test('college search combines state, district, name and pagination without changing source visibility', async () => {
+  let requestUrl;
+  const client = createApiClient('/api', async (url, options) => {
+    requestUrl = url;
+    assert.equal(options.headers.Authorization, undefined);
+    return ok({ data: [], page: 2, page_size: 25, total: 0 });
+  });
+  await client.institutions('Uttar Pradesh', 'Engineering', undefined, 2, 25, 'Ghaziabad');
+  const url = new URL(requestUrl, 'http://localhost');
+  assert.equal(url.pathname, '/api/institutions');
+  assert.deepEqual(Object.fromEntries(url.searchParams), {
+    page: '2', page_size: '25', state: 'Uttar Pradesh',
+    district: 'Ghaziabad', q: 'Engineering',
+  });
+});
+
+test('email OTP reset uses credential-free endpoints without leaking codes in URLs', async () => {
+  const captured = [];
+  const api = createApiClient('/api', async (url, options) => {
+    captured.push({ url, options });
+    return ok({ message: 'Request processed' });
+  });
+  await api.forgotPassword(' test@example.com ');
+  await api.confirmPasswordReset(' test@example.com ', ' 123456 ', 'NewStrongPassword123!');
+  assert.equal(captured[0].url, '/api/auth/password-reset/request');
+  assert.equal(captured[1].url, '/api/auth/password-reset/confirm');
+  for (const item of captured) {
+    assert.equal(item.options.method, 'POST');
+    assert.equal(item.options.headers.Authorization, undefined);
+    assert.ok(!item.url.includes('123456') && !item.url.includes('NewStrongPassword'));
+  }
+  assert.deepEqual(JSON.parse(captured[0].options.body), { email: 'test@example.com' });
+  assert.deepEqual(JSON.parse(captured[1].options.body), {
+    email: 'test@example.com', code: '123456', new_password: 'NewStrongPassword123!',
+  });
 });

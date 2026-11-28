@@ -2,7 +2,8 @@
 Module 2.4 - Deduplication, Entity Resolution & Provenance
 Run:  pip install rapidfuzz
       python dedup.py                 (uses built-in sample data)
-      python dedup.py events.csv      (uses your own CSV)
+      python dedup.py events.csv      (uses your own CSV / JSON)
+      python dedup.py --db            (also saves to master_events.db)
 
 CSV columns expected:
 source, source_id, source_url, title, organizer, start_date (YYYY-MM-DD),
@@ -195,7 +196,9 @@ def normalize_title(title):
     t = re.sub(r"[^a-z0-9 ]", " ", (title or "").lower())
     t = re.sub(r"\b(19|20)\d{2}\b", " ", t)  # drop years
     t = re.sub(r"\bmachine learning\b", "ml", t)
-    words = [TITLE_ALIASES.get(w, w) for w in t.split()]
+    words = " ".join(TITLE_ALIASES.get(w, w) for w in t.split()).split()
+    # Alias expansion can repeat words ("SIH - Smart India Hackathon"); keep first occurrence only.
+    words = list(dict.fromkeys(words))
     return " ".join(words)
 
 
@@ -249,7 +252,7 @@ def title_year(title):
     return m.group(1) if m else None
 
 # ---------------- MATCHING ----------------
-def compare(a, b):
+def compare(a, b, title_threshold=DUP_THRESHOLD):
     """Return (label, reason, score). label in duplicate / uncertain / not_duplicate"""
     # Registration pages are often reused for subsequent editions.
     ya, yb = title_year(a.get("title", "")), title_year(b.get("title", ""))
@@ -289,7 +292,7 @@ def compare(a, b):
     if ya and yb and ya != yb:
         return "not_duplicate", "different year in title", score
 
-    if score >= DUP_THRESHOLD and date_ok and loc_ok:
+    if score >= title_threshold and date_ok and loc_ok:
         return "duplicate", f"L2 title={score:.0f} date_ok loc_ok", score
     if score >= UNCERTAIN_THRESHOLD and date_close:
         return "uncertain", f"title={score:.0f} date_ok={date_ok} loc_ok={loc_ok}", score
@@ -297,7 +300,7 @@ def compare(a, b):
 
 # ---------------- CLUSTERING (union-find) ----------------
 def _candidate_pairs(events):
-    """Generate only pairs that can match under the rules, avoiding a full N² scan.
+    """Generate only pairs that can match under the rules, avoiding a full N^2 scan.
 
     Fuzzy duplicate/uncertain decisions require dates within seven days. Exact
     normalized registration links and shared numeric URL IDs remain candidates
@@ -368,7 +371,7 @@ def cluster(events):
 
 def are_duplicates(a, b, title_threshold=DUP_THRESHOLD):
     """Compatibility entry point for the labeled-pair evaluator."""
-    return compare(map_record(a, 0), map_record(b, 1))[0] == "duplicate"
+    return compare(map_record(a, 0), map_record(b, 1), title_threshold)[0] == "duplicate"
 
 # ---------------- MERGE ----------------
 def to_num(x):
@@ -463,6 +466,10 @@ def main():
         from master_db import save_master
         stats = save_master(master)
         print(f"\nSaved to master_events.db -> new: {stats['new']}, updated: {stats['updated']}, total in DB: {stats['total']}")
+        if stats["needs_review"]:
+            print(f"Needs manual review: {len(stats['needs_review'])}")
+            for r in stats["needs_review"]:
+                print(f"  - {r['title']}: {r['reason']}")
 
 
 if __name__ == "__main__":

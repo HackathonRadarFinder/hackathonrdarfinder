@@ -122,8 +122,8 @@ try {
   await page.getByRole('button', { name: 'Sign out', exact: true }).click();
   await page.locator('.platform-session').getByRole('link', { name: 'Sign in', exact: true }).waitFor();
   await page.goto(`${base}/forgot-password`);
-  await page.getByRole('heading', { name: 'Password reset unavailable', exact: true }).waitFor();
-  passed('Unsupported password recovery shows an accurate unavailable state');
+  await page.getByRole('heading', { name: 'Reset Password', exact: true }).waitFor();
+  passed('Password recovery displays reset form');
   await page.goto(`${base}/predictions`);
   await page.getByText(/No eligible public predictions/).waitFor();
   assert.equal(await page.locator('.platform-grid article').count(), 0);

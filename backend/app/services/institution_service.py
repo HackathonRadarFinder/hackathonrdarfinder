@@ -6,6 +6,7 @@ from sqlalchemy import func, select, or_
 from app.models.institution import Institution, Announcement
 from app.models.discovery import DiscoverySource, DiscoveryRun
 from app.schemas.institution import DirectoryImport
+from app.services.institution_publication import public_institution_filters
 
 
 def import_directory(db, body):
@@ -25,7 +26,7 @@ def import_directory(db, body):
         if row and row.last_verified_at > verified:
             counts['stale'] += 1
             continue
-        if row and row.provenance.get('checksum') == checksum:
+        if row and isinstance(row.provenance, dict) and row.provenance.get('checksum') == checksum:
             counts['unchanged'] += 1
             continue
         if row and row.last_verified_at == verified:
@@ -49,7 +50,8 @@ def import_directory(db, body):
         row.last_verified_at = verified
         row.provenance = dict(provider=body.provider, source_url=body.source_url,
             license_reference=body.license_reference, reviewed_by=body.reviewed_by,
-            website_evidence_url=item.website_evidence_url, checksum=checksum)
+            website_evidence_url=item.website_evidence_url, checksum=checksum,
+            reuse_permitted=body.reuse_permitted, directory_publication_approved=False)
     db.flush()
     return counts
 
@@ -96,8 +98,10 @@ def verified_event_coverage(db):
     from datetime import datetime, timezone
     linked = select(Hackathon.institution_id).join(Announcement,
         (Announcement.hackathon_id == Hackathon.id) & (Announcement.institution_id == Hackathon.institution_id)
-    ).where(Announcement.status == 'approved', Hackathon.institution_id.is_not(None))
+    ).join(Institution, Institution.id == Hackathon.institution_id).where(
+        Announcement.status == 'approved', Hackathon.institution_id.is_not(None),
+        *public_institution_filters())
     upcoming = linked.where(func.coalesce(Hackathon.end_date, Hackathon.start_date) >= datetime.now(timezone.utc).replace(tzinfo=None))
-    return dict(total_universities=db.scalar(select(func.count()).select_from(Institution)),
+    return dict(total_universities=db.scalar(select(func.count()).select_from(Institution).where(*public_institution_filters())),
         universities_with_verified_hackathons=db.scalar(select(func.count()).select_from(linked.distinct().subquery())),
         universities_with_upcoming_verified_hackathons=db.scalar(select(func.count()).select_from(upcoming.distinct().subquery())))
