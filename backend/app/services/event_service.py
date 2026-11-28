@@ -1,7 +1,8 @@
+import json
 from datetime import datetime, time, timezone
 
 from fastapi import HTTPException
-from sqlalchemy import func, select, or_
+from sqlalchemy import Text, cast, func, select, or_
 from sqlalchemy.orm import Session
 
 from app.models.core import EventVersion, Prediction, SavedItem
@@ -49,6 +50,8 @@ def _event_values(db: Session, event: EventCreate) -> dict:
         raise HTTPException(status_code=404, detail="Organization not found. Create the organization first.")
     if event.institution_id is not None and db.get(Institution, event.institution_id) is None:
         raise HTTPException(status_code=404, detail="Institution not found")
+    # model_dump turns `tags` into a list and `contacts` into a dict, which is
+    # what the JSON columns on the Hackathon model expect (BAC-02).
     values = event.model_dump(exclude={"organization", "organization_id"})
     values["organization_id"] = organization.id
     values["url"] = str(event.url) if event.url is not None else None
@@ -79,6 +82,22 @@ def get_event_page(db: Session, query: EventListParams):
         filters.append(Hackathon.mode.icontains(query.mode, autoescape=True))
     if query.organization_id is not None:
         filters.append(Hackathon.organization_id == query.organization_id)
+
+    # --- BAC-02: v4.1 filters ---
+    if query.category is not None:
+        filters.append(Hackathon.category == query.category)
+    if query.lifecycle_state is not None:
+        filters.append(Hackathon.lifecycle_state == query.lifecycle_state)
+    if query.tag is not None:
+        # `tags` is a JSON list. Match the quoted tag inside its JSON text, which works
+        # on both PostgreSQL and SQLite and matches whole tags only (case-insensitive).
+        filters.append(cast(Hackathon.tags, Text).icontains(
+            json.dumps(query.tag, ensure_ascii=False), autoescape=True))
+    if query.country is not None:
+        filters.append(func.lower(Hackathon.country) == query.country.lower())
+    if query.city is not None:
+        filters.append(func.lower(Hackathon.city) == query.city.lower())
+
     # Event datetime columns use UTC-naive storage. Compare complete calendar
     # day boundaries without truncating the column, so its index remains usable.
     # time.max also handles date.max without overflowing to the following day.
