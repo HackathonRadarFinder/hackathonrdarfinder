@@ -25,10 +25,39 @@ from dateutil import parser as date_parser
 
 USER_AGENT = "HackathonRadarFinderResearch/0.1"
 MAX_BYTES = 2_000_000
-FIELDS = ["title", "organization", "start_date", "end_date", "registration_deadline", "location", "mode",
-          "prize", "description", "url", "source", "scraped_at", "team_size", "themes", "city", "state",
-          "date_precision", "review_status", "issues", "source_hash", "collection_mode", "permission_reference", "acquisition_evidence"]
-
+FIELDS = [
+    "title",
+    "organization",
+    "start_date",
+    "end_date",
+    "registration_deadline",
+    "start_date_utc",
+    "end_date_utc",
+    "location",
+    "city",
+    "state",
+    "country",
+    "local_timezone",
+    "mode",
+    "prize",
+    "description",
+    "url",
+    "source",
+    "scraped_at",
+    "team_size",
+    "themes",
+    "categories",
+    "tags",
+    "date_precision",
+    "review_status",
+    "issues",
+    "source_hash",
+    "collection_mode",
+    "permission_reference",
+    "acquisition_evidence",
+    "field_provenance",
+    "organizer_contacts",
+]
 
 class CollectionDenied(Exception):
     """Permission, robots, HTTP challenge or source access check failed."""
@@ -65,6 +94,59 @@ def clean_url(url: str) -> str:
 def compact(value: str | None) -> str:
     return re.sub(r"\s+", " ", str(value or "")).strip()
 
+def normalize_timezone(value: str | None) -> str:
+    """Return a valid IANA timezone, otherwise unknown."""
+    if not value:
+        return "unknown"
+
+    from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+
+    try:
+        ZoneInfo(value.strip())
+        return value.strip()
+    except (ZoneInfoNotFoundError, ValueError):
+        return "unknown"
+
+
+def normalize_utc(value: str | None, local_timezone: str) -> str:
+    """Convert a date with a known timezone to UTC; never guess a timezone."""
+    if not value or local_timezone == "unknown":
+        return ""
+
+    from zoneinfo import ZoneInfo
+
+    try:
+        parsed = date_parser.parse(value, fuzzy=False)
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=ZoneInfo(local_timezone))
+        return parsed.astimezone(timezone.utc).isoformat()
+    except (ValueError, TypeError, OverflowError):
+        return ""
+
+
+def classify_categories(title: str, description: str) -> list[str]:
+    """Classify events using transparent keyword matching."""
+    text = f"{title} {description}".lower()
+
+    categories = {
+        "Artificial Intelligence": ("artificial intelligence", "machine learning", "deep learning", " ai "),
+        "Web Development": ("web development", "frontend", "backend", "full stack"),
+        "Blockchain": ("blockchain", "web3", "cryptocurrency"),
+        "Cybersecurity": ("cybersecurity", "cyber security", "ethical hacking"),
+        "Data Science": ("data science", "data analytics", "big data"),
+        "Sustainability": ("sustainability", "climate", "environment"),
+        "Healthcare": ("healthcare", "medical", "health tech"),
+        "Agriculture": ("agriculture", "farming", "agritech"),
+        "Education": ("education", "edtech", "learning"),
+        "Open Innovation": ("innovation", "open innovation"),
+    }
+
+    matched = [
+        category
+        for category, keywords in categories.items()
+        if any(keyword in f" {text} " for keyword in keywords)
+    ]
+    return matched or ["Other"]
 
 def iso_day(value: str | None) -> str | None:
     """Calendar-day precision only. Naive midnight is a DB convention, NOT a known time."""
@@ -198,6 +280,64 @@ def parse_event(url: str, html: str, *, observed_at: str | None = None) -> dict:
         # Typical pages include a clearly labelled overview section.
         m = re.search(r"All that you need to know about[^\n]*\n(.{40,1500})", raw_text, re.I | re.S)
         if m: row["description"] = compact(m.group(1))[:1000]
+
+
+    # Extract geography only from explicitly labelled public-page fields.
+    row["city"] = labelled(lines, "City")[:120]
+    row["state"] = labelled(lines, "State")[:100]
+    row["country"] = labelled(lines, "Country")[:100]
+
+    timezone_text = labelled(lines, "Timezone") or labelled(lines, "Time Zone")
+    row["local_timezone"] = normalize_timezone(timezone_text)
+
+    # Classify the event using its title and description.
+    categories = classify_categories(title, description)
+    row["categories"] = categories
+    row["tags"] = categories.copy()
+
+    # Keep the source of each extracted field.
+    row["field_provenance"] = {}
+
+    for field, label in (
+        ("city", "City"),
+        ("state", "State"),
+        ("country", "Country"),
+        ("local_timezone", "Timezone"),
+    ):
+        if row[field]:
+            row["field_provenance"][field] = {
+                "source": source,
+                "source_url": row["url"],
+                "source_field": label,
+                "method": "explicit_public_page_label",
+            }
+
+    if row["organization"]:
+        row["field_provenance"]["organization"] = {
+            "source": source,
+            "source_url": row["url"],
+            "source_field": "public_page_organizer_text",
+            "method": "html_text_extraction",
+        }
+
+    # Do not invent exact times when only calendar dates are available.
+    row["start_date_utc"] = (
+        normalize_utc(row["start_date"], row["local_timezone"])
+        if row["date_precision"] != "day" else ""
+    )
+    row["end_date_utc"] = (
+        normalize_utc(row["end_date"], row["local_timezone"])
+        if row["date_precision"] != "day" else ""
+    )
+
+    # Keep contacts unknown unless verified from public source information.
+    row["organizer_contacts"] = {
+        "contact_name": {"value": "unknown", "source_field": "unknown"},
+        "contact_designation": {"value": "unknown", "source_field": "unknown"},
+        "contact_email": {"value": "unknown", "source_field": "unknown"},
+        "contact_phone": {"value": "unknown", "source_field": "unknown"},
+    }
+
 
     # The parser is intentionally conservative: absent fields remain unknown.
     issues = []
