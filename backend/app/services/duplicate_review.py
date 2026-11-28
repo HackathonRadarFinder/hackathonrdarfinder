@@ -13,6 +13,7 @@ from app.models.core import AuditLog, EventVersion, Prediction, SavedItem
 from app.models.discovery import DiscoveryEvent, DiscoveryEvidence
 from app.models.institution import Announcement
 from app.models.email_delivery import EmailDelivery
+from app.models.contact import Contact
 
 
 class MergeConflict(ValueError):
@@ -152,7 +153,7 @@ def merge_reviewed(db, survivor_id, duplicate_id, token, actor_id, note):
     if merged_start and merged_end and merged_end < merged_start:
         raise MergeConflict('Selected metadata would end before the event starts')
     supported = {model.__tablename__ for model in (EventVersion, Prediction, SavedItem, DiscoveryEvent,
-                 DiscoveryEvidence, Announcement, EmailDelivery)}
+                 DiscoveryEvidence, Announcement, EmailDelivery, Contact)}
     for table in Base.metadata.tables.values():
         if any(fk.target_fullname == 'hackathons.id' for fk in table.foreign_keys) and table.name not in supported:
             raise MergeConflict('An unsupported event relationship requires manual migration')
@@ -185,7 +186,7 @@ def merge_reviewed(db, survivor_id, duplicate_id, token, actor_id, note):
             db.delete(saved)
         else:
             saved.hackathon_id = keep.id
-    for model in (DiscoveryEvent, DiscoveryEvidence, Announcement, Prediction, EmailDelivery):
+    for model in (DiscoveryEvent, DiscoveryEvidence, Announcement, Prediction, EmailDelivery, Contact):
         for related in db.scalars(select(model).where(model.hackathon_id == remove.id)):
             related.hackathon_id = keep.id
     # Keep reviewer-selected values, filling only absent facts; snapshots retain conflicts.
