@@ -141,7 +141,7 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
       const result = await request(`/events/${id}`, { signal, authenticated: false });
       return result.data;
     },
-    async institutions(state, search, signal, page = 1, pageSize = 100, district = '') { const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) }); if (state) params.set('state', state); if (district) params.set('district', district); if (search?.trim()) params.set('q', search.trim()); return request(`/institutions?${params}`, { signal, authenticated: false }); },
+        async institutions(state, search, signal, page = 1, pageSize = 100, district = '', university = '', type = '') { const params = new URLSearchParams({ page: String(page), page_size: String(pageSize) }); if (state) params.set('state', state); if (district) params.set('district', district); if (university) params.set('university', university); if (type) params.set('type', type); if (search?.trim()) params.set('q', search.trim()); return request(`/institutions?${params}`, { signal, authenticated: false }); }, 
     async institutionFilters(state, signal) { const params = new URLSearchParams(); if (state) params.set('state', state); return request(`/institutions/facets?${params}`, { signal, authenticated: false }); },
     async discoveryCoverage(signal) { return request('/admin/discovery/coverage', { signal }); },
     async discoveryRuns(signal) { return (await request('/admin/discovery/runs', { signal })).data; },
@@ -150,6 +150,7 @@ export function createApiClient(base, fetchImpl = (...args) => fetch(...args)) {
       if (!/^\d+$/.test(String(id)) || Number(id) < 1 || Number(id) > 2_147_483_647) throw new Error('Invalid event ID.');
       return (await request(`/events/${id}/discovery`, { signal, authenticated: false })).data;
     },
+        reportListing(payload) { return request('/listings/report', { method: 'POST', body: payload }); },
     async saved(signal) { return (await request('/account/saved', { signal })).data; },
     async save(id, saved) { return request(`/account/saved/${id}`, { method: saved ? 'DELETE' : 'PUT' }); },
     preferences(signal) { return request('/account/preferences', { signal }); },
